@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'specimen-base'
-include('specimenbase-catalog-domain')
+include('specimenbase-catalog-core')
