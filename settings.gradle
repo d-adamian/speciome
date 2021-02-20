@@ -9,3 +9,4 @@
 
 rootProject.name = 'specimen-base'
 include('specimenbase-catalog-core')
+include('specimenbase-catalog-api-service')
