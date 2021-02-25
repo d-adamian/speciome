@@ -5,17 +5,28 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
+import io.javalin.plugin.openapi.dsl.OpenApiBuilder;
+import io.javalin.plugin.openapi.dsl.OpenApiDocumentation;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
+import io.javalin.plugin.rendering.vue.VueComponent;
 import io.swagger.v3.oas.models.info.Info;
+import org.apache.http.HttpStatus;
 
 public final class ApiServiceMain {
 
     public static void main(String[] args) {
         // TODO: get port from command line parameters
         Javalin app = Javalin.create(
-                javalinConfig -> javalinConfig.registerPlugin(new OpenApiPlugin(getOpenApiOptions()))
+                config -> {
+                    config.enableWebjars();
+                    config.registerPlugin(new OpenApiPlugin(getOpenApiOptions()));
+                }
         ).start(8080);
-        app.get("/", ApiServiceMain::handleGetUserDetails);
+        app.get("/", new VueComponent("<main-page></main-page>"));
+
+        OpenApiDocumentation userDetailsDoc = OpenApiBuilder.document()
+                .result(Integer.toString(HttpStatus.SC_OK), String.class);
+        app.get("/user-details", OpenApiBuilder.documented(userDetailsDoc, ApiServiceMain::handleGetUserDetails));
     }
 
     private static OpenApiOptions getOpenApiOptions() {
