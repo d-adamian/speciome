@@ -4,6 +4,10 @@ import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("Given empty users storage")
 public class UserRegistrationTest {
@@ -50,6 +54,7 @@ public class UserRegistrationTest {
             LogInUser logInUser = useCaseFactory.logInUser();
             User user = logInUser.logIn(USER_1, PASSWORD_1);
             Assertions.assertThat(user).isNotNull();
+            Assertions.assertThat(user.getEmail()).isEqualTo(USER_1);
         }
 
         @Test
@@ -58,6 +63,38 @@ public class UserRegistrationTest {
             LogInUser logInUser = useCaseFactory.logInUser();
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_1, PASSWORD_2))
                     .isInstanceOf(LogInUser.InvalidCredentialsException.class);
+        }
+
+        @DisplayName("Then user 2 can not log in with any password")
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {PASSWORD_1, PASSWORD_2, "other_password"})
+        public void testUser2CantLogInWithAnyPassword(String password) {
+            LogInUser logInUser = useCaseFactory.logInUser();
+            Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_2, password))
+                    .isInstanceOf(LogInUser.InvalidCredentialsException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("When both users have been registered")
+    public class BothUsersRegistered {
+        @BeforeEach
+        public void setUp() {
+            useCaseFactory.registerUser().registerNewUser(USER_1, PASSWORD_1);
+            useCaseFactory.registerUser().registerNewUser(USER_2, PASSWORD_2);
+        }
+
+        @ParameterizedTest
+        @DisplayName("Then both users can log in")
+        @CsvSource({
+                USER_1 + ", " + PASSWORD_1,
+                USER_2 + ", " + PASSWORD_2
+        })
+        public void testBothUsersCanLogIn(String email, String password) {
+            User user = useCaseFactory.logInUser().logIn(email, password);
+            Assertions.assertThat(user).isNotNull();
+            Assertions.assertThat(user.getEmail()).isEqualTo(email);
         }
     }
 }
