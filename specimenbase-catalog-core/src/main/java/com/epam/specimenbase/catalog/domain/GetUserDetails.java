@@ -13,7 +13,7 @@ public final class GetUserDetails {
         }
     }
 
-    public Response execute() {
+    public Response getUserDetails() {
         String userEmail = "user@company.com";
         return new Response(userEmail);
     }

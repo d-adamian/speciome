@@ -40,7 +40,7 @@ public final class ApiServiceMain {
 
     private static void handleGetUserDetails(Context ctx) {
         GetUserDetails useCase = new GetUserDetails();
-        var response = useCase.execute();
+        var response = useCase.getUserDetails();
         ctx.json(response.getEmail());
     }
 }
