@@ -18,9 +18,4 @@ public final class LogInUser {
                 .orElseThrow(InvalidCredentialsException::new);
     }
 
-    public static class InvalidCredentialsException extends RuntimeException {
-        private InvalidCredentialsException() {
-            super("Invalid credentials");
-        }
-    }
 }

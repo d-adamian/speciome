@@ -34,7 +34,7 @@ public class UserRegistrationTest {
         public void testNoUserCanLogIn() {
             LogInUser logInUser = useCaseFactory.logInUser();
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_1, PASSWORD_1))
-                    .isInstanceOf(LogInUser.InvalidCredentialsException.class);
+                    .isInstanceOf(InvalidCredentialsException.class);
         }
     }
 
@@ -62,7 +62,7 @@ public class UserRegistrationTest {
         public void testUser1CantLogInWithIncorrectPassword() {
             LogInUser logInUser = useCaseFactory.logInUser();
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_1, PASSWORD_2))
-                    .isInstanceOf(LogInUser.InvalidCredentialsException.class);
+                    .isInstanceOf(InvalidCredentialsException.class);
         }
 
         @DisplayName("Then user 2 can not log in with any password")
@@ -72,7 +72,7 @@ public class UserRegistrationTest {
         public void testUser2CantLogInWithAnyPassword(String password) {
             LogInUser logInUser = useCaseFactory.logInUser();
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_2, password))
-                    .isInstanceOf(LogInUser.InvalidCredentialsException.class);
+                    .isInstanceOf(InvalidCredentialsException.class);
         }
     }
 

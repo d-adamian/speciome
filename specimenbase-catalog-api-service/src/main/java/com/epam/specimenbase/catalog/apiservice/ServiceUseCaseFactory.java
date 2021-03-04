@@ -1,4 +1,4 @@
-package com.epam.specimenbase.catalog.tests;
+package com.epam.specimenbase.catalog.apiservice;
 
 import com.epam.specimenbase.catalog.domain.GetUserDetails;
 import com.epam.specimenbase.catalog.domain.LogInUser;
@@ -6,8 +6,12 @@ import com.epam.specimenbase.catalog.domain.RegisterUser;
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import com.epam.specimenbase.catalog.ports.UserStorage;
 
-public final class TestsUseCaseFactory implements UseCaseFactory {
-    private final UserStorage userStorage = new InMemoryMapUserStorage();
+public final class ServiceUseCaseFactory implements UseCaseFactory {
+    private final UserStorage userStorage;
+
+    public ServiceUseCaseFactory() {
+        this.userStorage = new InMemoryMapUserStorage();
+    }
 
     @Override
     public RegisterUser registerUser() {

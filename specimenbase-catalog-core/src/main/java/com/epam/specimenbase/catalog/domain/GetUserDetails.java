@@ -1,6 +1,14 @@
 package com.epam.specimenbase.catalog.domain;
 
+import com.epam.specimenbase.catalog.ports.UserStorage;
+
 public final class GetUserDetails {
+    private final UserStorage userStorage;
+
+    public GetUserDetails(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+
     public static final class Response {
         private final String email;
 
@@ -13,8 +21,12 @@ public final class GetUserDetails {
         }
     }
 
-    public Response getUserDetails() {
-        String userEmail = "user@company.com";
-        return new Response(userEmail);
+    public Response getUserDetails(User user) {
+        if (user == null) {
+            throw new InvalidCredentialsException();
+        } else {
+            String email = user.getEmail();
+            return new Response(email);
+        }
     }
 }
