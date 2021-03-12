@@ -1,12 +1,11 @@
 package com.epam.specimenbase.catalog.apiservice;
 
+import com.epam.specimenbase.catalog.apiservice.endpoints.UserController;
+import com.epam.specimenbase.catalog.domain.InvalidCredentialsException;
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
-import io.javalin.plugin.openapi.dsl.OpenApiBuilder;
-import io.javalin.plugin.openapi.dsl.OpenApiDocumentation;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.javalin.plugin.rendering.vue.VueComponent;
 import io.swagger.v3.oas.models.info.Info;
@@ -33,9 +32,13 @@ public final class ApiServiceMain {
         ).start(port);
         app.get("/", new VueComponent("<main-page></main-page>"));
 
-        OpenApiDocumentation userDetailsDoc = OpenApiBuilder.document()
-                .result(Integer.toString(HttpStatus.SC_OK), String.class);
-        app.get("/user-details", OpenApiBuilder.documented(userDetailsDoc, this::handleGetUserDetails));
+        UserController userController = new UserController(useCaseFactory);
+        app.get("/user-details", userController::getUserDetails);
+        app.post("/register-user", userController::registerUser);
+        app.post("/login", userController::logInUser);
+        app.post("/logout", userController::logOut);
+
+        app.exception(InvalidCredentialsException.class, (e, ctx) -> ctx.status(HttpStatus.SC_UNAUTHORIZED));
     }
 
     private OpenApiOptions getOpenApiOptions() {
@@ -45,10 +48,5 @@ public final class ApiServiceMain {
         return new OpenApiOptions(applicationInfo)
                 .path("/swagger-docs")
                 .swagger(new SwaggerOptions("/swagger").title("Specimen Base Documentation"));
-    }
-
-    private void handleGetUserDetails(Context ctx) {
-        var response = useCaseFactory.getUserDetails().getUserDetails(null);
-        ctx.json(response.getEmail());
     }
 }
