@@ -74,6 +74,14 @@ public class UserRegistrationTest {
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_2, password))
                     .isInstanceOf(InvalidCredentialsException.class);
         }
+
+        @Test
+        @DisplayName("Then user 1 can not register one more time")
+        public void testUser1CanNotRegisterTwice() {
+            RegisterUser registerUser = useCaseFactory.registerUser();
+            Assertions.assertThatThrownBy(() -> registerUser.registerNewUser(USER_1, PASSWORD_1))
+                    .isInstanceOf(RegisterUser.UserAlreadyExistsException.class);
+        }
     }
 
     @Nested
