@@ -4,8 +4,7 @@ import java.util.Optional;
 
 public interface UserStorage {
 
-    // TODO: change password to salted hash
-    void addUser(String email, String password);
+    void addUser(UserData userData);
 
     Optional<UserData> loadUserData(String email);
 }

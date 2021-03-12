@@ -11,8 +11,8 @@ public final class InMemoryMapUserStorage implements UserStorage {
     private final Map<String, UserData> userDataMap = new HashMap<>();
 
     @Override
-    public void addUser(String email, String password) {
-        userDataMap.put(email, new UserData(email, password));
+    public void addUser(UserData userData) {
+        userDataMap.put(userData.getEmail(), userData);
     }
 
     @Override

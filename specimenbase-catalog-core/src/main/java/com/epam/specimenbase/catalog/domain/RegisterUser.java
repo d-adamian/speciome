@@ -1,5 +1,6 @@
 package com.epam.specimenbase.catalog.domain;
 
+import com.epam.specimenbase.catalog.ports.UserData;
 import com.epam.specimenbase.catalog.ports.UserStorage;
 
 public final class RegisterUser {
@@ -10,6 +11,9 @@ public final class RegisterUser {
     }
 
     public void registerNewUser(String email, String password) {
-        userStorage.addUser(email, password);
+        String salt = Passwords.generateSalt();
+        String passwordHash = Passwords.hashPassword(salt, password);
+        UserData userData = new UserData(email, salt, passwordHash);
+        userStorage.addUser(userData);
     }
 }
