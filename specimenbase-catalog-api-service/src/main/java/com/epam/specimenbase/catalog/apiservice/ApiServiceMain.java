@@ -31,6 +31,7 @@ public final class ApiServiceMain {
                 }
         ).start(port);
         app.get("/", new VueComponent("<main-page></main-page>"));
+        app.get("/static/sign-up", new VueComponent("<sign-up></sign-up>"));
 
         UserController userController = new UserController(useCaseFactory);
         app.get("/user-details", userController::getUserDetails);

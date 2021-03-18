@@ -1,6 +1,7 @@
 package com.epam.specimenbase.catalog.apiservice.endpoints;
 
 import com.epam.specimenbase.catalog.domain.InvalidCredentialsException;
+import com.epam.specimenbase.catalog.domain.RegisterUser;
 import com.epam.specimenbase.catalog.domain.User;
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,8 +31,13 @@ public final class UserController {
     )
     public void registerUser(Context ctx) {
         RegisterUserRequest request = ctx.bodyAsClass(RegisterUserRequest.class);
-        useCaseFactory.registerUser().registerNewUser(request.getEmail(), request.getPassword());
-        ctx.status(HttpStatus.SC_CREATED);
+        try {
+            useCaseFactory.registerUser().registerNewUser(request.getEmail(), request.getPassword());
+            ctx.status(HttpStatus.SC_CREATED);
+        } catch (RegisterUser.UserAlreadyExistsException e) {
+            ctx.status(HttpStatus.SC_BAD_REQUEST);
+            ctx.result("User already exists");
+        }
     }
 
     @OpenApi(
