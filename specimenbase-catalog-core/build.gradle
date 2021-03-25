@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
     id 'info.solidsoft.pitest' version '1.5.1'
 }
 
@@ -22,6 +23,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 checkstyleMain {
@@ -41,6 +43,17 @@ pitest {
     outputFormats = ['HTML']
     mutationThreshold = 100
 }
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    reports {
+        xml.enabled false
+        csv.enabled true
+        html.enabled true
+    }
+}
+
 
 build.dependsOn 'pitest'
 

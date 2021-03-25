@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 repositories {
@@ -23,8 +24,21 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.19.0")
 }
 
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    reports {
+        xml.enabled false
+        csv.enabled true
+        html.enabled true
+    }
+
+}
+
 test {
     useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
 }
 
 application {
