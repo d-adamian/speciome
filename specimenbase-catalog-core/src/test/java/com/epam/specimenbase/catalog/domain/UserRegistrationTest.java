@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("Given empty users storage")
+@DisplayName("Given no registered users")
 public class UserRegistrationTest {
     private static final String USER_1 = "user1@company1.com";
     private static final String PASSWORD_1 = "password_1";
@@ -35,6 +35,16 @@ public class UserRegistrationTest {
             LogInUser logInUser = useCaseFactory.logInUser();
             Assertions.assertThatThrownBy(() -> logInUser.logIn(USER_1, PASSWORD_1))
                     .isInstanceOf(InvalidCredentialsException.class);
+        }
+
+        @DisplayName("Then user can not register with invalid email")
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"INVALID", "email@other@aaa.com"})
+        public void testUserCanNotRegisterWithInvalidEmail(String email) {
+            RegisterUser registerUser = useCaseFactory.registerUser();
+            Assertions.assertThatThrownBy(() -> registerUser.registerNewUser(email, PASSWORD_1))
+                    .isInstanceOf(RegisterUser.EmailInvalidException.class);
         }
     }
 
