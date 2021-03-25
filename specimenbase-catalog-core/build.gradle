@@ -1,5 +1,8 @@
 plugins {
     id 'java'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'info.solidsoft.pitest' version '1.5.1'
 }
 
 repositories {
@@ -20,4 +23,38 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/main/test'
+}
+
+pitest {
+    targetClasses = ['com.epam.specimenbase.*']
+    excludedClasses = [
+            'com.epam.specimenbase.catalog.domain.Passwords' // salting password hashes not covered
+    ]
+    junit5PluginVersion = '0.12'
+    outputFormats = ['HTML']
+    mutationThreshold = 100
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    reports {
+        xml.enabled false
+        csv.enabled true
+        html.enabled true
+    }
+}
+
+
+build.dependsOn 'pitest'
+
+
