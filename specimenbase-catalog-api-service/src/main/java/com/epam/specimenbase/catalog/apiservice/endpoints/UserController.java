@@ -26,7 +26,8 @@ public final class UserController {
             summary = "Register new user",
             requestBody = @OpenApiRequestBody(content = @OpenApiContent(from = RegisterUserRequest.class)),
             responses = {
-                    @OpenApiResponse(status = "201") // TODO: handle duplicate registration case
+                    @OpenApiResponse(status = "201"),
+                    @OpenApiResponse(status = "400", description = "Input is invalid")
             }
     )
     public void registerUser(Context ctx) {
@@ -37,6 +38,9 @@ public final class UserController {
         } catch (RegisterUser.UserAlreadyExistsException e) {
             ctx.status(HttpStatus.SC_BAD_REQUEST);
             ctx.result("User already exists");
+        } catch (RegisterUser.EmailInvalidException e) {
+            ctx.status(HttpStatus.SC_BAD_REQUEST);
+            ctx.result("Email is invalid");
         }
     }
 
