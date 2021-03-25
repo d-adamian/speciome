@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'info.solidsoft.pitest' version '1.5.1'
 }
 
 repositories {
@@ -30,4 +31,17 @@ checkstyleMain {
 checkstyleTest {
     source = 'src/main/test'
 }
+
+pitest {
+    targetClasses = ['com.epam.specimenbase.*']
+    excludedClasses = [
+            'com.epam.specimenbase.catalog.domain.Passwords' // salting password hashes not covered
+    ]
+    junit5PluginVersion = '0.12'
+    outputFormats = ['HTML']
+    mutationThreshold = 100
+}
+
+build.dependsOn 'pitest'
+
 
