@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'checkstyle'
 }
 
 repositories {
@@ -28,4 +29,12 @@ test {
 
 application {
     mainClassName = 'com.epam.specimenbase.catalog.apiservice.ApiServiceMain'
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/main/test'
 }
