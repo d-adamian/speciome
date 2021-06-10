@@ -1,8 +1,8 @@
 package com.epam.specimenbase.catalog.apiservice.endpoints;
 
-import com.epam.specimenbase.catalog.domain.InvalidCredentialsException;
-import com.epam.specimenbase.catalog.domain.RegisterUser;
-import com.epam.specimenbase.catalog.domain.User;
+import com.epam.specimenbase.catalog.domain.users.InvalidCredentialsException;
+import com.epam.specimenbase.catalog.domain.users.RegisterUser;
+import com.epam.specimenbase.catalog.domain.users.User;
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +11,8 @@ import io.javalin.plugin.openapi.annotations.*;
 import org.apache.http.HttpStatus;
 
 public final class UserController {
-    private static final String USER_SESSION_ATTRIBUTE = "user";
+    // TODO: is this a good place for this constant?
+    public static final String USER_SESSION_ATTRIBUTE = "user";
 
     private final UseCaseFactory useCaseFactory;
 

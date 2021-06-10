@@ -1,9 +1,7 @@
-package com.epam.specimenbase.catalog.domain;
+package com.epam.specimenbase.catalog.domain.users;
 
 import com.epam.specimenbase.catalog.ports.UserData;
 import com.epam.specimenbase.catalog.ports.UserStorage;
-
-import java.util.Objects;
 
 public final class LogInUser {
     private final UserStorage userStorage;

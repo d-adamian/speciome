@@ -1,4 +1,4 @@
-package com.epam.specimenbase.catalog.domain;
+package com.epam.specimenbase.catalog.domain.users;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;

@@ -1,9 +1,12 @@
 package com.epam.specimenbase.catalog.apiservice;
 
+import com.epam.specimenbase.catalog.apiservice.endpoints.SampleController;
 import com.epam.specimenbase.catalog.apiservice.endpoints.UserController;
-import com.epam.specimenbase.catalog.domain.InvalidCredentialsException;
+import com.epam.specimenbase.catalog.domain.users.InvalidCredentialsException;
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
+import io.javalin.plugin.json.JavalinJackson;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
@@ -26,10 +29,12 @@ public final class ApiServiceMain {
     private void startService(int port) {
         Javalin app = Javalin.create(
                 config -> {
+                    JavalinJackson.getObjectMapper().registerModule(new JavaTimeModule());
                     config.enableWebjars();
                     config.registerPlugin(new OpenApiPlugin(getOpenApiOptions()));
                 }
         ).start(port);
+
         app.get("/", new VueComponent("<main-page></main-page>"));
         app.get("/static/sign-up", new VueComponent("<sign-up></sign-up>"));
 
@@ -38,6 +43,13 @@ public final class ApiServiceMain {
         app.post("/register-user", userController::registerUser);
         app.post("/login", userController::logInUser);
         app.post("/logout", userController::logOut);
+
+        SampleController sampleController = new SampleController(useCaseFactory);
+        app.get("/samples", sampleController::listSamples);
+        app.post("/sample", sampleController::addSample);
+        app.get("/sample/:sampleId", sampleController::getSample);
+        app.delete("/sample/:sampleId", sampleController::deleteSample);
+        app.put("/sample/:sampleId", sampleController::updateSample);
 
         app.exception(InvalidCredentialsException.class, (e, ctx) -> ctx.status(HttpStatus.SC_UNAUTHORIZED));
     }

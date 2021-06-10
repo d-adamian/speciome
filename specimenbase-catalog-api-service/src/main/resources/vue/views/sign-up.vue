@@ -64,7 +64,7 @@
                             password: this.password
                         })
                     }).then(response => {
-                        if (response.status == 200) {
+                        if (response.status == 201) {
                             this.newUser = false;
                         } else {
                             alert("Unable to register user");

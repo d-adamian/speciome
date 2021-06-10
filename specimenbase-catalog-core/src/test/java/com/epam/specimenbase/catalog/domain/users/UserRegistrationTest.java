@@ -1,4 +1,4 @@
-package com.epam.specimenbase.catalog.domain;
+package com.epam.specimenbase.catalog.domain.users;
 
 import com.epam.specimenbase.catalog.ports.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;

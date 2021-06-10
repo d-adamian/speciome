@@ -1,8 +1,9 @@
 package com.epam.specimenbase.catalog.ports;
 
-import com.epam.specimenbase.catalog.domain.GetUserDetails;
-import com.epam.specimenbase.catalog.domain.LogInUser;
-import com.epam.specimenbase.catalog.domain.RegisterUser;
+import com.epam.specimenbase.catalog.domain.samples.*;
+import com.epam.specimenbase.catalog.domain.users.GetUserDetails;
+import com.epam.specimenbase.catalog.domain.users.LogInUser;
+import com.epam.specimenbase.catalog.domain.users.RegisterUser;
 
 public interface UseCaseFactory {
 
@@ -12,4 +13,13 @@ public interface UseCaseFactory {
 
     GetUserDetails getUserDetails();
 
+    ListSamples listSamples();
+
+    AddSample addSample();
+
+    GetSample getSample();
+
+    DeleteSample deleteSample();
+
+    UpdateSample updateSample();
 }

@@ -1,4 +1,4 @@
-package com.epam.specimenbase.catalog.domain;
+package com.epam.specimenbase.catalog.domain.users;
 
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException() {
