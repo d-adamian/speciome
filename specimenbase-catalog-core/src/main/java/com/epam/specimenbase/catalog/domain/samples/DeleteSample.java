@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.SampleStorage;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
 
 public final class DeleteSample {
     private final SampleStorage sampleStorage;
@@ -9,7 +9,7 @@ public final class DeleteSample {
         this.sampleStorage = sampleStorage;
     }
 
-    public void deleteSample(String sampleId) {
+    public void deleteSample(Long sampleId) {
         sampleStorage.getSampleById(sampleId).ifPresentOrElse(
                 sampleData -> sampleStorage.deleteSampleById(sampleId),
                 () -> {

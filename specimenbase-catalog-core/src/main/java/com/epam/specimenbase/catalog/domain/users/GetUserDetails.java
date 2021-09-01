@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.users;
 
-import com.epam.specimenbase.catalog.ports.UserStorage;
+import com.epam.specimenbase.catalog.persistence.api.users.UserStorage;
 
 public final class GetUserDetails {
     private final UserStorage userStorage;

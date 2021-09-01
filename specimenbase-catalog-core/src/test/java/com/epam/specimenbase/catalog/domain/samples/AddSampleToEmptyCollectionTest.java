@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.UseCaseFactory;
+import com.epam.specimenbase.catalog.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
@@ -51,7 +51,7 @@ public class AddSampleToEmptyCollectionTest {
     @Nested
     @DisplayName("When one sample with empty attributes has been added")
     public class OneSampleWithEmptyAttributesAdded {
-        private String assignedSampleId = null;
+        private Long assignedSampleId = null;
         private ZonedDateTime creationTime = null;
 
         @BeforeEach
@@ -76,8 +76,8 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then single sample has non-empty identifier equal to assigned identifier")
         public void testSampleHasNonEmptyIdentifier() {
             Sample sample = getFirstSample();
-            String sampleId = sample.getSampleId();
-            Assertions.assertThat(sampleId).isNotEmpty();
+            Long sampleId = sample.getSampleId();
+            Assertions.assertThat(sampleId).isNotNull();
             Assertions.assertThat(sampleId).isEqualTo(assignedSampleId);
         }
 
@@ -86,7 +86,7 @@ public class AddSampleToEmptyCollectionTest {
         public void testSampleCanBeRetrievedBySampleId() {
             GetSample.Result result = useCaseFactory.getSample().getSample(assignedSampleId);
 
-            String sampleId = result.getSampleId();
+            Long sampleId = result.getSampleId();
 
             Assertions.assertThat(sampleId).isNotNull().isEqualTo(assignedSampleId);
 
@@ -98,7 +98,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then no sample can be retrieved by other identifier")
         public void testNoOtherSampleCanBeRetrieved() {
-            Assertions.assertThatThrownBy(() -> useCaseFactory.getSample().getSample("INCORRECT"))
+            Assertions.assertThatThrownBy(() -> useCaseFactory.getSample().getSample(536363654L))
                     .isInstanceOf(SampleNotFoundException.class);
         }
 
@@ -147,7 +147,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then attribute values are equal to given values")
         public void testAttributesAreEqualToProvidedValues() {
             // Using sample ID here to keep mutational testing happy
-            String sampleId = useCaseFactory.addSample().addNewSample(attributes).getSampleId();
+            Long sampleId = useCaseFactory.addSample().addNewSample(attributes).getSampleId();
             Sample sample = useCaseFactory.getSample().getSample(sampleId).getSample();
 
             Map<String, String> sampleAttributes = sample.getAttributes();
@@ -180,7 +180,7 @@ public class AddSampleToEmptyCollectionTest {
 
     @Nested
     @DisplayName("When one sample with extra attributes is added")
-    public class TwoSamplesAdded {
+    public class OneSampleWithExtraAttributes {
         private final Map<String, String> attributes = Map.of("UNKNOWN_ATTRIBUTE", "234");
 
         @Test
@@ -189,7 +189,36 @@ public class AddSampleToEmptyCollectionTest {
             Assertions.assertThatThrownBy(() -> useCaseFactory.addSample().addNewSample(attributes))
                     .isInstanceOf(UnexpectedAttributeException.class);
         }
+    }
 
+    @Nested
+    @DisplayName("When two samples have been added")
+    public class TwoSamplesAdded {
+        private Long sampleIdOne;
+        private Long sampleIdTwo;
+
+        @BeforeEach
+        void setUp() {
+            sampleIdOne = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleIdTwo = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+        }
+
+        @Test
+        @DisplayName("Then samples have different identifiers")
+        public void testSamplesHaveDifferentIdentifiers() {
+            Assertions.assertThat(sampleIdOne).isNotEqualTo(sampleIdTwo);
+        }
+
+        @Test
+        @DisplayName("Then both samples are present")
+        public void testTwoSamplesArePresent() {
+            Assertions.assertThat(useCaseFactory.listSamples().listSamples().getSamples()).hasSize(2);
+            for (Long sampleId : List.of(sampleIdOne, sampleIdTwo)) {
+                GetSample.Result getResult = useCaseFactory.getSample().getSample(sampleId);
+                Assertions.assertThat(getResult.getSampleId()).isEqualTo(sampleId);
+                Assertions.assertThat(getResult.getSample().getSampleId()).isEqualTo(sampleId);
+            }
+        }
     }
 
     private Sample getFirstSample() {

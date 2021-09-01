@@ -1,0 +1,46 @@
+package com.epam.specimenbase.catalog.persistence.testmocks;
+
+import com.epam.specimenbase.catalog.persistence.api.samples.ListSamplesResult;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleData;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public class InMemoryMapSampleStorage implements SampleStorage {
+    private long maxSampleId = 0;
+    private final Map<Long, SampleData> samplesById = new HashMap<>();
+
+    @Override
+    public Long addSample(SampleData sampleData) {
+        Long sampleId = maxSampleId;
+        samplesById.put(sampleId, sampleData);
+        maxSampleId++;
+        return sampleId;
+    }
+
+    @Override
+    public ListSamplesResult listSamples() {
+        return new ListSamplesResult(samplesById.size(), samplesById);
+    }
+
+    @Override
+    public Optional<SampleData> getSampleById(Long sampleId) {
+        return Optional.ofNullable(samplesById.get(sampleId));
+    }
+
+    @Override
+    public void deleteSampleById(Long sampleId) {
+        samplesById.remove(sampleId);
+    }
+
+    @Override
+    public void updateSample(Long sampleId, SampleData sampleData) {
+        samplesById.put(sampleId, sampleData);
+    }
+
+    public void clear() {
+        samplesById.clear();
+    }
+}

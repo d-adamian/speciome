@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.users;
 
-import com.epam.specimenbase.catalog.ports.UseCaseFactory;
+import com.epam.specimenbase.catalog.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;

@@ -1,13 +1,48 @@
 plugins {
+    id 'java'
     id 'checkstyle'
+    id 'jacoco'
 }
 
+
+
 allprojects {
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     checkstyle {
         toolVersion '7.8.1'
         configFile file("config/checkstyle.xml")
     }
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+
+    checkstyleMain {
+        source = 'src/main/java'
+    }
+
+    checkstyleTest {
+        source = 'src/main/test'
+    }
+
+    jacocoTestReport {
+        dependsOn test // tests are required to run before generating the report
+
+        reports {
+            xml.enabled false
+            csv.enabled true
+            html.enabled true
+        }
+    }
+
 }
 
 group = 'com.epam.specimenbase'

@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.SampleData;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleData;
 import com.google.common.collect.ImmutableMap;
 
 import java.time.ZonedDateTime;
@@ -8,24 +8,24 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class Sample {
-    private final String sampleId;
+    private final Long sampleId;
     private final ZonedDateTime createdAt;
     private final ZonedDateTime updatedAt;
     private final Map<String, String> attributes;
 
-    private Sample(String sampleId, ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes) {
+    private Sample(Long sampleId, ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes) {
         this.sampleId = sampleId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.attributes = ImmutableMap.copyOf(attributes);
     }
 
-    public static Sample fromSampleData(String sampleId, SampleData sampleData) {
+    public static Sample fromSampleData(Long sampleId, SampleData sampleData) {
         return new Sample(
                 sampleId, sampleData.getCreatedAt(), sampleData.getUpdatedAt(), sampleData.getAttributes());
     }
 
-    public String getSampleId() {
+    public Long getSampleId() {
         return sampleId;
     }
 

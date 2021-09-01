@@ -1,12 +1,10 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.SampleData;
-import com.epam.specimenbase.catalog.ports.SampleStorage;
-import org.checkerframework.checker.units.qual.A;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleData;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,18 +30,18 @@ public final class AddSample {
     private Result storeNewSample(Map<String, String> attributes) {
         ZonedDateTime createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime updatedAt = ZonedDateTime.now(ZoneId.of("UTC"));
-        String sampleId = sampleStorage.addSample(new SampleData(createdAt, updatedAt, attributes));
+        Long sampleId = sampleStorage.addSample(new SampleData(createdAt, updatedAt, attributes));
         return new Result(sampleId);
     }
 
     public static final class Result {
-        private final String sampleId;
+        private final Long sampleId;
 
-        public Result(String sampleId) {
+        public Result(Long sampleId) {
             this.sampleId = sampleId;
         }
 
-        public String getSampleId() {
+        public Long getSampleId() {
             return sampleId;
         }
     }

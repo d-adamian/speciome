@@ -1,7 +1,7 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.SampleData;
-import com.epam.specimenbase.catalog.ports.SampleStorage;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleData;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -15,7 +15,7 @@ public final class UpdateSample {
         this.sampleStorage = sampleStorage;
     }
 
-    public Result updateSample(String sampleId, Map<String, String> attributes) {
+    public Result updateSample(Long sampleId, Map<String, String> attributes) {
         Optional<SampleData> sampleDataOptional = sampleStorage.getSampleById(sampleId);
 
         if (sampleDataOptional.isPresent()) {
@@ -25,7 +25,7 @@ public final class UpdateSample {
         }
     }
 
-    private Result updateExistingSample(String sampleId, SampleData sampleData, Map<String, String> attributes) {
+    private Result updateExistingSample(Long sampleId, SampleData sampleData, Map<String, String> attributes) {
         Attributes.checkExtraAttributes(attributes);
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));

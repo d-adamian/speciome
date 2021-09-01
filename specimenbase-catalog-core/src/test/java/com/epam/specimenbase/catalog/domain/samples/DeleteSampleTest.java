@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.UseCaseFactory;
+import com.epam.specimenbase.catalog.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ public class DeleteSampleTest {
         @Test
         @DisplayName("Then exception is thrown")
         public void testExceptionIsThrown() {
-            String sampleId = "ANY_SAMPLE_ID";
+            Long sampleId = 12343534L;
             Assertions.assertThatThrownBy(() -> useCaseFactory.deleteSample().deleteSample(sampleId))
                     .isInstanceOf(SampleNotFoundException.class);
         }
@@ -33,7 +33,7 @@ public class DeleteSampleTest {
     @Nested
     @DisplayName("When I have created a sample")
     public class DeleteCreatedSample {
-        String sampleId;
+        Long sampleId;
 
         @BeforeEach
         public void setUp() {

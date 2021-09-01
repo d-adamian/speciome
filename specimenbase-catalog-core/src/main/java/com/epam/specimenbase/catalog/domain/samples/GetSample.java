@@ -1,7 +1,7 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.SampleData;
-import com.epam.specimenbase.catalog.ports.SampleStorage;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleData;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ public final class GetSample {
         this.sampleStorage = sampleStorage;
     }
 
-    public Result getSample(String sampleId) {
+    public Result getSample(Long sampleId) {
         Optional<SampleData> sampleDataOptional = sampleStorage.getSampleById(sampleId);
         return sampleDataOptional
                 .map(sampleData -> Sample.fromSampleData(sampleId, sampleData))
@@ -21,15 +21,15 @@ public final class GetSample {
     }
 
     public static final class Result {
-        private final String sampleId;
+        private final Long sampleId;
         private final Sample sample;
 
-        public Result(String sampleId, Sample sample) {
+        public Result(Long sampleId, Sample sample) {
             this.sampleId = sampleId;
             this.sample = sample;
         }
 
-        public String getSampleId() {
+        public Long getSampleId() {
             return sampleId;
         }
 

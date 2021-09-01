@@ -1,7 +1,7 @@
 package com.epam.specimenbase.catalog.domain.users;
 
-import com.epam.specimenbase.catalog.ports.UserData;
-import com.epam.specimenbase.catalog.ports.UserStorage;
+import com.epam.specimenbase.catalog.persistence.api.users.UserData;
+import com.epam.specimenbase.catalog.persistence.api.users.UserStorage;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public final class RegisterUser {
@@ -17,9 +17,7 @@ public final class RegisterUser {
             throw new UserAlreadyExistsException();
         });
 
-        String salt = Passwords.generateSalt();
-        String passwordHash = Passwords.hashPassword(salt, password);
-        UserData userData = new UserData(email, salt, passwordHash);
+        UserData userData = new UserData(email, password);
         userStorage.addUser(userData);
     }
 

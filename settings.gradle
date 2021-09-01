@@ -8,5 +8,8 @@
  */
 
 rootProject.name = 'specimen-base'
-include('specimenbase-catalog-core')
-include('specimenbase-catalog-api-service')
+include 'specimenbase-catalog-persistence-api'
+include 'specimenbase-catalog-core'
+include 'specimenbase-catalog-persistence-spring-data-jpa'
+include 'specimenbase-catalog-service-spring-mvc'
+

@@ -1,7 +1,7 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.ListSamplesResult;
-import com.epam.specimenbase.catalog.ports.SampleStorage;
+import com.epam.specimenbase.catalog.persistence.api.samples.ListSamplesResult;
+import com.epam.specimenbase.catalog.persistence.api.samples.SampleStorage;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.epam.specimenbase.catalog.domain.samples;
 
-import com.epam.specimenbase.catalog.ports.UseCaseFactory;
+import com.epam.specimenbase.catalog.UseCaseFactory;
 import com.epam.specimenbase.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,7 @@ public class UpdateSampleTest {
         @Test
         @DisplayName("Then exception is thrown")
         public void testExceptionIsThrown() {
-            String sampleId = "ANY_SAMPLE_ID";
+            Long sampleId = 1534534645L;
             Map<String, String> attributes = Map.of();
             Assertions.assertThatThrownBy(() -> useCaseFactory.updateSample().updateSample(sampleId, attributes))
                     .isInstanceOf(SampleNotFoundException.class);
@@ -41,7 +41,7 @@ public class UpdateSampleTest {
                 Attributes.ALL.get(1), "Mock_value_2"
         );
 
-        private String sampleId;
+        private Long sampleId;
         private Sample originalSample;
         private Sample updatedSample;
 
@@ -84,7 +84,7 @@ public class UpdateSampleTest {
     @DisplayName("When I update existing sample adding incorrect attributes")
     public class UpdateExistingSampleWithIncorrectAttributes {
 
-        private String sampleId;
+        private Long sampleId;
 
         @BeforeEach
         void setUp() {
