@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar">
-        <a class="navbar-brand" href="#">Specimen Base</a>
+        <a class="navbar-brand" href="#">Speciome</a>
         <div class="navbar-nav navbar-right">
             <div class="dropdown">
                 <a class="btn dropdown-toggle" role="button" id="navbarUserDropdown"

@@ -45,5 +45,5 @@ allprojects {
 
 }
 
-group = 'com.epam.specimenbase'
+group = 'com.epam.speciome'
 version = '1.0-SNAPSHOT'

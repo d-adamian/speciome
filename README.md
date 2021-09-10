@@ -1,2 +1,2 @@
-# specimen-base
+# Speciome
 База биологических образцов

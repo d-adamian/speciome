@@ -7,9 +7,9 @@
  * in the user manual at https://docs.gradle.org/6.7.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'specimen-base'
-include 'specimenbase-catalog-persistence-api'
-include 'specimenbase-catalog-core'
-include 'specimenbase-catalog-persistence-spring-data-jpa'
-include 'specimenbase-catalog-service-spring-mvc'
+rootProject.name = 'speciome'
+include 'speciome-catalog-persistence-api'
+include 'speciome-catalog-core'
+include 'speciome-catalog-persistence-spring-data-jpa'
+include 'speciome-catalog-service-spring-mvc'
 
