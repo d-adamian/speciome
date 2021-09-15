@@ -1,11 +1,17 @@
 plugins {
     id 'java'
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id "org.springframework.boot" version "2.5.0"
+    id "org.springframework.boot" version "2.5.0" apply(false)
 }
 
 group 'com.epam.speciome'
 version '1.0-SNAPSHOT'
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
 
 dependencies {
     implementation project(':speciome-catalog-persistence-api')
@@ -16,10 +22,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-bootJar {
-    enabled(false)
 }
 
 test {
