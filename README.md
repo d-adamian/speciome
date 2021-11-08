@@ -7,7 +7,7 @@ of biological specimens (plants, insects, animals etc).
 ### Prerequisites
 The following needs to be installed before building the project:
 * Java 11
-* NodeJS 16+
+* NodeJS 16
 * NPM 7.15+
 
 ### Project build & run
@@ -20,11 +20,11 @@ The following needs to be installed before building the project:
   ./gradlew bootRun
   ```
   Swagger page will be available at http://localhost:8081/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
-* Run development frontend server - from *frontend-vuejs*:
+* Run development frontend server - from *speciome-reactjs*:
   ```shell
-  npm run serve
+  npm run start
   ```
-  Frontend webpage will be available at http://localhost:8080/
+  Frontend webpage will be available at http://localhost:3000/
 
 ## Contributors
 In alphabetical order:

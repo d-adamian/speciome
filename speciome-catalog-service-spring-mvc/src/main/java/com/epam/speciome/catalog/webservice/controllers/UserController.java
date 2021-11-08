@@ -80,7 +80,7 @@ public class UserController {
                     description = "Success", responseCode = "204"
             ),
             @ApiResponse(
-                    description = "Credentials are invalid", responseCode = "400"
+                    description = "Credentials are invalid", responseCode = "401"
             )
     })
     @PostMapping(path = "/login")
