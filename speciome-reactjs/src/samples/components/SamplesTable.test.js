@@ -62,11 +62,18 @@ describe('Table rendering tests', () => {
             const buttons = await screen.findAllByRole('button', {name: label});
             expect(buttons).toHaveLength(samples.length);
         });
-    })
+    });
 
     test('Given number of rows is displayed', async () => {
         const tableRows = await screen.findAllByRole('row', {exact: true});
         expect(tableRows).toHaveLength(samples.length + 1);
+    });
+
+    test('"Export to CSV" button is displayed and has correct link', async () => {
+        const exportButton = await screen.findByText('Export to CSV', {exact: true});
+        expect(exportButton).toBeInTheDocument();
+        // TODO: remove explicit URL to server, should be handled by dev proxy configuration
+        expect(exportButton.getAttribute('href')).toBe('http://localhost:8081/samples/download');
     })
 });
 
