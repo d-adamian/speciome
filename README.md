@@ -20,7 +20,12 @@ The following needs to be installed before building the project:
   ./gradlew bootRun
   ```
   Swagger page will be available at http://localhost:8081/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config
-* Run development frontend server - from *speciome-reactjs*:
+* Install all NPM packages (need to be done only on first install or when dependencies are changed). 
+  Run from *./speciome-reactjs*:
+  ```shell
+  npm install
+  ```
+* Run development frontend server - from *./speciome-reactjs*:
   ```shell
   npm run start
   ```
