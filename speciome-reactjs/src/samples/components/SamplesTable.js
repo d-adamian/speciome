@@ -155,6 +155,7 @@ function SamplesTable() {
                     </tbody>
                 </Table>
                 <Button variant="primary" onClick={handleAddSample}>Add sample</Button>
+                <Button variant="primary" href="http://localhost:8081/samples/download">Export to CSV</Button>
             </div>
         );
     }
