@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -121,6 +122,16 @@ public class SampleControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.totalCount").value(1))
                 .andExpect(jsonPath("$.samples[0].sampleId").value(sampleId));
+    }
+
+    @Test
+    void downloadCsv() throws Exception {
+        String postResponse = mockMvc.perform(get("/samples/download"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/csv"))
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(postResponse.contains("sampleTaxonomy"));
+
     }
 
     private long postSampleWithoutAttributes() throws Exception {

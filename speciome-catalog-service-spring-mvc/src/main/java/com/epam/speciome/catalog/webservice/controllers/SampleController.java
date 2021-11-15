@@ -17,9 +17,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -196,5 +202,29 @@ public class SampleController {
         Long getSampleId() {
             return sampleId;
         }
+    }
+
+    @Operation(
+            summary = "Download samples",
+            description = "Download a CSV file with available samples"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "OK", responseCode = "200", content = @Content(
+                    mediaType = "application/csv")
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
+    @GetMapping("/samples/download")
+    public ResponseEntity<Resource> getFile() throws IOException {
+        String filename = "samples.csv";
+        InputStreamResource file = new InputStreamResource(useCaseFactory.exportSamples().exportSamples());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(file);
     }
 }

@@ -1,10 +1,10 @@
 package com.epam.speciome.catalog;
 
+import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.domain.users.GetUserDetails;
 import com.epam.speciome.catalog.domain.users.GetUserPassword;
 import com.epam.speciome.catalog.domain.users.LogInUser;
 import com.epam.speciome.catalog.domain.users.RegisterUser;
-import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
 
@@ -51,5 +51,9 @@ public class UseCaseFactory {
 
     public UpdateSample updateSample() {
         return new UpdateSample(sampleStorage);
+    }
+
+    public ExportSamples exportSamples() {
+        return new ExportSamples(sampleStorage);
     }
 }
