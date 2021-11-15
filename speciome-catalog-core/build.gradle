@@ -3,12 +3,14 @@
 //file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'java'
-    id 'info.solidsoft.pitest' version '1.5.1'
+    id 'info.solidsoft.pitest' version '1.7.0'
 }
 
 dependencies {
     implementation('com.google.guava:guava:30.1-jre')
     implementation('commons-validator:commons-validator:1.7')
+    implementation ('com.opencsv:opencsv:3.7')
+
 
     implementation project(':speciome-catalog-persistence-api')
 
