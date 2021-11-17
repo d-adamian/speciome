@@ -8,7 +8,6 @@
 # https://gradle.org/
 # https://github.com/gradle/gradle
 
-image: gradle:jdk11
 
 # Disable the Gradle daemon for Continuous Integration servers as correctness
 # is usually a priority over speed in CI environments. Using a fresh
@@ -20,8 +19,9 @@ variables:
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
-build:
+build-java:
   stage: build
+  image: gradle:jdk11
   script: ./gradlew --build-cache build
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -30,8 +30,9 @@ build:
       - build
       - .gradle
 
-test:
+test-java:
   stage: test
+  image: gradle:jdk11
   script: ./gradlew check
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -39,3 +40,11 @@ test:
     paths:
       - build
       - .gradle
+
+test-npm:
+  stage: test
+  image: node:latest
+  script:
+    - cd ./speciome-reactjs
+    - npm install
+    - CI=true npm run test
