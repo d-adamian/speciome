@@ -33,7 +33,11 @@ The following needs to be installed before building the project:
 
 ## Contributors
 In alphabetical order:
-* Aleksanda Davydova
+* Aleksandr Postnikov
+* Aleksandra Davydova
 * Anna Bogdanova
 * Dmitrii Adamian
+* Iaroslav Shmorgunov
 * Olga Bogdanova
+* Olga Trubetskaia
+* Valeriia Rodina
