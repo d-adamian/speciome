@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class SampleController {
 
     @Operation(
             summary = "List samples",
-            description = "Returns all available samples"
+            description = "Returns samples with required archival status"
     )
     @ApiResponses({
             @ApiResponse(
@@ -49,18 +50,31 @@ public class SampleController {
                     mediaType = "application/json", schema = @Schema(implementation = ListSamplesResponse.class)
             )),
             @ApiResponse(
+                    description = "Invalid input parameters", responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
                     description = "Not authenticated", responseCode = "401",
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
     @GetMapping("/samples")
     @ResponseBody
-    public ListSamplesResponse listSamples() {
-        ListSamples.Result result = useCaseFactory.listSamples().listSamples();
-        List<SampleResponse> samples = result.getSamples().stream()
-                .map(SampleResponse::new)
-                .collect(Collectors.toList());
-        return new ListSamplesResponse(result.getTotalCount(), samples);
+    public ListSamplesResponse listSamples(
+            @Schema(allowableValues = {"ALL", "UNARCHIVED", "ARCHIVED"}, defaultValue = "ALL")
+            @RequestParam(value = "archivalStatus", required = false)
+            @Parameter(description = "Which samples to list") String archivalStatus
+    ) {
+        try {
+            Optional<ArchivalStatus> optionalStatus = ArchivalStatus.defineArchivalStatus(archivalStatus);
+            ListSamples.Result result = useCaseFactory.listSamples().listSamples(optionalStatus);
+            List<SampleResponse> samples = result.getSamples().stream()
+                    .map(SampleResponse::new)
+                    .collect(Collectors.toList());
+            return new ListSamplesResponse(result.getTotalCount(), samples);
+        } catch (ArchivalStatusException e) {
+            throw new InvalidInputException(e.getMessage());
+        }
     }
 
     @Operation(
@@ -253,6 +267,7 @@ public class SampleController {
             this.sampleId = sampleId;
         }
 
+        @SuppressWarnings("unused") // getter is used for JSON
         @Schema(description = "Internal sample identifier", example = "1")
         @JsonProperty
         Long getSampleId() {

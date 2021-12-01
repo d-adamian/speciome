@@ -27,6 +27,10 @@ public final class SampleData {
         return updatedAt;
     }
 
+    public boolean isArchived() {
+        return archived;
+    }
+
     public Map<String, String> getAttributes() {
         return ImmutableMap.copyOf(attributes);
     }
@@ -56,12 +60,4 @@ public final class SampleData {
                 ", archived" + archived +
                 '}';
     }
-
-    public boolean isArchived() {
-        return archived;
-    }
-
-//    public void setArchived(boolean archived) {
-//        this.archived = archived;
-//    }
 }
