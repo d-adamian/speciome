@@ -14,6 +14,7 @@ public final class SampleResponse {
     private final ZonedDateTime createdAt;
     private final ZonedDateTime updatedAt;
     private final List<SampleAttribute> attributes;
+    private final boolean archive;
 
     public SampleResponse(Sample sample) {
         this.sampleId = sample.getSampleId();
@@ -23,6 +24,7 @@ public final class SampleResponse {
                 .map(entry -> new SampleAttribute(entry.getKey(), entry.getValue()))
                 .sorted(Comparator.comparing(SampleAttribute::getAttribute))
                 .collect(Collectors.toList());
+        this.archive = sample.isArchived();
     }
 
     @Schema(description = "Internal sample identifier", example = "1")
@@ -44,5 +46,10 @@ public final class SampleResponse {
     @Schema(description = "Sample attributes")
     @JsonProperty public List<SampleAttribute> getAttributes() {
         return attributes;
+    }
+
+    @Schema(description = "Sample archive status")
+    @JsonProperty public boolean isArchive() {
+        return archive;
     }
 }

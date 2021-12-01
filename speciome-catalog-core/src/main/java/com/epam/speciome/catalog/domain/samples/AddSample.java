@@ -30,7 +30,7 @@ public final class AddSample {
     private Result storeNewSample(Map<String, String> attributes) {
         ZonedDateTime createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime updatedAt = ZonedDateTime.now(ZoneId.of("UTC"));
-        Long sampleId = sampleStorage.addSample(new SampleData(createdAt, updatedAt, attributes));
+        Long sampleId = sampleStorage.addSample(new SampleData(createdAt, updatedAt, attributes, false));
         return new Result(sampleId);
     }
 

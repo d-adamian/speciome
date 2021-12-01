@@ -27,6 +27,7 @@ public class SampleEntity {
     private LocalDateTime createdAtUtc;
     private String updatedAtZone;
     private LocalDateTime updatedAtUtc;
+    private boolean archived;
 
     @OneToMany(
             mappedBy = "sample",
@@ -48,17 +49,19 @@ public class SampleEntity {
         Map<String, String> attributes = entity.attributes.stream().collect(
                 Collectors.toMap(SampleAttributeEntity::getAttribute, SampleAttributeEntity::getValue)
         );
-        ZonedDateTime createdAt = entity.createdAtUtc.atZone(ZoneId.of(entity.createdAtZone));
-        ZonedDateTime updatedAt = entity.updatedAtUtc.atZone(ZoneId.of(entity.updatedAtZone));
-        return new SampleData(createdAt, updatedAt, attributes);
+        ZonedDateTime createdAt = entity.createdAtUtc.atZone(ZoneId.of(entity.createdAtZone)).withNano(0);
+        ZonedDateTime updatedAt = entity.updatedAtUtc.atZone(ZoneId.of(entity.updatedAtZone)).withNano(0);
+        boolean archived = entity.archived;
+        return new SampleData(createdAt, updatedAt, attributes, archived);
     }
 
     public static SampleEntity fromSampleData(SampleData sampleData) {
         SampleEntity sampleEntity = new SampleEntity();
-        sampleEntity.createdAtUtc = sampleData.getCreatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime();
+        sampleEntity.createdAtUtc = sampleData.getCreatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
         sampleEntity.createdAtZone = sampleData.getCreatedAt().getZone().getId();
-        sampleEntity.updatedAtUtc = sampleData.getUpdatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime();
+        sampleEntity.updatedAtUtc = sampleData.getUpdatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
         sampleEntity.updatedAtZone = sampleData.getUpdatedAt().getZone().getId();
+        sampleEntity.archived = sampleData.isArchived();
 
         sampleData.getAttributes().forEach((attribute, value) -> {
             SampleAttributeEntity attributeEntity = new SampleAttributeEntity();

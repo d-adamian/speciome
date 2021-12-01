@@ -56,4 +56,12 @@ public class UseCaseFactory {
     public ExportSamples exportSamples() {
         return new ExportSamples(sampleStorage);
     }
+
+    public ArchiveSample archiveSample() {
+        return new ArchiveSample(sampleStorage);
+    }
+
+    public UnArchiveSample unArchiveSample() {
+        return new UnArchiveSample(sampleStorage);
+    }
 }

@@ -185,6 +185,60 @@ public class SampleController {
         }
     }
 
+    @Operation(
+            summary = "Archive sample",
+            description = "Archive given sample"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Archived successfully", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Sample not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401"
+            )
+    })
+    @PutMapping("/sample/{sampleId}/archive")
+    public SampleResponse archiveSample(
+            @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
+    ) {
+        try {
+            Sample archivedSample = useCaseFactory.archiveSample().archiveSample(sampleId);
+            return new SampleResponse(archivedSample);
+        } catch (SampleNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+    }
+
+    @Operation(
+            summary = "UnArchive sample",
+            description = "UnArchive given sample"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "UnArchived successfully", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Sample not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401"
+            )
+    })
+    @PutMapping("/sample/{sampleId}/unarchive")
+    public SampleResponse unArchiveSample(
+            @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
+    ) {
+        try {
+            Sample unArchivedSample = useCaseFactory.unArchiveSample().unArchiveSample(sampleId);
+            return new SampleResponse(unArchivedSample);
+        } catch (SampleNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+    }
+
     private static Map<String, String> convertAttributes(List<SampleAttribute> sampleAttributes) {
         return sampleAttributes.stream()
                 .collect(Collectors.toMap(SampleAttribute::getAttribute, SampleAttribute::getValue));
