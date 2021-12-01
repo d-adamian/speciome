@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from 'react';
 
 import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
 import Spinner from 'react-bootstrap/Spinner'
 import Table from 'react-bootstrap/Table'
 
 import {
     addSample, archiveSample, deleteSample, findSamples, listAttributes, unArchiveSample, updateSample
 } from "../api/SampleAPI";
+import ImportDialog from "./ImportDialog";
 import EditableRow from "./EditableRow";
 
 function TableHeader(props) {
@@ -62,23 +66,25 @@ function TableRow(props) {
 
 function SamplesTable() {
     const [fetching, setFetching] = useState(true);
+    const [importing, setImporting] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [columnNames, setColumnNames] = useState([]);
     const [samples, setSamples] = useState([]);
 
-    useEffect(() => {
-        function fetchInitialData() {
-            listAttributes().then(attributes => {
-                findSamples().then(response => {
-                    setFetching(false);
-                    setSelectedId(null);
-                    setColumnNames(attributes);
-                    setSamples(response.samples);
-                });
-            })
-        }
+    function reloadTable() {
+        listAttributes().then(attributes => {
+            findSamples().then(response => {
+                setFetching(false);
+                setSelectedId(null);
+                setColumnNames(attributes);
+                setSamples(response.samples);
+            });
+        });
+    }
 
-        fetchInitialData();
+    useEffect(() => {
+        reloadTable();
+
         return () => {
             setFetching(false);
             setSelectedId(null);
@@ -135,6 +141,19 @@ function SamplesTable() {
         setSelectedId(null);
     }
 
+    function handleImport() {
+        setImporting(true);
+    }
+
+    function handleImportCompleted() {
+        setImporting(false);
+        reloadTable();
+    }
+
+    function handleImportCancelled() {
+        setImporting(false);
+    }
+
     function handleArchive(sampleId) {
         archiveSample(sampleId).then((sample) => {
             replaceSampleInState(sampleId, sample);
@@ -153,43 +172,57 @@ function SamplesTable() {
         </Spinner>);
     } else {
         return (
-            <div>
-                <Table>
-                    <TableHeader columnNames={columnNames}/>
-                    <tbody>
-                    {samples &&
-                    samples.map((sample, index) => {
-                        if (sample.sampleId === selectedId) {
-                            return (
-                                <EditableRow
-                                    key={index}
-                                    columnNames={columnNames}
-                                    sample={sample}
-                                    onCancel={handleCancelEdit}
-                                    onSave={(updatedSample) => handleSave(updatedSample)}
-                                />
-                            )
-                        } else {
-                            return (
-                                <TableRow
-                                    key={index}
-                                    sample={sample}
-                                    columnNames={columnNames}
-                                    editDisabled={selectedId !== null}
+            <Container fluid>
+                <ImportDialog show={importing} onCancel={handleImportCancelled} onComplete={handleImportCompleted}/>
+                <Row>
+                    <Col>
+                        <Button variant="primary" onClick={handleAddSample}>Add sample</Button>
+                    </Col>
+                    <Col>
+                        <div className="float-end">
+                            <Button variant="outline-primary" href="http://localhost:8081/samples/download">
+                                Export to CSV
+                            </Button>
+                            <Button variant="outline-primary" onClick={handleImport}>Import</Button>
+                        </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Table>
+                        <TableHeader columnNames={columnNames}/>
+                        <tbody>
+                        {samples &&
+                        samples.map((sample, index) => {
+                            if (sample.sampleId === selectedId) {
+                                return (
+                                    <EditableRow
+                                        key={index}
+                                        columnNames={columnNames}
+                                        sample={sample}
+                                        onCancel={handleCancelEdit}
+                                        onSave={(updatedSample) => handleSave(updatedSample)}
+                                    />
+                                )
+                            } else {
+                                return (
+                                    <TableRow
+                                        key={index}
+                                        sample={sample}
+                                        columnNames={columnNames}
+                                        editDisabled={selectedId !== null}
                                     onArchive={() => handleArchive(sample.sampleId)}
-                                    onDelete={() => handleDelete(sample.sampleId)}
-                                    onEdit={() => handleEdit(sample.sampleId)}
+                                        onDelete={() => handleDelete(sample.sampleId)}
+                                        onEdit={() => handleEdit(sample.sampleId)}
                                     onRestore={() => handleRestore(sample.sampleId)}
-                                />
-                            );
+                                    />
+                                );
+                            }
+                        })
                         }
-                    })
-                    }
-                    </tbody>
-                </Table>
-                <Button variant="primary" onClick={handleAddSample}>Add sample</Button>
-                <Button variant="primary" href="http://localhost:8081/samples/download">Export to CSV</Button>
-            </div>
+                        </tbody>
+                    </Table>
+                </Row>
+            </Container>
         );
     }
 }

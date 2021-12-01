@@ -88,7 +88,11 @@ describe('Table rendering tests', () => {
         expect(exportButton).toBeInTheDocument();
         // TODO: remove explicit URL to server, should be handled by dev proxy configuration
         expect(exportButton.getAttribute('href')).toBe('http://localhost:8081/samples/download');
-    })
+    });
+
+    test('"Import button is displayed once', async () => {
+        const importButton = await screen.findByText('Import', {exact: true});
+    });
 });
 
 describe('Interaction tests', () => {
