@@ -48,6 +48,20 @@ function updateSample({sampleId, attributes}) {
     return axios.put(url, payload);
 }
 
+function importCSV(csvFile) {
+    const url = `${BASE_URL}/samples/upload/csv`;
+
+    const formData = new FormData();
+    formData.append('file', csvFile, csvFile.name);
+
+    return axios.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}
+
 export {
-    BASE_URL, addSample, archiveSample, deleteSample, findSamples, listAttributes, unArchiveSample, updateSample
+    BASE_URL, addSample, archiveSample, deleteSample, findSamples, importCSV, listAttributes, unArchiveSample,
+    updateSample
 };
