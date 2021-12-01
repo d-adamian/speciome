@@ -32,7 +32,8 @@ public final class UpdateSample {
         SampleData updatedData = new SampleData(
                 sampleData.getCreatedAt(),
                 now,
-                Attributes.fillMissingAttributeValues(attributes)
+                Attributes.fillMissingAttributeValues(attributes),
+                sampleData.isArchived()
         );
         sampleStorage.updateSample(sampleId, updatedData);
         Sample sample = Sample.fromSampleData(sampleId, updatedData);

@@ -12,17 +12,20 @@ public final class Sample {
     private final ZonedDateTime createdAt;
     private final ZonedDateTime updatedAt;
     private final Map<String, String> attributes;
+    private boolean archived;
 
-    private Sample(Long sampleId, ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes) {
+    private Sample(Long sampleId, ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes, boolean archived) {
         this.sampleId = sampleId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.attributes = ImmutableMap.copyOf(attributes);
+        this.archived = archived;
     }
 
     public static Sample fromSampleData(Long sampleId, SampleData sampleData) {
         return new Sample(
-                sampleId, sampleData.getCreatedAt(), sampleData.getUpdatedAt(), sampleData.getAttributes());
+                sampleId, sampleData.getCreatedAt(), sampleData.getUpdatedAt(), 
+                sampleData.getAttributes(), sampleData.isArchived());
     }
 
     public Long getSampleId() {
@@ -42,18 +45,23 @@ public final class Sample {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Sample sample = (Sample) o;
-        return sampleId.equals(sample.sampleId) &&
-                createdAt.equals(sample.createdAt) &&
-                updatedAt.equals(sample.updatedAt) &&
-                attributes.equals(sample.attributes);
+        return Objects.equals(sampleId, sample.sampleId) &&
+                Objects.equals(createdAt, sample.createdAt) &&
+                Objects.equals(updatedAt, sample.updatedAt) &&
+                Objects.equals(attributes, sample.attributes) &&
+                Objects.equals(archived, sample.archived);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sampleId, createdAt, updatedAt, attributes);
+        return Objects.hash(sampleId, createdAt, updatedAt, attributes, archived);
     }
 
     public Map<String, String> getAttributes() {
         return ImmutableMap.copyOf(attributes);
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 }

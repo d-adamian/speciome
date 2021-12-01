@@ -60,6 +60,19 @@ public class SampleControllerTest {
         mockMvc.perform(get("/sample/" + sampleId))
                 .andExpect(status().isNotFound());
     }
+    @Test
+    public void testArchiveSampleReturnsNotFoundWithoutCreatingSample() throws Exception {
+        long sampleId = 1L;
+        mockMvc.perform(put("/sample/" + sampleId +  "/archive"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUnArchiveSampleReturnsNotFoundWithoutCreatingSample() throws Exception {
+        long sampleId = 1L;
+        mockMvc.perform(put("/sample/" + sampleId +  "/unarchive"))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     public void testPostAndGetSampleWithoutAttributes() throws Exception {

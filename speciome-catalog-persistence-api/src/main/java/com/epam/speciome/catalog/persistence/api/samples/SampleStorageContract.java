@@ -85,16 +85,20 @@ public interface SampleStorageContract {
     }
 
     private static SampleData sampleOne() {
-        ZonedDateTime createdAt = ZonedDateTime.now().minusDays(1);
-        ZonedDateTime updatedAt = ZonedDateTime.now().minusHours(1);
+        // we add withNano(0) to avoid failing tests for time variables
+        // when there are some minor difference at the ending of output time variables
+        ZonedDateTime createdAt = ZonedDateTime.now().minusDays(1).withNano(0);
+        ZonedDateTime updatedAt = ZonedDateTime.now().minusHours(1).withNano(0);
         Map<String, String> attributes = Map.of("key1", "value1", "key2", "value2");
-        return new SampleData(createdAt, updatedAt, attributes);
+        return new SampleData(createdAt, updatedAt, attributes, false);
     }
 
     private static SampleData sampleTwo() {
-        ZonedDateTime createdAt = ZonedDateTime.now().minusDays(3);
-        ZonedDateTime updatedAt = ZonedDateTime.now().minusMinutes(25);
+        // we add withNano(0) to avoid failing tests for time variables
+        // when there are some minor difference at the ending of output time variables
+        ZonedDateTime createdAt = ZonedDateTime.now().minusDays(3).withNano(0);
+        ZonedDateTime updatedAt = ZonedDateTime.now().minusMinutes(25).withNano(0);
         Map<String, String> attributes = Map.of("key3", "value3", "key4", "value4");
-        return new SampleData(createdAt, updatedAt, attributes);
+        return new SampleData(createdAt, updatedAt, attributes, false);
     }
 }

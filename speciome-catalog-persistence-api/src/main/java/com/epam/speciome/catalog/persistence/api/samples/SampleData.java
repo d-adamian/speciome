@@ -10,11 +10,13 @@ public final class SampleData {
     private final ZonedDateTime createdAt;
     private final ZonedDateTime updatedAt;
     private final Map<String, String> attributes;
+    private final boolean archived;
 
-    public SampleData(ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes) {
+    public SampleData(ZonedDateTime createdAt, ZonedDateTime updatedAt, Map<String, String> attributes, boolean archived) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.attributes = ImmutableMap.copyOf(attributes);
+        this.archived = archived;
     }
 
     public ZonedDateTime getCreatedAt() {
@@ -36,12 +38,13 @@ public final class SampleData {
         SampleData that = (SampleData) o;
         return Objects.equals(createdAt, that.createdAt) &&
                 Objects.equals(updatedAt, that.updatedAt) &&
-                Objects.equals(attributes, that.attributes);
+                Objects.equals(attributes, that.attributes) &&
+                Objects.equals(archived, that.archived);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdAt, updatedAt, attributes);
+        return Objects.hash(createdAt, updatedAt, attributes, archived);
     }
 
     @Override
@@ -50,6 +53,15 @@ public final class SampleData {
                 "createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", attributes=" + attributes +
+                ", archived" + archived +
                 '}';
     }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+//    public void setArchived(boolean archived) {
+//        this.archived = archived;
+//    }
 }
