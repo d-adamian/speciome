@@ -3,12 +3,19 @@ import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
+import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Spinner from 'react-bootstrap/Spinner'
 import Table from 'react-bootstrap/Table'
 
 import {
-    addSample, archiveSample, deleteSample, findSamples, listAttributes, unArchiveSample, updateSample
+    addSample,
+    archiveSample,
+    deleteSample,
+    findSamples,
+    listAttributes,
+    unArchiveSample,
+    updateSample
 } from "../api/SampleAPI";
 import ImportDialog from "./ImportDialog";
 import EditableRow from "./EditableRow";
@@ -69,11 +76,12 @@ function SamplesTable() {
     const [importing, setImporting] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [columnNames, setColumnNames] = useState([]);
+    const [archivalStatus, setArchivalStatus] = useState('ALL');
     const [samples, setSamples] = useState([]);
 
     function reloadTable() {
         listAttributes().then(attributes => {
-            findSamples().then(response => {
+            findSamples(archivalStatus).then(response => {
                 setFetching(false);
                 setSelectedId(null);
                 setColumnNames(attributes);
@@ -91,7 +99,7 @@ function SamplesTable() {
             setColumnNames([]);
             setSamples([]);
         };
-    }, []);
+    }, [archivalStatus]);
 
     function handleDelete(sampleIdToDelete) {
         deleteSample(sampleIdToDelete).then(() => {
@@ -166,6 +174,10 @@ function SamplesTable() {
         });
     }
 
+    function handleArchivalStatusChange(event) {
+        setArchivalStatus(event.target.value);
+    }
+
     if (fetching) {
         return (<Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
@@ -175,7 +187,18 @@ function SamplesTable() {
             <Container fluid>
                 <ImportDialog show={importing} onCancel={handleImportCancelled} onComplete={handleImportCompleted}/>
                 <Row>
-                    <Col>
+                    <Col md="auto">
+                        <Form.Group controlId="showSamplesOption">
+                            <Form.Label>Show samples</Form.Label>
+                            <Form.Select
+                                value={archivalStatus}
+                                onChange={handleArchivalStatusChange}
+                            >
+                                <option value="ALL">All samples</option>
+                                <option value="ARCHIVED">Archived only</option>
+                                <option value="UNARCHIVED">UnArchived only</option>
+                            </Form.Select>
+                        </Form.Group>
                         <Button variant="primary" onClick={handleAddSample}>Add sample</Button>
                     </Col>
                     <Col>

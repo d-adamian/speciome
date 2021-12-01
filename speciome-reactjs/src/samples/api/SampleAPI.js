@@ -17,10 +17,14 @@ function deleteSample(sampleId) {
     return axios.delete(url);
 }
 
-function findSamples() {
+function findSamples(archivalStatus) {
     const url = `${BASE_URL}/samples`
 
-    return axios.get(url).then(response => response.data);
+    return axios.get(url, {
+        params: {
+            archivalStatus: archivalStatus
+        }
+    }).then(response => response.data);
 }
 
 function listAttributes() {

@@ -1,4 +1,5 @@
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import {setupServer} from "msw/node";
 import {rest} from "msw";
@@ -90,8 +91,16 @@ describe('Table rendering tests', () => {
         expect(exportButton.getAttribute('href')).toBe('http://localhost:8081/samples/download');
     });
 
-    test('"Import button is displayed once', async () => {
+    test('"Import" button is displayed once', async () => {
         const importButton = await screen.findByText('Import', {exact: true});
+        expect(importButton).toBeInTheDocument();
+    });
+
+    test('"Show samples" select is displayed, "All samples" option is selected', async () => {
+        const showSamplesSelect = await screen.findByLabelText('Show samples', {exact: true});
+        expect(showSamplesSelect).toBeInTheDocument();
+
+        expect(screen.getByText('All samples', {exact: true}).selected).toBeTruthy();
     });
 });
 
@@ -202,5 +211,27 @@ describe('Interaction tests', () => {
         ).toHaveLength(samples.length - numArchived + 1));
 
         expect(testCallback).toHaveBeenCalledTimes(1);
+    });
+
+    test('Changing archival status option is propagated to API call', async () =>  {
+        const testCallback = jest.fn();
+        const targetArchivalStatus = 'ARCHIVED';
+        server.use(
+            rest.get(`${BASE_URL}/samples`, (req, res, ctx) => {
+                const archivalStatus = req.url.searchParams.get('archivalStatus');
+                testCallback(archivalStatus);
+                const response = {
+                    totalCount: samples.length,
+                    samples: samples
+                }
+                return res(ctx.status(200), ctx.json(response));
+            })
+        )
+        const showSamplesSelect = await screen.findByLabelText('Show samples', {exact: true});
+        expect(showSamplesSelect).toBeInTheDocument();
+        userEvent.selectOptions(showSamplesSelect, screen.getByText('Archived only', {exact: true}));
+
+        await waitFor(() => expect(testCallback).toHaveBeenCalledTimes(2));
+        expect(testCallback).toHaveBeenCalledWith(targetArchivalStatus);
     });
 });
