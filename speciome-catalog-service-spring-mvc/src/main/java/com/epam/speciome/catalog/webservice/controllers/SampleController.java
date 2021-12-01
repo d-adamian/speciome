@@ -4,6 +4,7 @@ import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
+import com.epam.speciome.catalog.webservice.exceptions.UnsupportedMediaTypeException;
 import com.epam.speciome.catalog.webservice.models.ListSamplesResponse;
 import com.epam.speciome.catalog.webservice.models.SampleAttribute;
 import com.epam.speciome.catalog.webservice.models.SampleRequest;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +46,7 @@ public class SampleController {
     @ApiResponses({
             @ApiResponse(
                     description = "OK", responseCode = "200", content = @Content(
-                            mediaType = "application/json", schema = @Schema(implementation = ListSamplesResponse.class)
+                    mediaType = "application/json", schema = @Schema(implementation = ListSamplesResponse.class)
             )),
             @ApiResponse(
                     description = "Not authenticated", responseCode = "401",
@@ -281,4 +283,33 @@ public class SampleController {
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(file);
     }
+
+    @Operation(
+            summary = "Import samples",
+            description = "Import samples from CSV file"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Import is successful", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
+    @PostMapping(value = "/samples/upload/csv")
+    @ResponseStatus(HttpStatus.OK)
+    public void uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+        String MEDIA_TYPE_CSV = "text/csv";
+        if (MEDIA_TYPE_CSV.equals(file.getContentType())) {
+            try {
+                useCaseFactory.importSamples().saveSamples(file.getInputStream());
+            } catch (ImportFileWithMissingColumns e) {
+                throw new InvalidInputException(e.getMessage());
+            }
+        } else {
+            throw new UnsupportedMediaTypeException();
+        }
+    }
+
 }
