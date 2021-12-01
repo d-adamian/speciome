@@ -4,7 +4,9 @@ import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import Table from 'react-bootstrap/Table'
 
-import {addSample, deleteSample, findSamples, listAttributes, updateSample} from "../api/SampleAPI";
+import {
+    addSample, archiveSample, deleteSample, findSamples, listAttributes, unArchiveSample, updateSample
+} from "../api/SampleAPI";
 import EditableRow from "./EditableRow";
 
 function TableHeader(props) {
@@ -24,7 +26,7 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const {columnNames, sample, editDisabled, onDelete, onEdit} = props;
+    const {columnNames, sample, editDisabled, onDelete, onEdit, onArchive, onRestore} = props;
     const kvPairs = sample.attributes.map(({attribute, value}) => [attribute, value]);
     const attributeMap = new Map(kvPairs);
 
@@ -38,8 +40,21 @@ function TableRow(props) {
                 })
             }
             <td>
-                <Button variant="primary" disabled={editDisabled} onClick={onEdit}>Edit</Button>
-                <Button variant="danger" onClick={onDelete}>Delete</Button>
+                {
+                    sample.archive ?
+                    (
+                        <div>
+                            <Button variant="primary" onClick={onRestore}>Restore</Button>
+                            <Button variant="danger" onClick={onDelete}>Delete</Button>
+                        </div>
+                    ) :
+                    (
+                        <div>
+                            <Button variant="primary" disabled={editDisabled} onClick={onEdit}>Edit</Button>
+                            <Button variant="danger" onClick={onArchive}>Archive</Button>
+                        </div>
+                    )
+                }
             </td>
         </tr>
     );
@@ -93,17 +108,21 @@ function SamplesTable() {
         })
     }
 
+    function replaceSampleInState(sampleId, changedSample) {
+        const updatedSamples = samples.map((sample) => {
+            if (sample.sampleId === changedSample.sampleId) {
+                return changedSample;
+            } else {
+                return sample;
+            }
+        });
+
+        setSamples(updatedSamples);
+    }
+
     function handleSave(changedSample) {
         updateSample(changedSample).then(() => {
-            const updatedSamples = samples.map((sample) => {
-                if (sample.sampleId === changedSample.sampleId) {
-                    return changedSample;
-                } else {
-                    return sample;
-                }
-            });
-
-            setSamples(updatedSamples);
+            replaceSampleInState(changedSample.sampleId, changedSample);
             setSelectedId(null);
         })
     }
@@ -114,6 +133,18 @@ function SamplesTable() {
 
     function handleCancelEdit() {
         setSelectedId(null);
+    }
+
+    function handleArchive(sampleId) {
+        archiveSample(sampleId).then((sample) => {
+            replaceSampleInState(sampleId, sample);
+        });
+    }
+
+    function handleRestore(sampleId) {
+        unArchiveSample(sampleId).then((sample) => {
+            replaceSampleInState(sampleId, sample);
+        });
     }
 
     if (fetching) {
@@ -145,8 +176,10 @@ function SamplesTable() {
                                     sample={sample}
                                     columnNames={columnNames}
                                     editDisabled={selectedId !== null}
+                                    onArchive={() => handleArchive(sample.sampleId)}
                                     onDelete={() => handleDelete(sample.sampleId)}
                                     onEdit={() => handleEdit(sample.sampleId)}
+                                    onRestore={() => handleRestore(sample.sampleId)}
                                 />
                             );
                         }
