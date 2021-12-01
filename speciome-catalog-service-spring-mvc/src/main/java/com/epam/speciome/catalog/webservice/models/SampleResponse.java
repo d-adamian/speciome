@@ -13,6 +13,7 @@ public final class SampleResponse {
     private final Long sampleId;
     private final ZonedDateTime createdAt;
     private final ZonedDateTime updatedAt;
+    private final boolean archived;
     private final List<SampleAttribute> attributes;
     private final boolean archive;
 
@@ -20,6 +21,7 @@ public final class SampleResponse {
         this.sampleId = sample.getSampleId();
         this.createdAt = sample.getCreatedAt();
         this.updatedAt = sample.getUpdatedAt();
+        this.archived = sample.isArchived();
         this.attributes = sample.getAttributes().entrySet().stream()
                 .map(entry -> new SampleAttribute(entry.getKey(), entry.getValue()))
                 .sorted(Comparator.comparing(SampleAttribute::getAttribute))
@@ -41,6 +43,11 @@ public final class SampleResponse {
     @Schema(description = "Sample update time")
     @JsonProperty public ZonedDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    @Schema(description = "Sample archival status")
+    @JsonProperty public boolean isArchived() {
+        return archived;
     }
 
     @Schema(description = "Sample attributes")

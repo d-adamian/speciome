@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Files;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +43,6 @@ public class SampleControllerTest {
     @BeforeEach
     void setUp() {
         sampleStorage.clear();
-    }
-
-    @Test
-    public void testListSamplesReturnsEmptyList() throws Exception {
-        mockMvc.perform(get("/samples"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalCount").value(0))
-                .andExpect(jsonPath("$.samples.length()").value(0));
     }
 
     @Test
@@ -134,24 +126,44 @@ public class SampleControllerTest {
     }
 
     @Test
-    public void testListSamplesReturnsCreatedSample() throws Exception {
-        long sampleId = postSampleWithoutAttributes();
-
+    public void testListSamplesNoInputParameters() throws Exception {
         mockMvc.perform(get("/samples"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalCount").value(1))
-                .andExpect(jsonPath("$.samples[0].sampleId").value(sampleId));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void downloadCsv() throws Exception {
-        String postResponse = mockMvc.perform(get("/samples/download"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/csv"))
-                .andReturn().getResponse().getContentAsString();
-        assertTrue(postResponse.contains("sampleTaxonomy"));
+    public void testListSamplesWrongInputParameters() throws Exception {
+        mockMvc.perform(get("/samples")
+                        .param("archivalStatus", "anything"))
+                .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    public void testListUnarchivedSamplesReturnsUnarchivedSample() throws Exception {
+        long sampleId = postSampleWithoutAttributes();
+        String postResponse = mockMvc.perform(get("/samples")
+                        .param("archivalStatus", "UNARCHIVED"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalCount").value(1))
+                .andExpect(jsonPath("$.samples[0].sampleId").value(sampleId))
+                .andReturn().getResponse().getContentAsString();
+        Assertions.assertTrue(postResponse.contains("\"archived\":false"));
+
+    }
+
+    @Test
+    public void testListArchivedSamplesReturnsArchivedSample() throws Exception {
+        long sampleId = postSampleWithoutAttributes();
+        mockMvc.perform(put("/sample/"+ sampleId + "/archive"));
+        String postResponse = mockMvc.perform(get("/samples")
+                        .param("archivalStatus", "ARCHIVED"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalCount").value(1))
+                .andExpect(jsonPath("$.samples[0].sampleId").value(sampleId))
+                .andReturn().getResponse().getContentAsString();
+        Assertions.assertTrue(postResponse.contains("\"archived\":true"));
     }
 
     @Test
@@ -162,6 +174,14 @@ public class SampleControllerTest {
                 .file(file)
                 .contentType("text/csv"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void downloadCsv() throws Exception {
+        String postResponse = mockMvc.perform(get("/samples/download"))
+                .andExpect(content().contentType("application/csv"))
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(postResponse.contains("sampleTaxonomy"));
     }
 
     private long postSampleWithoutAttributes() throws Exception {
