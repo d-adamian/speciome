@@ -10,6 +10,7 @@ const columnNames = ['col1_test', 'col2_test'];
 const samples = [
     {
         sampleId: 1,
+        archive: false,
         attributes: [
             {attribute: 'col1_test', value: 'val_s1_c1'},
             {attribute: 'col2_test', value: 'val_s1_c2'},
@@ -17,12 +18,22 @@ const samples = [
     },
     {
         sampleId: 2,
+        archive: false,
         attributes: [
             {attribute: 'col1_test', value: 'val_s2_c1'},
             {attribute: 'col2_test', value: 'val_s2_c2'},
         ]
     },
+    {
+        sampleId: 3,
+        archive: true,
+        attributes: [
+            {attribute: 'col1_test', value: 'val_s3_c1'},
+            {attribute: 'col2_test', value: 'val_s3_c2'},
+        ]
+    },
 ];
+const numArchived = samples.filter(({archive}) => archive).length;
 
 const server = setupServer(
     rest.get(`${BASE_URL}/attributes`, (req, res, ctx) => {
@@ -57,11 +68,14 @@ describe('Table rendering tests', () => {
         }
     });
 
-    test('Edit & Delete buttons are rendered in the table', () => {
-        ['Edit', 'Delete'].forEach(async (label) => {
-            const buttons = await screen.findAllByRole('button', {name: label});
-            expect(buttons).toHaveLength(samples.length);
-        });
+    test.each(['Edit', 'Archive'])('"%s" button is rendered for all non-archived samples', async (label) => {
+        const buttons = await screen.findAllByRole('button', {name: label});
+        expect(buttons).toHaveLength(samples.length - numArchived);
+    });
+
+    test.each(['Restore', 'Delete'])('"%s" button is rendered for all archived samples', async (label) => {
+        const buttons = await screen.findAllByRole('button', {name: label});
+        expect(buttons).toHaveLength(numArchived);
     });
 
     test('Given number of rows is displayed', async () => {
@@ -128,7 +142,7 @@ describe('Interaction tests', () => {
         const editButtons = await screen.findAllByRole('button', {name: 'Edit'});
         fireEvent.click(editButtons[0]);
 
-        expect(editButtons).toHaveLength(samples.length);
+        expect(editButtons).toHaveLength(samples.length - numArchived);
         await waitFor(() => expect(editButtons[1]).toBeDisabled());
 
         const saveButton = await screen.findByRole('button', {name: 'Save'});
@@ -139,5 +153,50 @@ describe('Interaction tests', () => {
 
         await waitFor(() => expect(testCallback).toHaveBeenCalledTimes(1));
         await waitFor(() => expect(screen.queryAllByRole('button', {name: 'Save'})).toHaveLength(0));
+    });
+
+    test('Archiving row calls API and changes number of "Archive" and "Delete" buttons', async () => {
+        const testCallback = jest.fn();
+        samples.forEach((sample) => {
+            server.use(
+                rest.put(`${BASE_URL}/sample/${sample.sampleId}/archive`, (req, res, ctx) => {
+                    testCallback(sample.sampleId);
+                    const updatedSample = {...sample, archive: true}
+                    return res(ctx.status(204), ctx.json(updatedSample));
+                })
+            )
+        });
+
+        const archiveButtons = await screen.findAllByRole('button', {name: 'Archive'});
+        fireEvent.click(archiveButtons[0]);
+        await waitFor(() => expect(screen.queryAllByRole('button', {name: 'Delete'})).toHaveLength(numArchived + 1));
+        await waitFor(
+            () => expect(screen.queryAllByRole('button', {name: 'Archive'})
+        ).toHaveLength(samples.length - numArchived - 1));
+
+        expect(testCallback).toHaveBeenCalledTimes(1);
+    });
+
+    // TODO: merge shared code in tests
+    test('Restoring row calls API and changes number of "Archive" and "Delete" buttons', async () => {
+        const testCallback = jest.fn();
+        samples.forEach((sample) => {
+            server.use(
+                rest.put(`${BASE_URL}/sample/${sample.sampleId}/unarchive`, (req, res, ctx) => {
+                    testCallback(sample.sampleId);
+                    const updatedSample = {...sample, archive: false}
+                    return res(ctx.status(204), ctx.json(updatedSample));
+                })
+            )
+        });
+
+        const restoreButtons = await screen.findAllByRole('button', {name: 'Restore'});
+        fireEvent.click(restoreButtons[0]);
+        await waitFor(() => expect(screen.queryAllByRole('button', {name: 'Delete'})).toHaveLength(numArchived - 1));
+        await waitFor(
+            () => expect(screen.queryAllByRole('button', {name: 'Archive'})
+        ).toHaveLength(samples.length - numArchived + 1));
+
+        expect(testCallback).toHaveBeenCalledTimes(1);
     });
 });

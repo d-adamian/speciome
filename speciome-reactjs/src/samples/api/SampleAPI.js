@@ -29,6 +29,18 @@ function listAttributes() {
     return axios.get(url).then(response => response.data);
 }
 
+function archiveSample(sampleId) {
+    const url = `${BASE_URL}/sample/${sampleId}/archive`;
+
+    return axios.put(url).then(response => response.data);
+}
+
+function unArchiveSample(sampleId) {
+    const url = `${BASE_URL}/sample/${sampleId}/unarchive`;
+
+    return axios.put(url).then(response => response.data);
+}
+
 function updateSample({sampleId, attributes}) {
     const url = `${BASE_URL}/sample/${sampleId}`;
 
@@ -36,4 +48,6 @@ function updateSample({sampleId, attributes}) {
     return axios.put(url, payload);
 }
 
-export {BASE_URL, addSample, deleteSample, findSamples, listAttributes, updateSample};
+export {
+    BASE_URL, addSample, archiveSample, deleteSample, findSamples, listAttributes, unArchiveSample, updateSample
+};
