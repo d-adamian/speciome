@@ -47,7 +47,7 @@ public class UpdateSampleTest {
 
         @BeforeEach
         void setUp() throws InterruptedException {
-            sampleId = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
             originalSample = useCaseFactory.getSample().getSample(sampleId).getSample();
             // Test fails on Windows if we do not put thread to short sleep
             Thread.sleep(5);
@@ -89,7 +89,7 @@ public class UpdateSampleTest {
 
         @BeforeEach
         void setUp() {
-            sampleId = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
         }
 
         @Test

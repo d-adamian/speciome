@@ -37,7 +37,7 @@ public class DeleteSampleTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
         }
 
         @Test

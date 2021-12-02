@@ -43,7 +43,7 @@ public class ListSamplesTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
         }
 
         @ParameterizedTest
@@ -70,7 +70,7 @@ public class ListSamplesTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
             useCaseFactory.archiveSample().archiveSample(sampleId);
         }
 

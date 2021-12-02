@@ -18,7 +18,7 @@ class ArchiveSampleTest {
     public void setUp() {
         useCaseFactory = new TestsUseCaseFactory();
         for (int i = 0; i < NUM_SAMPLES; i++) {
-            useCaseFactory.addSample().addNewSampleWithoutAttributes();
+            useCaseFactory.addSample().addSampleWithoutAttributes();
         }
     }
 
