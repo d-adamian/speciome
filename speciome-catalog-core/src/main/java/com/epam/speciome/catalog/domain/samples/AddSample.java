@@ -18,16 +18,16 @@ public final class AddSample {
         this.sampleStorage = sampleStorage;
     }
 
-    public Result addNewSampleWithoutAttributes() {
-        return storeNewSample(EMPTY_ATTRIBUTES);
+    public Result addSampleWithoutAttributes() {
+        return storeSample(EMPTY_ATTRIBUTES);
     }
 
-    public Result addNewSample(Map<String, String> inputAttributes) {
+    public Result addSample(Map<String, String> inputAttributes) {
         Attributes.checkExtraAttributes(inputAttributes);
-        return storeNewSample(Attributes.fillMissingAttributeValues(inputAttributes));
+        return storeSample(Attributes.fillMissingAttributeValues(inputAttributes));
     }
 
-    private Result storeNewSample(Map<String, String> attributes) {
+    private Result storeSample(Map<String, String> attributes) {
         ZonedDateTime createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime updatedAt = ZonedDateTime.now(ZoneId.of("UTC"));
         Long sampleId = sampleStorage.addSample(new SampleData(createdAt, updatedAt, attributes, false));

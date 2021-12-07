@@ -30,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -103,9 +102,9 @@ public class SampleController {
             AddSample.Result result;
             List<SampleAttribute> attributes = request == null ? List.of() : request.getAttributes();
             if (attributes == null || attributes.isEmpty()) {
-                result = useCaseFactory.addSample().addNewSampleWithoutAttributes();
+                result = useCaseFactory.addSample().addSampleWithoutAttributes();
             } else {
-                result = useCaseFactory.addSample().addNewSample(convertAttributes(attributes));
+                result = useCaseFactory.addSample().addSample(convertAttributes(attributes));
             }
             return new CreateSampleResponse(result.getSampleId());
         } catch (UnexpectedAttributeException e) {

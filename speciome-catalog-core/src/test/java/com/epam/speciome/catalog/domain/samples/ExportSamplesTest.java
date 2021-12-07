@@ -67,7 +67,7 @@ class ExportSamplesTest {
             sampleAttributes.put(Attributes.PLACE_OF_COLLECTION, "St. Petersburg");
             sampleAttributes.put(Attributes.SAMPLE_TAXONOMY, "Dandelion");
 
-            useCaseFactory.addSample().addNewSample(sampleAttributes);
+            useCaseFactory.addSample().addSample(sampleAttributes);
         }
 
         @Test

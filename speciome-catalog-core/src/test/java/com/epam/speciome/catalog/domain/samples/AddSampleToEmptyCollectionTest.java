@@ -57,7 +57,7 @@ public class AddSampleToEmptyCollectionTest {
         @BeforeEach
         public void setUp() {
             AddSample addSample = useCaseFactory.addSample();
-            AddSample.Result result = addSample.addNewSampleWithoutAttributes();
+            AddSample.Result result = addSample.addSampleWithoutAttributes();
             assignedSampleId = result.getSampleId();
             creationTime = ZonedDateTime.now(ZoneId.of("UTC"));
         }
@@ -147,7 +147,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then attribute values are equal to given values")
         public void testAttributesAreEqualToProvidedValues() {
             // Using sample ID here to keep mutational testing happy
-            Long sampleId = useCaseFactory.addSample().addNewSample(attributes).getSampleId();
+            Long sampleId = useCaseFactory.addSample().addSample(attributes).getSampleId();
             Sample sample = useCaseFactory.getSample().getSample(sampleId).getSample();
 
             Map<String, String> sampleAttributes = sample.getAttributes();
@@ -166,7 +166,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then attributes are empty for non-provided values")
         public void testAttributesAreEmptyForNonProvidedValues() {
-            useCaseFactory.addSample().addNewSample(attributes);
+            useCaseFactory.addSample().addSample(attributes);
             Map<String, String> sampleAttributes = getFirstSample().getAttributes();
 
             Sets.SetView<String> expectedEmptyAttributes = Sets.difference(
@@ -186,7 +186,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then exception is thrown that attribute is unknown")
         public void testExceptionIsThrown() {
-            Assertions.assertThatThrownBy(() -> useCaseFactory.addSample().addNewSample(attributes))
+            Assertions.assertThatThrownBy(() -> useCaseFactory.addSample().addSample(attributes))
                     .isInstanceOf(UnexpectedAttributeException.class);
         }
     }
@@ -199,8 +199,8 @@ public class AddSampleToEmptyCollectionTest {
 
         @BeforeEach
         void setUp() {
-            sampleIdOne = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
-            sampleIdTwo = useCaseFactory.addSample().addNewSampleWithoutAttributes().getSampleId();
+            sampleIdOne = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleIdTwo = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
         }
 
         @Test
