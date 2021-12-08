@@ -13,7 +13,7 @@ public final class InMemoryMapUserStorage implements UserStorage {
 
     @Override
     public void addUser(UserData userData) {
-        String email = userData.getEmail();
+        String email = userData.email();
         if (userDataMap.containsKey(email)) {
             throw new UserAlreadyExistsException(email);
         }

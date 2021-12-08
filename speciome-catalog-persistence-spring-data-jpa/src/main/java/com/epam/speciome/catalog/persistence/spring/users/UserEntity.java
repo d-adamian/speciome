@@ -23,7 +23,7 @@ public class UserEntity {
     }
 
     public static UserEntity fromUserData(UserData userData) {
-        return new UserEntity(userData.getEmail(), userData.getPasswordHash());
+        return new UserEntity(userData.email(), userData.passwordHash());
     }
 
     public UserData toUserData() {

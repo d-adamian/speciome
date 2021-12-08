@@ -15,7 +15,7 @@ public class SpringUserStorage implements UserStorage {
 
     @Override
     public void addUser(UserData userData) {
-        String email = userData.getEmail();
+        String email = userData.email();
         boolean isNewUser = repository.findByEmail(email).isEmpty();
         if (isNewUser) {
             repository.save(UserEntity.fromUserData(userData));

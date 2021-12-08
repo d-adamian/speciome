@@ -17,11 +17,11 @@ public final class SampleResponse {
     private final List<SampleAttribute> attributes;
 
     public SampleResponse(Sample sample) {
-        this.sampleId = sample.getSampleId();
-        this.createdAt = sample.getCreatedAt();
-        this.updatedAt = sample.getUpdatedAt();
+        this.sampleId = sample.sampleId();
+        this.createdAt = sample.createdAt();
+        this.updatedAt = sample.updatedAt();
         this.archived = sample.isArchived();
-        this.attributes = sample.getAttributes().entrySet().stream()
+        this.attributes = sample.attributes().entrySet().stream()
                 .map(entry -> new SampleAttribute(entry.getKey(), entry.getValue()))
                 .sorted(Comparator.comparing(SampleAttribute::getAttribute))
                 .collect(Collectors.toList());

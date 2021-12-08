@@ -21,7 +21,7 @@ before_script:
 
 build-java:
   stage: build
-  image: gradle:jdk11
+  image: gradle:jdk17
   script: ./gradlew --build-cache build
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -32,7 +32,7 @@ build-java:
 
 test-java:
   stage: test
-  image: gradle:jdk11
+  image: gradle:jdk17
   script: ./gradlew check
   cache:
     key: "$CI_COMMIT_REF_NAME"

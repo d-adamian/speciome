@@ -1,6 +1,8 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
+import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,37 +49,37 @@ public class UpdateSampleTest {
 
         @BeforeEach
         void setUp() throws InterruptedException {
-            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
-            originalSample = useCaseFactory.getSample().getSample(sampleId).getSample();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
+            originalSample = useCaseFactory.getSample().getSample(sampleId).sample();
             // Test fails on Windows if we do not put thread to short sleep
             Thread.sleep(5);
-            updatedSample = useCaseFactory.updateSample().updateSample(sampleId, attributes).getSample();
+            updatedSample = useCaseFactory.updateSample().updateSample(sampleId, attributes).sample();
         }
 
         @Test
         @DisplayName("Then sample attributes are equal to given values")
         public void testAttributesAreSet() {
-            Assertions.assertThat(updatedSample.getAttributes()).containsAllEntriesOf(attributes);
+            Assertions.assertThat(updatedSample.attributes()).containsAllEntriesOf(attributes);
         }
 
         @Test
         @DisplayName("Then sample update date is increased")
         public void testUpdateDateIsIncreased() {
-            Assertions.assertThat(updatedSample.getUpdatedAt()).isAfter(originalSample.getUpdatedAt());
+            Assertions.assertThat(updatedSample.updatedAt()).isAfter(originalSample.updatedAt());
         }
 
         @Test
         @DisplayName("Then sample creation date is unchanged")
         public void testCreationDateIsUnchanged() {
-            Assertions.assertThat(originalSample.getCreatedAt()).isEqualTo(updatedSample.getCreatedAt());
+            Assertions.assertThat(originalSample.createdAt()).isEqualTo(updatedSample.createdAt());
         }
 
         @Test
         @DisplayName("Then returned sample is identical to sample in storage")
         public void testReturnedSampleSameAsGetNext() {
             GetSample.Result getResult = useCaseFactory.getSample().getSample(sampleId);
-            Assertions.assertThat(getResult.getSampleId()).isEqualTo(sampleId);
-            Assertions.assertThat(getResult.getSample()).isEqualTo(updatedSample);
+            Assertions.assertThat(getResult.sampleId()).isEqualTo(sampleId);
+            Assertions.assertThat(getResult.sample()).isEqualTo(updatedSample);
         }
     }
 
@@ -89,7 +91,7 @@ public class UpdateSampleTest {
 
         @BeforeEach
         void setUp() {
-            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
         }
 
         @Test

@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.domain.users;
 
+import com.epam.speciome.catalog.domain.exceptions.InvalidCredentialsException;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
 
 // TODO: remove after Javalin-Vue PoC implementation is removed
@@ -12,8 +13,8 @@ public final class LogInUser {
 
     public User logIn(String email, String password) {
         return userStorage.loadUserData(email)
-                .filter(userData -> userData.getPasswordHash().equals(password))
-                .map(userData -> new User(userData.getEmail()))
+                .filter(userData -> userData.passwordHash().equals(password))
+                .map(userData -> new User(userData.email()))
                 .orElseThrow(InvalidCredentialsException::new);
     }
 }

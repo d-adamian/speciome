@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.users;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.InvalidCredentialsException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -64,7 +65,7 @@ public class UserRegistrationTest {
             LogInUser logInUser = useCaseFactory.logInUser();
             User user = logInUser.logIn(USER_1, PASSWORD_1);
             Assertions.assertThat(user).isNotNull();
-            Assertions.assertThat(user.getEmail()).isEqualTo(USER_1);
+            Assertions.assertThat(user.email()).isEqualTo(USER_1);
         }
 
         @Test
@@ -112,7 +113,7 @@ public class UserRegistrationTest {
         public void testBothUsersCanLogIn(String email, String password) {
             User user = useCaseFactory.logInUser().logIn(email, password);
             Assertions.assertThat(user).isNotNull();
-            Assertions.assertThat(user.getEmail()).isEqualTo(email);
+            Assertions.assertThat(user.email()).isEqualTo(email);
         }
     }
 }

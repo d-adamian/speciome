@@ -34,15 +34,6 @@ public final class AddSample {
         return new Result(sampleId);
     }
 
-    public static final class Result {
-        private final Long sampleId;
-
-        public Result(Long sampleId) {
-            this.sampleId = sampleId;
-        }
-
-        public Long getSampleId() {
-            return sampleId;
-        }
+    public record Result(Long sampleId) {
     }
 }
