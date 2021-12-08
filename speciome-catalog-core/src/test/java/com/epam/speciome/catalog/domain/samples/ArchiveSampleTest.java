@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +27,9 @@ class ArchiveSampleTest {
     @DisplayName("Field archive should be false after creation")
     public void archiveSampleFalseWhenCreated() {
         assertAll(
-                () -> assertFalse(useCaseFactory.getSample().getSample(0L).getSample().isArchived()),
-                () -> assertFalse(useCaseFactory.getSample().getSample(1L).getSample().isArchived()),
-                () -> assertFalse(useCaseFactory.getSample().getSample(2L).getSample().isArchived())
+                () -> assertFalse(useCaseFactory.getSample().getSample(0L).sample().isArchived()),
+                () -> assertFalse(useCaseFactory.getSample().getSample(1L).sample().isArchived()),
+                () -> assertFalse(useCaseFactory.getSample().getSample(2L).sample().isArchived())
         );
     }
 
@@ -47,7 +48,7 @@ class ArchiveSampleTest {
     @Test
     @DisplayName("Sample Ids should be the same")
     public void eqalsId() {
-        assertEquals(0L, useCaseFactory.archiveSample().archiveSample(0L).getSampleId());
+        assertEquals(0L, useCaseFactory.archiveSample().archiveSample(0L).sampleId());
     }
 
     @Nested
@@ -63,20 +64,20 @@ class ArchiveSampleTest {
         @Test
         @DisplayName("Archive zeroth sample")
         public void testZerothElement() {
-            assertTrue(useCaseFactory.getSample().getSample(0L).getSample().isArchived());
+            assertTrue(useCaseFactory.getSample().getSample(0L).sample().isArchived());
         }
         @Test
         @DisplayName("Archive first sample")
         public void testFirstElement() {
-            assertTrue(useCaseFactory.getSample().getSample(1L).getSample().isArchived());
+            assertTrue(useCaseFactory.getSample().getSample(1L).sample().isArchived());
         }
         @Test
         @DisplayName("Archive all elements test")
         public void testAllThreeElements() {
             assertAll(
-                    () -> assertTrue(useCaseFactory.getSample().getSample(0L).getSample().isArchived()),
-                    () -> assertTrue(useCaseFactory.getSample().getSample(1L).getSample().isArchived()),
-                    () -> assertTrue(useCaseFactory.getSample().getSample(2L).getSample().isArchived())
+                    () -> assertTrue(useCaseFactory.getSample().getSample(0L).sample().isArchived()),
+                    () -> assertTrue(useCaseFactory.getSample().getSample(1L).sample().isArchived()),
+                    () -> assertTrue(useCaseFactory.getSample().getSample(2L).sample().isArchived())
             );
         }
     }

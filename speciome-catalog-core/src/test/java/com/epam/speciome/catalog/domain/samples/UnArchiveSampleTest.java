@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,13 +39,13 @@ class UnArchiveSampleTest {
     @Test
     @DisplayName("Sample Ids should be the same")
     public void eqalsId() {
-        assertEquals(0L, useCaseFactory.unArchiveSample().unArchiveSample(0L).getSampleId());
+        assertEquals(0L, useCaseFactory.unArchiveSample().unArchiveSample(0L).sampleId());
     }
 
     @Test
     @DisplayName("archived field is true before archiving")
     public void testsThatSampleIsArchived() {
-        assertTrue(useCaseFactory.getSample().getSample(0L).getSample().isArchived());
+        assertTrue(useCaseFactory.getSample().getSample(0L).sample().isArchived());
     }
 
     @Nested
@@ -55,7 +56,7 @@ class UnArchiveSampleTest {
         @DisplayName("UnArchive zeroth sample")
         public void testZerothElement() {
             useCaseFactory.unArchiveSample().unArchiveSample(0L);
-            assertFalse(useCaseFactory.getSample().getSample(0L).getSample().isArchived());
+            assertFalse(useCaseFactory.getSample().getSample(0L).sample().isArchived());
         }
 
         @Test
@@ -64,9 +65,9 @@ class UnArchiveSampleTest {
             assertAll("archived field is true before archiving",
                     () -> {
                         assertAll(
-                                () -> assertTrue(useCaseFactory.getSample().getSample(0L).getSample().isArchived()),
-                                () -> assertTrue(useCaseFactory.getSample().getSample(1L).getSample().isArchived()),
-                                () -> assertTrue(useCaseFactory.getSample().getSample(2L).getSample().isArchived())
+                                () -> assertTrue(useCaseFactory.getSample().getSample(0L).sample().isArchived()),
+                                () -> assertTrue(useCaseFactory.getSample().getSample(1L).sample().isArchived()),
+                                () -> assertTrue(useCaseFactory.getSample().getSample(2L).sample().isArchived())
                         );
 
                         for (int i = 0; i < NUM_SAMPLES; i++) {
@@ -74,9 +75,9 @@ class UnArchiveSampleTest {
                         }
 
                         assertAll("archived field change to false",
-                                () -> assertFalse(useCaseFactory.getSample().getSample(0L).getSample().isArchived()),
-                                () -> assertFalse(useCaseFactory.getSample().getSample(1L).getSample().isArchived()),
-                                () -> assertFalse(useCaseFactory.getSample().getSample(2L).getSample().isArchived())
+                                () -> assertFalse(useCaseFactory.getSample().getSample(0L).sample().isArchived()),
+                                () -> assertFalse(useCaseFactory.getSample().getSample(1L).sample().isArchived()),
+                                () -> assertFalse(useCaseFactory.getSample().getSample(2L).sample().isArchived())
                         );
                     }
             );

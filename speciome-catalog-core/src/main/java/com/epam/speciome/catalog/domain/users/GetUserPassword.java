@@ -11,7 +11,7 @@ public final class GetUserPassword {
     }
 
     public String getUserPassword(String email) {
-        return userStorage.loadUserData(email).map(UserData::getPasswordHash)
+        return userStorage.loadUserData(email).map(UserData::passwordHash)
                 .orElseThrow(UserNotFoundException::new);
     }
 

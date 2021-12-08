@@ -44,7 +44,7 @@ public class UserController {
     String getUserDetails(Principal principal) {
         String userEmail = principal.getName();
         GetUserDetails.Response result = useCaseFactory.getUserDetails().getUserDetails(new User(userEmail));
-        return result.getEmail();
+        return result.email();
     }
 
     @Operation(

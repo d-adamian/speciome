@@ -1,5 +1,7 @@
 package com.epam.speciome.catalog.domain.samples;
 
+import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
+
 import java.util.Optional;
 
 public enum ArchivalStatus {

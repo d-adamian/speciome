@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.domain.samples;
 
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
@@ -30,25 +31,16 @@ public final class UpdateSample {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         SampleData updatedData = new SampleData(
-                sampleData.getCreatedAt(),
+                sampleData.createdAt(),
                 now,
                 Attributes.fillMissingAttributeValues(attributes),
                 sampleData.isArchived()
         );
         sampleStorage.updateSample(sampleId, updatedData);
-        Sample sample = Sample.fromSampleData(sampleId, updatedData);
+        Sample sample = new Sample(sampleId, updatedData);
         return new Result(sample);
     }
 
-    public static final class Result {
-        private final Sample sample;
-
-        Result(Sample sample) {
-            this.sample = sample;
-        }
-
-        public Sample getSample() {
-            return sample;
-        }
+    public record Result(Sample sample) {
     }
 }

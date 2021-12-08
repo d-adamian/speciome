@@ -16,8 +16,8 @@ public interface SampleStorageContract {
     default void testNoSamplesInEmptyStorage() {
         ListSamplesResult listSamplesResult = sampleStorage().listSamples();
         Assertions.assertThat(listSamplesResult).isNotNull();
-        Assertions.assertThat(listSamplesResult.getTotalCount()).isEqualTo(0);
-        Assertions.assertThat(listSamplesResult.getSamplesById()).isEmpty();
+        Assertions.assertThat(listSamplesResult.totalCount()).isEqualTo(0);
+        Assertions.assertThat(listSamplesResult.loadSamplesById()).isEmpty();
     }
 
     @Test
@@ -44,8 +44,8 @@ public interface SampleStorageContract {
 
         ListSamplesResult listSamplesResult = sampleStorage.listSamples();
         Assertions.assertThat(listSamplesResult).isNotNull();
-        Assertions.assertThat(listSamplesResult.getTotalCount()).isEqualTo(2);
-        Assertions.assertThat(listSamplesResult.getSamplesById())
+        Assertions.assertThat(listSamplesResult.totalCount()).isEqualTo(2);
+        Assertions.assertThat(listSamplesResult.loadSamplesById())
                 .isNotNull()
                 .hasSize(2)
                 .isEqualTo(Map.of(
@@ -61,12 +61,12 @@ public interface SampleStorageContract {
         SampleData sample = sampleOne();
 
         Long sampleId = sampleStorage.addSample(sample);
-        Assertions.assertThat(sampleStorage.listSamples().getTotalCount()).isEqualTo(1);
+        Assertions.assertThat(sampleStorage.listSamples().totalCount()).isEqualTo(1);
 
         sampleStorage.deleteSampleById(sampleId);
         ListSamplesResult listSamplesResult = sampleStorage.listSamples();
-        Assertions.assertThat(listSamplesResult.getTotalCount()).isEqualTo(0);
-        Assertions.assertThat(listSamplesResult.getSamplesById()).isEmpty();
+        Assertions.assertThat(listSamplesResult.totalCount()).isEqualTo(0);
+        Assertions.assertThat(listSamplesResult.loadSamplesById()).isEmpty();
         Assertions.assertThat(sampleStorage.getSampleById(sampleId)).isEmpty();
     }
 

@@ -1,4 +1,4 @@
-package com.epam.speciome.catalog.domain.samples;
+package com.epam.speciome.catalog.domain.exceptions;
 
 public final class SampleNotFoundException extends RuntimeException {
     public SampleNotFoundException(Long sampleId) {

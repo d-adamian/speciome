@@ -1,6 +1,10 @@
 package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
+import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumns;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
+import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
@@ -67,10 +71,10 @@ public class SampleController {
         try {
             Optional<ArchivalStatus> optionalStatus = ArchivalStatus.defineArchivalStatus(archivalStatus);
             ListSamples.Result result = useCaseFactory.listSamples().listSamples(optionalStatus);
-            List<SampleResponse> samples = result.getSamples().stream()
+            List<SampleResponse> samples = result.samples().stream()
                     .map(SampleResponse::new)
                     .collect(Collectors.toList());
-            return new ListSamplesResponse(result.getTotalCount(), samples);
+            return new ListSamplesResponse(result.totalCount(), samples);
         } catch (ArchivalStatusException e) {
             throw new InvalidInputException(e.getMessage());
         }
@@ -106,7 +110,7 @@ public class SampleController {
             } else {
                 result = useCaseFactory.addSample().addSample(convertAttributes(attributes));
             }
-            return new CreateSampleResponse(result.getSampleId());
+            return new CreateSampleResponse(result.sampleId());
         } catch (UnexpectedAttributeException e) {
             throw new InvalidInputException(e.getMessage());
         }
@@ -137,7 +141,7 @@ public class SampleController {
     ) {
         try {
             GetSample.Result result = useCaseFactory.getSample().getSample(sampleId);
-            return new SampleResponse(result.getSample());
+            return new SampleResponse(result.sample());
         } catch (SampleNotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }

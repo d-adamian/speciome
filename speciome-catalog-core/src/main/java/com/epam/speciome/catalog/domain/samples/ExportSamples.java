@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ExportSamples {
-
+public final class ExportSamples {
     private final SampleStorage sampleStorage;
 
     public ExportSamples(SampleStorage sampleStorage) {
@@ -23,8 +22,7 @@ public class ExportSamples {
 
     public ByteArrayInputStream exportSamples() throws IOException {
 
-        Map<Long, SampleData> sampleDataMap = sampleStorage.listSamples().getSamplesById();
-
+        Map<Long, SampleData> sampleDataMap = sampleStorage.listSamples().loadSamplesById();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try (var outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
@@ -36,11 +34,10 @@ public class ExportSamples {
                 SampleData sampleData = entry.getValue();
                 List<String> sampleDataRow = new ArrayList<>();
                 sampleDataRow.add(String.valueOf(entry.getKey()));
-                sampleDataRow.add(String.valueOf(sampleData.getCreatedAt()));
-                sampleDataRow.add(String.valueOf(sampleData.getUpdatedAt()));
-
+                sampleDataRow.add(String.valueOf(sampleData.createdAt()));
+                sampleDataRow.add(String.valueOf(sampleData.updatedAt()));
                 for (String attribute : Attributes.ALL) {
-                    sampleDataRow.add(sampleData.getAttributes().get(attribute));
+                    sampleDataRow.add(sampleData.attributes().get(attribute));
                 }
                 String[] sampleArray = sampleDataRow.toArray(String[]::new);
                 writer.writeNext(sampleArray);

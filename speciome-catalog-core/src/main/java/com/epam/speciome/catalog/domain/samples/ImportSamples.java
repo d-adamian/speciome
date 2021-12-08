@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.domain.samples;
 
+import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumns;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import com.opencsv.CSVParser;
@@ -13,7 +14,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 public final class ImportSamples {
-
     private final SampleStorage sampleStorage;
 
     public ImportSamples(SampleStorage sampleStorage) {
@@ -72,7 +72,6 @@ public final class ImportSamples {
         }
         return samples;
     }
-
 
     private List<SampleData> writeSamples(List<String[]> lines) {
         if (lines.size() == 0 || lines.size() == 1) {

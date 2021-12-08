@@ -29,7 +29,7 @@ public interface UserStorageContract {
         UserStorage userStorage = userStorage();
         addUserToStorage(userStorage);
         UserData userData = userStorage.loadUserData(getUserEmail()).orElseThrow();
-        Assertions.assertThat(userData.getPasswordHash()).isEqualTo(getPasswordHash());
+        Assertions.assertThat(userData.passwordHash()).isEqualTo(getPasswordHash());
     }
 
     @Test

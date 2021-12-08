@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ public class DeleteSampleTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
         }
 
         @Test

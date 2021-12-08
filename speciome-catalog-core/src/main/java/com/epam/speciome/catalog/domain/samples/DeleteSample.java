@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.domain.samples;
 
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
 public final class DeleteSample {

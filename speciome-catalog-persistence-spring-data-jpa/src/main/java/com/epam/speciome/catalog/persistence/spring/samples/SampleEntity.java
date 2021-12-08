@@ -57,13 +57,13 @@ public class SampleEntity {
 
     public static SampleEntity fromSampleData(SampleData sampleData) {
         SampleEntity sampleEntity = new SampleEntity();
-        sampleEntity.createdAtUtc = sampleData.getCreatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
-        sampleEntity.createdAtZone = sampleData.getCreatedAt().getZone().getId();
-        sampleEntity.updatedAtUtc = sampleData.getUpdatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
-        sampleEntity.updatedAtZone = sampleData.getUpdatedAt().getZone().getId();
+        sampleEntity.createdAtUtc = sampleData.createdAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
+        sampleEntity.createdAtZone = sampleData.createdAt().getZone().getId();
+        sampleEntity.updatedAtUtc = sampleData.updatedAt().withZoneSameLocal(ZONE_ID_UTC).toLocalDateTime().withNano(0);
+        sampleEntity.updatedAtZone = sampleData.updatedAt().getZone().getId();
         sampleEntity.archived = sampleData.isArchived();
 
-        sampleData.getAttributes().forEach((attribute, value) -> {
+        sampleData.attributes().forEach((attribute, value) -> {
             SampleAttributeEntity attributeEntity = new SampleAttributeEntity();
             attributeEntity.setAttribute(attribute);
             attributeEntity.setValue(value);

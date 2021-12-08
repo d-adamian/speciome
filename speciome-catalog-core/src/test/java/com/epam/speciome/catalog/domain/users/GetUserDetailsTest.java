@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.users;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.InvalidCredentialsException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +50,7 @@ public class GetUserDetailsTest {
         public void testUserEmailMatches() {
             var response = useCaseFactory.getUserDetails().getUserDetails(user);
             Assertions.assertThat(response).isNotNull();
-            Assertions.assertThat(response.getEmail()).isEqualTo(EMAIL);
+            Assertions.assertThat(response.email()).isEqualTo(EMAIL);
         }
     }
-
 }

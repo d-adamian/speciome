@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumns;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.junit.jupiter.api.*;
 
@@ -35,7 +36,7 @@ public class ImportSamplesTest {
 
             FileInputStream fileInputStream = loadCsvFromResources("empty_samples.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(Collections.emptyList(), useCaseFactory.listSamples().listSamples().getSamples());
+            assertEquals(Collections.emptyList(), useCaseFactory.listSamples().listSamples().samples());
         }
     }
 
@@ -64,7 +65,7 @@ public class ImportSamplesTest {
 
             FileInputStream fileInputStream = loadCsvFromResources("samples.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(1, useCaseFactory.listSamples().listSamples().getTotalCount());
+            assertEquals(1, useCaseFactory.listSamples().listSamples().totalCount());
         }
     }
 
@@ -78,7 +79,7 @@ public class ImportSamplesTest {
 
             FileInputStream fileInputStream = loadCsvFromResources("many_samples.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(4, useCaseFactory.listSamples().listSamples().getTotalCount());
+            assertEquals(4, useCaseFactory.listSamples().listSamples().totalCount());
         }
     }
 }

@@ -30,7 +30,7 @@ public class ListSamplesTest {
         public void testEmptyStorageAllSamples() {
             ListSamples.Result listResult =
                     useCaseFactory.listSamples().listSamples();
-            int samplesCount = listResult.getTotalCount();
+            int samplesCount = listResult.totalCount();
             Assertions.assertThat(samplesCount).isEqualTo(0);
         }
     }
@@ -43,7 +43,7 @@ public class ListSamplesTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
         }
 
         @ParameterizedTest
@@ -51,11 +51,11 @@ public class ListSamplesTest {
         public void testCaseUnarchivedSample(ArchivalStatus archivalStatus) {
             ListSamples.Result listResult =
                     useCaseFactory.listSamples().listSamples(Optional.of(archivalStatus));
-            int samplesCount = listResult.getTotalCount();
+            int samplesCount = listResult.totalCount();
             if (archivalStatus.equals(ArchivalStatus.ARCHIVED)) {
                 Assertions.assertThat(samplesCount).isEqualTo(0);
             } else if (archivalStatus.equals(ArchivalStatus.ALL) || archivalStatus.equals(ArchivalStatus.UNARCHIVED)){
-                long resultId = listResult.getSamples().get(0).getSampleId();
+                long resultId = listResult.samples().get(0).sampleId();
                 Assertions.assertThat(samplesCount).isEqualTo(1);
                 Assertions.assertThat(sampleId).isEqualTo(resultId);
             }
@@ -70,7 +70,7 @@ public class ListSamplesTest {
 
         @BeforeEach
         public void setUp() {
-            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleId = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
             useCaseFactory.archiveSample().archiveSample(sampleId);
         }
 
@@ -79,11 +79,11 @@ public class ListSamplesTest {
         public void testCaseArchivedSample(ArchivalStatus archivalStatus) {
             ListSamples.Result listResult =
                     useCaseFactory.listSamples().listSamples(Optional.of(archivalStatus));
-            int samplesCount = listResult.getTotalCount();
+            int samplesCount = listResult.totalCount();
             if (archivalStatus.equals(ArchivalStatus.UNARCHIVED)) {
                 Assertions.assertThat(samplesCount).isEqualTo(0);
             } else if (archivalStatus.equals(ArchivalStatus.ALL) || archivalStatus.equals(ArchivalStatus.ARCHIVED)) {
-                long resultId = listResult.getSamples().get(0).getSampleId();
+                long resultId = listResult.samples().get(0).sampleId();
                 Assertions.assertThat(samplesCount).isEqualTo(1);
                 Assertions.assertThat(sampleId).isEqualTo(resultId);
             }

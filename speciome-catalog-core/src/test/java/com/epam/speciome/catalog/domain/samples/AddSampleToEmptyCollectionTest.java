@@ -1,6 +1,8 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
+import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
@@ -40,10 +42,10 @@ public class AddSampleToEmptyCollectionTest {
             ListSamples.Result listResult = useCaseFactory.listSamples().listSamples();
             Assertions.assertThat(listResult).isNotNull();
 
-            int samplesTotal = listResult.getTotalCount();
+            int samplesTotal = listResult.totalCount();
             Assertions.assertThat(samplesTotal).isEqualTo(0);
 
-            List<Sample> samples = listResult.getSamples();
+            List<Sample> samples = listResult.samples();
             Assertions.assertThat(samples).isEmpty();
         }
     }
@@ -58,7 +60,7 @@ public class AddSampleToEmptyCollectionTest {
         public void setUp() {
             AddSample addSample = useCaseFactory.addSample();
             AddSample.Result result = addSample.addSampleWithoutAttributes();
-            assignedSampleId = result.getSampleId();
+            assignedSampleId = result.sampleId();
             creationTime = ZonedDateTime.now(ZoneId.of("UTC"));
         }
 
@@ -66,8 +68,8 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then collection contains one sample")
         public void testCollectionHasOneSample() {
             ListSamples.Result list = useCaseFactory.listSamples().listSamples();
-            Assertions.assertThat(list.getTotalCount()).isEqualTo(1);
-            List<Sample> samples = list.getSamples();
+            Assertions.assertThat(list.totalCount()).isEqualTo(1);
+            List<Sample> samples = list.samples();
             Assertions.assertThat(samples).isNotNull();
             Assertions.assertThat(samples.size()).isEqualTo(1);
         }
@@ -76,7 +78,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then single sample has non-empty identifier equal to assigned identifier")
         public void testSampleHasNonEmptyIdentifier() {
             Sample sample = getFirstSample();
-            Long sampleId = sample.getSampleId();
+            Long sampleId = sample.sampleId();
             Assertions.assertThat(sampleId).isNotNull();
             Assertions.assertThat(sampleId).isEqualTo(assignedSampleId);
         }
@@ -86,12 +88,12 @@ public class AddSampleToEmptyCollectionTest {
         public void testSampleCanBeRetrievedBySampleId() {
             GetSample.Result result = useCaseFactory.getSample().getSample(assignedSampleId);
 
-            Long sampleId = result.getSampleId();
+            Long sampleId = result.sampleId();
 
             Assertions.assertThat(sampleId).isNotNull().isEqualTo(assignedSampleId);
 
             Sample sampleFromList = getFirstSample();
-            Sample sampleRetrieved = result.getSample();
+            Sample sampleRetrieved = result.sample();
             Assertions.assertThat(sampleRetrieved).isNotNull().isEqualTo(sampleFromList);
         }
 
@@ -109,8 +111,8 @@ public class AddSampleToEmptyCollectionTest {
 
             TemporalUnitWithinOffset tolerance = new TemporalUnitWithinOffset(5, ChronoUnit.SECONDS);
 
-            ZonedDateTime createdAt = sample.getCreatedAt();
-            ZonedDateTime updatedAt = sample.getUpdatedAt();
+            ZonedDateTime createdAt = sample.createdAt();
+            ZonedDateTime updatedAt = sample.updatedAt();
             Assertions.assertThat(creationTime)
                     .isNotNull()
                     .isCloseTo(createdAt, tolerance)
@@ -120,7 +122,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then sample has mandatory attributes")
         public void testSampleHasAttributes() {
-            Map<String, String> attributes = getFirstSample().getAttributes();
+            Map<String, String> attributes = getFirstSample().attributes();
             Assertions.assertThat(attributes.keySet())
                     .containsExactlyInAnyOrderElementsOf(Attributes.ALL);
         }
@@ -128,7 +130,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then all attributes are empty")
         public void testAllAttributesAreEmpty() {
-            Map<String, String> attributes = getFirstSample().getAttributes();
+            Map<String, String> attributes = getFirstSample().attributes();
             Assertions.assertThat(attributes.values()).containsOnly("");
         }
     }
@@ -147,10 +149,10 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then attribute values are equal to given values")
         public void testAttributesAreEqualToProvidedValues() {
             // Using sample ID here to keep mutational testing happy
-            Long sampleId = useCaseFactory.addSample().addSample(attributes).getSampleId();
-            Sample sample = useCaseFactory.getSample().getSample(sampleId).getSample();
+            Long sampleId = useCaseFactory.addSample().addSample(attributes).sampleId();
+            Sample sample = useCaseFactory.getSample().getSample(sampleId).sample();
 
-            Map<String, String> sampleAttributes = sample.getAttributes();
+            Map<String, String> sampleAttributes = sample.attributes();
             Assertions.assertThat(sampleAttributes).containsExactlyEntriesOf(attributes);
         }
     }
@@ -167,7 +169,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then attributes are empty for non-provided values")
         public void testAttributesAreEmptyForNonProvidedValues() {
             useCaseFactory.addSample().addSample(attributes);
-            Map<String, String> sampleAttributes = getFirstSample().getAttributes();
+            Map<String, String> sampleAttributes = getFirstSample().attributes();
 
             Sets.SetView<String> expectedEmptyAttributes = Sets.difference(
                     Set.copyOf(Attributes.ALL), attributes.keySet()
@@ -199,8 +201,8 @@ public class AddSampleToEmptyCollectionTest {
 
         @BeforeEach
         void setUp() {
-            sampleIdOne = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
-            sampleIdTwo = useCaseFactory.addSample().addSampleWithoutAttributes().getSampleId();
+            sampleIdOne = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
+            sampleIdTwo = useCaseFactory.addSample().addSampleWithoutAttributes().sampleId();
         }
 
         @Test
@@ -212,18 +214,18 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then both samples are present")
         public void testTwoSamplesArePresent() {
-            Assertions.assertThat(useCaseFactory.listSamples().listSamples().getSamples()).hasSize(2);
+            Assertions.assertThat(useCaseFactory.listSamples().listSamples().samples()).hasSize(2);
             for (Long sampleId : List.of(sampleIdOne, sampleIdTwo)) {
                 GetSample.Result getResult = useCaseFactory.getSample().getSample(sampleId);
-                Assertions.assertThat(getResult.getSampleId()).isEqualTo(sampleId);
-                Assertions.assertThat(getResult.getSample().getSampleId()).isEqualTo(sampleId);
+                Assertions.assertThat(getResult.sampleId()).isEqualTo(sampleId);
+                Assertions.assertThat(getResult.sample().sampleId()).isEqualTo(sampleId);
             }
         }
     }
 
     private Sample getFirstSample() {
         ListSamples.Result list = useCaseFactory.listSamples().listSamples();
-        Assertions.assertThat(list.getSamples()).isNotNull().isNotEmpty();
-        return list.getSamples().get(0);
+        Assertions.assertThat(list.samples()).isNotNull().isNotEmpty();
+        return list.samples().get(0);
     }
 }
