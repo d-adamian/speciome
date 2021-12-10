@@ -4,6 +4,8 @@ import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
+import java.util.Optional;
+
 public final class ArchiveSample {
     private final SampleStorage sampleStorage;
 
@@ -12,11 +14,12 @@ public final class ArchiveSample {
     }
 
     public Sample archiveSample(Long id) {
-        if (sampleStorage.getSampleById(id).isPresent()) {
+        Optional<SampleData> sampleById = sampleStorage.getSampleById(id);
+        if (sampleById.isPresent()) {
             SampleData sampleData = new SampleData(
-                    sampleStorage.getSampleById(id).get().createdAt(),
-                    sampleStorage.getSampleById(id).get().updatedAt(),
-                    sampleStorage.getSampleById(id).get().attributes(),
+                    sampleById.get().createdAt(),
+                    sampleById.get().updatedAt(),
+                    sampleById.get().attributes(),
                     true);
             sampleStorage.updateSample(id, sampleData);
             return new Sample(id, sampleData);
