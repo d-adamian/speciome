@@ -4,8 +4,6 @@ plugins {
     id 'jacoco'
 }
 
-
-
 allprojects {
 
     sourceCompatibility = JavaVersion.VERSION_17
@@ -43,6 +41,9 @@ allprojects {
         }
     }
 
+    // For Heroku builds
+    task stage(dependsOn: ['build', 'clean'])
+    build.mustRunAfter clean
 }
 
 group = 'com.epam.speciome'

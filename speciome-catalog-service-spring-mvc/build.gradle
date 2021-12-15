@@ -26,3 +26,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+// For Heroku builds
+task copyToLib(type: Copy) {
+    from "$buildDir/libs"
+    into "$rootProject.buildDir/libs"
+}
+copyToLib.dependsOn(bootJar)
+stage.dependsOn(copyToLib)

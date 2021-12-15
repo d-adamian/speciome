@@ -48,3 +48,14 @@ test-npm:
     - cd ./speciome-reactjs
     - npm install
     - CI=true npm run test
+
+deploy-heroku:
+  stage: deploy
+  image: ruby:latest
+  only:
+    - main
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APP_DEV --api_key=$HEROKU_API_KEY
