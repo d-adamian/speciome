@@ -1,16 +1,19 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.UseCaseFactory;
-import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumns;
+import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Given that CSV file for importing is uploaded")
 public class ImportSamplesTest {
@@ -31,27 +34,26 @@ public class ImportSamplesTest {
     public class ImportEmptyFile {
 
         @Test
-        @DisplayName("Then nothing will be added to samples storage")
+        @DisplayName("Then error should be thrown")
         public void testImportEmptyFile() throws Exception {
 
             FileInputStream fileInputStream = loadCsvFromResources("empty_samples.csv");
-            useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(Collections.emptyList(), useCaseFactory.listSamples().listSamples().samples());
+            assertThrows(ImportFileWithMissingColumnsException.class, () ->
+                    useCaseFactory.importSamples().saveSamples(fileInputStream));
         }
     }
 
     @Nested
-    @DisplayName("When CSV with missing columns is imported")
-    public class ImportMissingColumns {
+    @DisplayName("When there are missing field in CSV header")
+    public class ImportWithMissingHeader {
 
         @Test
-        @DisplayName("Then error is thrown")
-        public void testImportMissingColumns() throws Exception {
+        @DisplayName("Then error should be thrown")
+        public void testImportWithMissingHeader() throws Exception {
 
             FileInputStream fileInputStream = loadCsvFromResources("missing_columns.csv");
-            Assertions.assertThrows(ImportFileWithMissingColumns.class, () -> {
-                useCaseFactory.importSamples().saveSamples(fileInputStream);
-            });
+            assertThrows(ImportFileWithMissingColumnsException.class, () ->
+                    useCaseFactory.importSamples().saveSamples(fileInputStream));
         }
     }
 

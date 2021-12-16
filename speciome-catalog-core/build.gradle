@@ -9,7 +9,7 @@ plugins {
 dependencies {
     implementation('com.google.guava:guava:30.1-jre')
     implementation('commons-validator:commons-validator:1.7')
-    implementation ('com.opencsv:opencsv:3.7')
+    implementation 'com.univocity:univocity-parsers:2.9.1'
 
 
     implementation project(':speciome-catalog-persistence-api')
@@ -22,7 +22,9 @@ dependencies {
 
 pitest {
     targetClasses = ['com.epam.speciome.*']
-    excludedMethods = ['equals', 'hashCode']
+    excludedMethods = ['equals',            // not testing auto-generated methods
+                       'hashCode',          // not testing auto-generated methods
+                       'getParserSettings'] // CSV parser configuration settings
     junit5PluginVersion = '0.12'
     outputFormats = ['HTML']
     mutationThreshold = 100

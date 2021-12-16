@@ -2,12 +2,15 @@ package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
-import com.opencsv.CSVWriter;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,35 +25,39 @@ public final class ExportSamples {
 
     public ByteArrayInputStream exportSamples() throws IOException {
 
-        Map<Long, SampleData> sampleDataMap = sampleStorage.listSamples().loadSamplesById();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        try (var outputStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-             CSVWriter writer = new CSVWriter(outputStreamWriter)) {
+        try (Writer outputStreamWriter = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
 
-            writer.writeNext(writeHeader().toArray(String[]::new));
-
-            for (Map.Entry<Long, SampleData> entry : sampleDataMap.entrySet()) {
-                SampleData sampleData = entry.getValue();
-                List<String> sampleDataRow = new ArrayList<>();
-                sampleDataRow.add(String.valueOf(entry.getKey()));
-                sampleDataRow.add(String.valueOf(sampleData.createdAt()));
-                sampleDataRow.add(String.valueOf(sampleData.updatedAt()));
-                for (String attribute : Attributes.ALL) {
-                    sampleDataRow.add(sampleData.attributes().get(attribute));
-                }
-                String[] sampleArray = sampleDataRow.toArray(String[]::new);
-                writer.writeNext(sampleArray);
-            }
+            CsvWriter writer = new CsvWriter(outputStreamWriter, new CsvWriterSettings());
+            writer.writeHeaders(getHeaderColumns());
+            writer.writeRowsAndClose(getTableRows());
         }
         return new ByteArrayInputStream(out.toByteArray());
     }
 
-    private List<String> writeHeader() {
+    private List<List<Object>> getTableRows() {
+        List<List<Object>> listToOutputInCSV = new ArrayList<>();
+        Map<Long, SampleData> sampleDataMap = sampleStorage.listSamples().loadSamplesById();
+
+        for (Map.Entry<Long, SampleData> entry : sampleDataMap.entrySet()) {
+            List<Object> sampleDataRow = new ArrayList<>();
+
+            SampleData value = entry.getValue();
+
+            sampleDataRow.add(entry.getKey());
+            for (String attribute : Attributes.ALL) {
+                sampleDataRow.add(value.attributes().get(attribute));
+            }
+
+            listToOutputInCSV.add(sampleDataRow);
+        }
+        return listToOutputInCSV;
+    }
+
+    private List<String> getHeaderColumns() {
         List<String> header = new ArrayList<>();
         header.add("Id");
-        header.add("Created At");
-        header.add("Updated At");
         header.addAll(Attributes.ALL);
         return header;
     }

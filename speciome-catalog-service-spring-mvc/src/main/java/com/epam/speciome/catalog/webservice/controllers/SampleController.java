@@ -2,7 +2,6 @@ package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
-import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumns;
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
@@ -32,9 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Tag(name = "Samples", description = "Sample Management API")
@@ -318,16 +315,13 @@ public class SampleController {
     @PostMapping(value = "/samples/upload/csv")
     @ResponseStatus(HttpStatus.OK)
     public void uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        String MEDIA_TYPE_CSV = "text/csv";
-        if (MEDIA_TYPE_CSV.equals(file.getContentType())) {
-            try {
-                useCaseFactory.importSamples().saveSamples(file.getInputStream());
-            } catch (ImportFileWithMissingColumns e) {
-                throw new InvalidInputException(e.getMessage());
-            }
-        } else {
+        Set<String> ALLOWED_IMPORT_TYPES = Set.of("application/vnd.ms-excel", "text/csv");
+        String contentType = file.getContentType();
+        if (!ALLOWED_IMPORT_TYPES.contains(contentType)) {
             throw new UnsupportedMediaTypeException();
         }
+        useCaseFactory.importSamples().saveSamples(file.getInputStream());
+
     }
 
 }
