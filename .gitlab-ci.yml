@@ -22,6 +22,7 @@ before_script:
 build-java:
   stage: build
   image: gradle:jdk17
+  retry: 2
   script: ./gradlew --build-cache build
   cache:
     key: "$CI_COMMIT_REF_NAME"
