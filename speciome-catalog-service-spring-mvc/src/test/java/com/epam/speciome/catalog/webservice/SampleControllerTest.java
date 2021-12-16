@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -167,7 +168,7 @@ public class SampleControllerTest {
     }
 
     @Test
-    void importFromCsv() throws Exception {
+    public void testImportFromCsv() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "file", "text/csv",
                 new FileInputStream(new File("src/test/resources/samples.csv")));
         mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
@@ -177,7 +178,7 @@ public class SampleControllerTest {
     }
 
     @Test
-    void downloadCsv() throws Exception {
+    public void testGetCsv() throws Exception {
         String postResponse = mockMvc.perform(get("/samples/download"))
                 .andExpect(content().contentType("application/csv"))
                 .andReturn().getResponse().getContentAsString();

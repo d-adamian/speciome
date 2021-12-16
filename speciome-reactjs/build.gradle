@@ -1,0 +1,22 @@
+plugins {
+    id "com.github.node-gradle.node" version "3.1.1"
+}
+
+apply plugin: 'base'
+
+node {
+    version = '16.13.1'
+    npmVersion = '7.0.15'
+    download = true
+}
+
+npm_run_build {
+    inputs.files fileTree("src")
+    inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+
+    outputs.dir 'build'
+    environment = ['CI': 'false'] // Don't fail build on ESLint warnings
+}
+
+assemble.dependsOn(npm_run_build)
