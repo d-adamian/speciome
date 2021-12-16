@@ -16,12 +16,21 @@ dependencies {
     implementation project(':speciome-catalog-core')
     implementation project(':speciome-catalog-persistence-api')
     implementation project(':speciome-catalog-persistence-spring-data-jpa')
+    implementation project(':speciome-reactjs')
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
+
+task copyWebApp(type: Copy) {
+    dependsOn ":speciome-reactjs:build"
+    from "$rootDir/speciome-reactjs/build"
+    into "$rootDir/speciome-catalog-service-spring-mvc/build/resources/main/static"
+}
+
+processResources.dependsOn(copyWebApp)
 
 test {
     useJUnitPlatform()

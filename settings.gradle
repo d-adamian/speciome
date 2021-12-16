@@ -12,4 +12,5 @@ include 'speciome-catalog-persistence-api'
 include 'speciome-catalog-core'
 include 'speciome-catalog-persistence-spring-data-jpa'
 include 'speciome-catalog-service-spring-mvc'
+include 'speciome-reactjs'
 

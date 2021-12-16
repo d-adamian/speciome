@@ -31,6 +31,10 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable() // TODO: why we are disabling CSRF here?
                 .authorizeRequests()
+                .antMatchers("/static/**").permitAll() // Allow access to static pages from 'speciome-reactjs'
+                .antMatchers("/", "index.html", "asset-manifest.json", "favicon.ico",
+                        "asset-manifest.json", "logo192.png", "logo512.png", "robots.txt").permitAll() // Allow access
+                                                                             // to static pages from 'speciome-reactjs'
                 .mvcMatchers("/new-user").permitAll() // Allow registering new users
                 .mvcMatchers("/swagger-ui.html").permitAll() // Allow access to Swagger UI
                 .mvcMatchers("/swagger-ui/**").permitAll()
