@@ -81,8 +81,8 @@ public final class ImportSamples {
 
         settings.setLineSeparatorDetectionEnabled(true);
         settings.setProcessor(rowListProcessor);
-        settings.setHeaderExtractionEnabled(true);
         settings.selectFields(Attributes.ALL.toArray(new String[0]));
+        settings.setHeaderExtractionEnabled(true);
         settings.setEmptyValue("");
         settings.setNullValue("");
         return settings;

@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,6 +84,27 @@ public class ImportSamplesTest {
             FileInputStream fileInputStream = loadCsvFromResources("many_samples.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
             assertEquals(4, useCaseFactory.listSamples().listSamples().totalCount());
+        }
+    }
+    @Nested
+    @DisplayName("When CSV with excess columns is imported")
+    public class ImportExcessColumns {
+
+        @Test
+        @DisplayName("Then samples from the file will be successfully added to the storage")
+        public void testImportExcessColumns() throws Exception {
+
+            FileInputStream fileInputStream = loadCsvFromResources("excess_columns.csv");
+            useCaseFactory.importSamples().saveSamples(fileInputStream);
+            List<Sample> samples = useCaseFactory.listSamples().listSamples().samples();
+            Map<String, String> importedAttributes = samples.get(0).attributes();
+
+            assertEquals(4, samples.size());
+
+            assertEquals("test name8", importedAttributes.get(Attributes.COLLECTOR_NAME));
+            assertEquals("10 Oct", importedAttributes.get(Attributes.DATE_OF_COLLECTION));
+            assertEquals("dandelion", importedAttributes.get(Attributes.SAMPLE_TAXONOMY));
+            assertEquals("St. Petersburg", importedAttributes.get(Attributes.PLACE_OF_COLLECTION));
         }
     }
 }

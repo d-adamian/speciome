@@ -5,25 +5,22 @@ import com.epam.speciome.catalog.persistence.testmocks.InMemoryMapSampleStorage;
 import com.epam.speciome.catalog.webservice.models.SampleAttribute;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.util.Files;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -169,12 +166,26 @@ public class SampleControllerTest {
 
     @Test
     public void testImportFromCsv() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "file", "text/csv",
-                new FileInputStream(new File("src/test/resources/samples.csv")));
         mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
-                .file(file)
+                .file(getTestCsv("src/test/resources/samples.csv"))
                 .contentType("text/csv"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testImportExcessColumns() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
+                        .file(getTestCsv("src/test/resources/excess_columns.csv"))
+                        .contentType("text/csv"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testImportInvalidData() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
+                        .file(getTestCsv("src/test/resources/invalid_data.csv"))
+                        .contentType("text/csv"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -195,5 +206,10 @@ public class SampleControllerTest {
         Map<String, Object> postJson = Map.of("attributes", List.of(new SampleAttribute(attribute, value)));
 
         return new ObjectMapper().writeValueAsString(postJson);
+    }
+
+    private MockMultipartFile getTestCsv(String fileName) throws IOException {
+        return new MockMultipartFile("file", "file", "text/csv",
+                new FileInputStream(new File(fileName)));
     }
 }
