@@ -2,9 +2,11 @@ package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
+import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsException;
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
+import com.epam.speciome.catalog.webservice.exceptions.InvalidFileContentException;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
 import com.epam.speciome.catalog.webservice.exceptions.UnsupportedMediaTypeException;
@@ -308,6 +310,10 @@ public class SampleController {
                     description = "Import is successful", responseCode = "204"
             ),
             @ApiResponse(
+                    description = "Invalid input file", responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
                     description = "Not authenticated", responseCode = "401",
                     content = @Content(schema = @Schema(hidden = true))
             )
@@ -315,13 +321,16 @@ public class SampleController {
     @PostMapping(value = "/samples/upload/csv")
     @ResponseStatus(HttpStatus.OK)
     public void uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        Set<String> ALLOWED_IMPORT_TYPES = Set.of("application/vnd.ms-excel", "text/csv");
-        String contentType = file.getContentType();
-        if (!ALLOWED_IMPORT_TYPES.contains(contentType)) {
-            throw new UnsupportedMediaTypeException();
+        try {
+            Set<String> ALLOWED_IMPORT_TYPES = Set.of("application/vnd.ms-excel", "text/csv");
+            String contentType = file.getContentType();
+            if (!ALLOWED_IMPORT_TYPES.contains(contentType)) {
+                throw new UnsupportedMediaTypeException();
+            }
+            useCaseFactory.importSamples().saveSamples(file.getInputStream());
+        } catch (ImportFileWithMissingColumnsException e) {
+            throw new InvalidFileContentException(e.getMessage());
         }
-        useCaseFactory.importSamples().saveSamples(file.getInputStream());
 
     }
-
 }
