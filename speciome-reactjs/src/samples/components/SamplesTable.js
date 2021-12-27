@@ -52,7 +52,7 @@ function TableRow(props) {
             }
             <td>
                 {
-                    sample.archive ?
+                    sample.archived ?
                     (
                         <div>
                             <Button variant="primary" onClick={onRestore}>Restore</Button>

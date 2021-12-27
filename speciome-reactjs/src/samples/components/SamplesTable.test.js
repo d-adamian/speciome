@@ -11,7 +11,7 @@ const columnNames = ['col1_test', 'col2_test'];
 const samples = [
     {
         sampleId: 1,
-        archive: false,
+        archived: false,
         attributes: [
             {attribute: 'col1_test', value: 'val_s1_c1'},
             {attribute: 'col2_test', value: 'val_s1_c2'},
@@ -19,7 +19,7 @@ const samples = [
     },
     {
         sampleId: 2,
-        archive: false,
+        archived: false,
         attributes: [
             {attribute: 'col1_test', value: 'val_s2_c1'},
             {attribute: 'col2_test', value: 'val_s2_c2'},
@@ -27,14 +27,14 @@ const samples = [
     },
     {
         sampleId: 3,
-        archive: true,
+        archived: true,
         attributes: [
             {attribute: 'col1_test', value: 'val_s3_c1'},
             {attribute: 'col2_test', value: 'val_s3_c2'},
         ]
     },
 ];
-const numArchived = samples.filter(({archive}) => archive).length;
+const numArchived = samples.filter(({archived}) => archived).length;
 
 const server = setupServer(
     rest.get(`${BASE_URL}/attributes`, (req, res, ctx) => {
@@ -174,7 +174,7 @@ describe('Interaction tests', () => {
             server.use(
                 rest.put(`${BASE_URL}/sample/${sample.sampleId}/archive`, (req, res, ctx) => {
                     testCallback(sample.sampleId);
-                    const updatedSample = {...sample, archive: true}
+                    const updatedSample = {...sample, archived: true}
                     return res(ctx.status(204), ctx.json(updatedSample));
                 })
             )
@@ -197,7 +197,7 @@ describe('Interaction tests', () => {
             server.use(
                 rest.put(`${BASE_URL}/sample/${sample.sampleId}/unarchive`, (req, res, ctx) => {
                     testCallback(sample.sampleId);
-                    const updatedSample = {...sample, archive: false}
+                    const updatedSample = {...sample, archived: false}
                     return res(ctx.status(204), ctx.json(updatedSample));
                 })
             )
