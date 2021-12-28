@@ -94,9 +94,18 @@ public class SampleControllerTest {
     }
 
     @Test
+    public void testDeleteNonArchivedSampleReturnsNotFound() throws Exception {
+        long sampleId = postSampleWithoutAttributes();
+        String samplePath = "/sample/" + sampleId;
+        mockMvc.perform(delete(samplePath))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testSampleNotFoundAfterDeletion() throws Exception {
         long sampleId = postSampleWithoutAttributes();
         String samplePath = "/sample/" + sampleId;
+        mockMvc.perform(put("/sample/" + sampleId +  "/archive"));
         mockMvc.perform(delete(samplePath)).andExpect(status().isNoContent());
         mockMvc.perform(get(samplePath)).andExpect(status().isNotFound());
     }
