@@ -2,10 +2,12 @@ package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
+import com.epam.speciome.catalog.domain.exceptions.SampleNotArchivedException;
 import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsException;
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
+import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidFileContentException;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
@@ -147,8 +149,9 @@ public class SampleController {
     }
 
     @Operation(
-            summary = "Delete sample",
-            description = "Deletes given sample"
+            summary = "Delete not archived sample",
+            description = "Deletes given not archived sample"
+
     )
     @ApiResponses({
             @ApiResponse(
@@ -156,6 +159,9 @@ public class SampleController {
             ),
             @ApiResponse(
                     description = "Sample not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Sample is archived and cannot be deleted", responseCode = "403"
             ),
             @ApiResponse(
                     description = "Not authenticated", responseCode = "401"
@@ -170,6 +176,8 @@ public class SampleController {
             useCaseFactory.deleteSample().deleteSample(sampleId);
         } catch (SampleNotFoundException e) {
             throw new NotFoundException(e.getMessage());
+        } catch (SampleNotArchivedException e) {
+            throw new ForbiddenException(e.getMessage());
         }
     }
 
