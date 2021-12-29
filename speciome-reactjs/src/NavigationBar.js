@@ -14,6 +14,12 @@ function SignedOutNav() {
 function SignedInNav(props) {
     return (
         <Nav>
+            <Nav.Link as={Link} to="/">
+                Samples
+            </Nav.Link>
+            <Nav.Link as={Link} to="/collections">
+                Collections
+            </Nav.Link>
             <Navbar.Text>
                 Signed in as {props.userEmail}
             </Navbar.Text>
@@ -26,15 +32,15 @@ function SignedInNav(props) {
 
 function NavigationBar(props) {
     return (
-        <Navbar bg="light" expand="lg">
-            <Container>
+        <Container>
+            <Navbar bg="light" expand="lg">
                 <Navbar.Brand as={Link} to="/">Speciome</Navbar.Brand>
                 {props.userEmail === '' ?
                     <SignedOutNav/> :
                     <SignedInNav userEmail={props.userEmail} logoutCallback={props.logoutCallback}/>
                 }
-            </Container>
-        </Navbar>
+            </Navbar>
+        </Container>
     );
 }
 

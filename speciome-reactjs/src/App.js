@@ -13,9 +13,10 @@ import './App.css';
 import {getUserDetails, logout} from "./users/api/UserAPI";
 
 import LoginForm from "./users/components/LoginForm";
-import MainPage from "./MainPage";
 import NavigationBar from "./NavigationBar";
 import RegistrationForm from "./users/components/RegistrationForm";
+import SamplesTable from "./samples/components/SamplesTable";
+import CollectionsList from "./collections/components/CollectionsList";
 
 function App() {
     const [userEmail, setUserEmail] = useState('');
@@ -52,11 +53,11 @@ function App() {
         }
     }
 
-    function WrappedMainPage(props) {
+    function WrappedPage(props) {
         if (props.userEmail === '') {
             return <Redirect to="/login"/>;
         } else {
-            return <MainPage/>;
+            return props.children;
         }
     }
 
@@ -66,7 +67,14 @@ function App() {
             <hr/>
             <Switch>
                 <Route exact path="/">
-                    <WrappedMainPage userEmail={userEmail}/>
+                    <WrappedPage userEmail={userEmail}>
+                        <SamplesTable/>
+                    </WrappedPage>
+                </Route>
+                <Route exact path="/collections">
+                    <WrappedPage userEmail={userEmail}>
+                        <CollectionsList/>
+                    </WrappedPage>
                 </Route>
                 <Route exact path="/register">
                     <WrappedRegistrationForm userEmail={userEmail}/>
