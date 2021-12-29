@@ -1,20 +1,25 @@
 package com.epam.speciome.catalog;
 
+import com.epam.speciome.catalog.domain.collections.AddCollection;
+import com.epam.speciome.catalog.domain.collections.GetCollection;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.domain.users.GetUserDetails;
 import com.epam.speciome.catalog.domain.users.GetUserPassword;
 import com.epam.speciome.catalog.domain.users.LogInUser;
 import com.epam.speciome.catalog.domain.users.RegisterUser;
+import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
 
 public class UseCaseFactory {
     private final UserStorage userStorage;
     private final SampleStorage sampleStorage;
+    private final CollectionStorage collectionStorage;
 
-    public UseCaseFactory(UserStorage userStorage, SampleStorage sampleStorage) {
+    public UseCaseFactory(UserStorage userStorage, SampleStorage sampleStorage, CollectionStorage collectionStorage) {
         this.userStorage = userStorage;
         this.sampleStorage = sampleStorage;
+        this.collectionStorage = collectionStorage;
     }
 
     public RegisterUser registerUser() {
@@ -67,5 +72,13 @@ public class UseCaseFactory {
 
     public UnArchiveSample unArchiveSample() {
         return new UnArchiveSample(sampleStorage);
+    }
+
+    public AddCollection addCollection() {
+        return new AddCollection(collectionStorage);
+    }
+
+    public GetCollection getCollection() {
+        return new GetCollection(collectionStorage);
     }
 }

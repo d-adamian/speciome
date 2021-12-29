@@ -1,6 +1,8 @@
 package com.epam.speciome.catalog.webservice;
 
 import com.epam.speciome.catalog.UseCaseFactory;
+import com.epam.speciome.catalog.persistence.spring.collections.CollectionJpaRepository;
+import com.epam.speciome.catalog.persistence.spring.collections.SpringCollectionStorage;
 import com.epam.speciome.catalog.persistence.spring.samples.SampleJpaRepository;
 import com.epam.speciome.catalog.persistence.spring.samples.SpringSampleStorage;
 import com.epam.speciome.catalog.persistence.spring.users.SpringUserStorage;
@@ -21,11 +23,14 @@ public class AppConfiguration {
     @Autowired
     private SampleJpaRepository sampleJpaRepository;
 
+    @Autowired
+    private CollectionJpaRepository collectionJpaRepository;
+
     @Bean
     public UseCaseFactory useCaseFactory() {
         return new UseCaseFactory(
                 new SpringUserStorage(userJpaRepository),
-                new SpringSampleStorage(sampleJpaRepository)
-        );
+                new SpringSampleStorage(sampleJpaRepository),
+                new SpringCollectionStorage(collectionJpaRepository));
     }
 }
