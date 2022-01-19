@@ -5,7 +5,7 @@ import org.hibernate.annotations.Proxy;
 import javax.persistence.*;
 
 @Entity(name = "SampleAttribute")
-@Table(name = "sample_attribute")
+@Table(name = "sample_attribute", schema = "catalog")
 @Proxy(lazy = false)
 public class SampleAttributeEntity {
     @Id

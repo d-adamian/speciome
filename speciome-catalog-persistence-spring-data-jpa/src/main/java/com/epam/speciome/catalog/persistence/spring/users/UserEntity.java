@@ -4,8 +4,10 @@ import com.epam.speciome.catalog.persistence.api.users.UserData;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Entity(name = "user")
+@Entity(name = "user_")
+@Table(name = "user_", schema = "catalog")
 public class UserEntity {
 
     @Id
