@@ -6,7 +6,7 @@ import org.hibernate.annotations.Proxy;
 import javax.persistence.*;
 
 @Entity(name = "collection")
-@Table(name = "collection")
+@Table(name = "collection", schema = "catalog")
 @Proxy(lazy = false)
 public class CollectionEntity {
 

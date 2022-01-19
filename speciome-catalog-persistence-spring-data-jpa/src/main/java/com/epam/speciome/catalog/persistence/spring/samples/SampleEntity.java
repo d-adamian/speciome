@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity(name = "sample")
-@Table(name = "sample")
+@Table(name = "sample", schema = "catalog")
 @Proxy(lazy = false)
 public class SampleEntity {
     private static final ZoneId ZONE_ID_UTC = ZoneId.of("UTC");
