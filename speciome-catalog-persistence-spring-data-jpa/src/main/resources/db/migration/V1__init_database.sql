@@ -1,14 +1,14 @@
-CREATE SCHEMA IF NOT EXISTS catalog;
+SET search_path TO catalog;
 
 CREATE SEQUENCE hibernate_sequence START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE catalog.user_ (
-    email VARCHAR(255) PRIMARY KEY NOT NULL,
+CREATE TABLE users (
+    email VARCHAR PRIMARY KEY NOT NULL,
     password_hash VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE catalog.sample (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE samples (
+    sample_id BIGSERIAL PRIMARY KEY,
     archived BOOLEAN NOT NULL,
     created_at_utc TIMESTAMP NOT NULL,
     created_at_zone VARCHAR(255) NOT NULL,
@@ -16,14 +16,14 @@ CREATE TABLE catalog.sample (
     updated_at_zone VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE catalog.sample_attribute (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE sample_attributes (
+    sample_attribute_id BIGSERIAL PRIMARY KEY,
     attribute VARCHAR(255) NOT NULL,
-    value VARCHAR(255) NOT NULL,
-    sample_id BIGINT NOT NULL REFERENCES sample(id) ON DELETE CASCADE
+    value TEXT NOT NULL,
+    sample_id BIGINT REFERENCES samples(sample_id) ON DELETE CASCADE
 );
 
-CREATE TABLE catalog.collection (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE collections (
+    collection_id BIGSERIAL PRIMARY KEY,
     collection_name VARCHAR(255) NOT NULL
 );
