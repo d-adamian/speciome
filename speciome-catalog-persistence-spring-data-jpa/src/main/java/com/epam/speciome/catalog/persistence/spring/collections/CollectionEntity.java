@@ -6,12 +6,13 @@ import org.hibernate.annotations.Proxy;
 import javax.persistence.*;
 
 @Entity(name = "collection")
-@Table(name = "collection", schema = "catalog")
+@Table(name = "collections", schema = "catalog")
 @Proxy(lazy = false)
 public class CollectionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "collection_id")
     private long id;
 
     private String collectionName;

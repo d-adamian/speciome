@@ -5,16 +5,20 @@ import org.hibernate.annotations.Proxy;
 import javax.persistence.*;
 
 @Entity(name = "SampleAttribute")
-@Table(name = "sample_attribute", schema = "catalog")
+@Table(name = "sample_attributes", schema = "catalog")
 @Proxy(lazy = false)
 public class SampleAttributeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "sample_attribute_id")
     private Long id;
     private String attribute;
+
+    @Lob
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sample_id")
     private SampleEntity sample;
 
     public String getAttribute() {

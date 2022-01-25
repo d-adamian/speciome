@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity(name = "sample")
-@Table(name = "sample", schema = "catalog")
+@Table(name = "samples", schema = "catalog")
 @Proxy(lazy = false)
 public class SampleEntity {
     private static final ZoneId ZONE_ID_UTC = ZoneId.of("UTC");
@@ -21,6 +21,7 @@ public class SampleEntity {
     @SuppressWarnings("unused") // assigned by Hibernate
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "sample_id")
     private Long id;
 
     private String createdAtZone;

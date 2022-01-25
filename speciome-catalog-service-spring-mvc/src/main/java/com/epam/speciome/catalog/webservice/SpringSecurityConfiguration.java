@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,7 +40,6 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/swagger-ui.html").permitAll() // Allow access to Swagger UI
                 .mvcMatchers("/swagger-ui/**").permitAll()
                 .mvcMatchers("/v3/api-docs/**").permitAll() // Allow access to OpenAPI JSON endpoint
-                .mvcMatchers("/h2-ui/**").permitAll() // Allow access to H2 console. TODO: remove in prod!!!
                 .mvcMatchers("/login").permitAll() // Allow access to login endpoint
                 .anyRequest().authenticated()
                 .and()

@@ -1,0 +1,18 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: ci
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      use-new-id-generator-mappings: false
+    show-sql: true
+  flyway:
+    schemas: catalog
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        security: DEBUG
