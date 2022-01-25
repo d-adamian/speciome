@@ -1,12 +1,16 @@
 package com.epam.speciome.catalog.persistence.spring.collections;
 
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
+import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 public class SpringCollectionStorage implements CollectionStorage {
@@ -21,6 +25,18 @@ public class SpringCollectionStorage implements CollectionStorage {
         CollectionEntity collectionEntity = CollectionEntity.fromCollectionData(collectionData);
         collectionJpaRepository.saveAndFlush(collectionEntity);
         return collectionEntity.getId();
+    }
+
+    @Override
+    public ListCollectionsResult listCollections() {
+        List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll();
+        Map<Long, CollectionData> collectionDataMap = collectionEntityList
+                .stream()
+                .collect(Collectors.toMap(
+                        CollectionEntity::getId,
+                        CollectionEntity::asCollectionData
+                ));
+        return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap);
     }
 
     @Override
