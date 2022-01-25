@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface CollectionStorageContract {
@@ -20,7 +21,40 @@ public interface CollectionStorageContract {
         Assertions.assertThat(getResult).isNotNull();
     }
 
-    private static CollectionData collectionOne()  {
+    @Test
+    @DisplayName("When no collections have been added to storage. Then no collections are listed.")
+    default void testNoCollectionsInEmptyStorage() {
+        ListCollectionsResult listCollectionsResult = collectionStorage().listCollections();
+        Assertions.assertThat(listCollectionsResult).isNotNull();
+        Assertions.assertThat(listCollectionsResult.getTotalCount()).isEqualTo(0);
+        Assertions.assertThat(listCollectionsResult.getCollectionDataMap()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("When two collections have been added to storage. Then both are listed")
+    default void testTwoCollectionsAreListed() {
+        CollectionStorage collectionStorage = collectionStorage();
+        CollectionData collection1 = collectionOne();
+        CollectionData collection2 = collectionTwo();
+
+        long collectionIdOne = collectionStorage.addCollection(collection1);
+        long collectionIdTwo = collectionStorage.addCollection(collection2);
+
+        ListCollectionsResult listCollectionsResult = collectionStorage.listCollections();
+        Assertions.assertThat(listCollectionsResult.getCollectionDataMap())
+                .isNotNull()
+                .hasSize(2)
+                .isEqualTo(Map.of(
+                        collectionIdOne, collection1,
+                        collectionIdTwo, collection2
+                ));
+    }
+
+    private static CollectionData collectionOne() {
         return new CollectionData("Herbs");
+    }
+
+    private static CollectionData collectionTwo() {
+        return new CollectionData("Animals");
     }
 }
