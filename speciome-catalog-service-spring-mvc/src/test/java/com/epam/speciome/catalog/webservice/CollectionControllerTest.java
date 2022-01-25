@@ -53,4 +53,31 @@ public class CollectionControllerTest {
         CollectionRequest request = new CollectionRequest(collectionName);
         return new ObjectMapper().writeValueAsString(request);
     }
+
+    @Test
+    public void testListEmptyCollections() throws Exception {
+        mockMvc.perform(get("/collections"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void testListCollectionsReturnsCreatedCollection() throws Exception {
+        String collectionName1 = "Berries";
+        String collectionName2 = "Tomatoes";
+        String urlPath = "/collection";
+
+        String putBody = createCollectionRequest(collectionName1);
+        String putBody2 = createCollectionRequest(collectionName2);
+
+        mockMvc.perform(post(urlPath).contentType(MediaType.APPLICATION_JSON).content(putBody));
+        mockMvc.perform(post(urlPath).contentType(MediaType.APPLICATION_JSON).content(putBody2));
+
+        String contentAsString = mockMvc.perform(get("/collections"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Assertions.assertTrue(contentAsString.contains(collectionName1));
+        Assertions.assertTrue(contentAsString.contains(collectionName2));
+    }
 }
