@@ -19,7 +19,7 @@ CREATE TABLE samples (
 CREATE TABLE sample_attributes (
     sample_attribute_id BIGSERIAL PRIMARY KEY,
     attribute VARCHAR(255) NOT NULL,
-    value TEXT NOT NULL,
+    value VARCHAR NOT NULL,
     sample_id BIGINT REFERENCES samples(sample_id) ON DELETE CASCADE
 );
 
