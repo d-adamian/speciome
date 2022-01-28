@@ -20,7 +20,7 @@ public class SampleEntity {
 
     @SuppressWarnings("unused") // assigned by Hibernate
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sample_id")
     private Long id;
 

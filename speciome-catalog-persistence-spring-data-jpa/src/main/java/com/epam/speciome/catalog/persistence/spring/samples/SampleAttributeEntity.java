@@ -9,12 +9,10 @@ import javax.persistence.*;
 @Proxy(lazy = false)
 public class SampleAttributeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sample_attribute_id")
     private Long id;
     private String attribute;
-
-    @Lob
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)

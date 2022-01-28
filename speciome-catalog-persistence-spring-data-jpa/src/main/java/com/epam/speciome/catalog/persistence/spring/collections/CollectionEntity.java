@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class CollectionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "collection_id")
     private long id;
 
