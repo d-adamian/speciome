@@ -1,20 +1,45 @@
-import Button from "react-bootstrap/Button";
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import CollectionDialog from "./CollectionDialog";
-import {Alert} from "react-bootstrap";
 
-function CreateSuccessAlert(props) {
-    const {collectionId, onClose} = props;
-    if (collectionId !== null) {
-        return <Alert variant="success" dismissible onClose={onClose}>Created collection {collectionId}</Alert>
-    } else {
-        return null;
+import {Button, Spinner, Table} from "react-bootstrap";
+import {listCollections} from "../api/CollectionsAPI";
+
+function CollectionsTable(props) {
+    const {collections} = props;
+
+    if (collections.length === 0) {
+        return (<p>You do not have any collection yet</p>);
     }
+    return (
+        <Table>
+            <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+                collections.map(({collectionName}, index) => {
+                    return (
+                        <tr key={index}>
+                            <td>
+                                {collectionName}
+                            </td>
+                        </tr>
+                    )
+                })
+            }
+            </tbody>
+        </Table>
+    )
 }
 
 function CollectionsList() {
+    const [collections, setCollections] = useState([]);
     const [creating, setCreating] = useState(false);
-    const [collectionId, setCollectionId] = useState(null);
+    const [fetching, setFetching] = useState(true);
 
     function handleCreateCancelled() {
         setCreating(false);
@@ -22,26 +47,40 @@ function CollectionsList() {
 
     function handleCreateCompleted(collectionId) {
         setCreating(false);
-        setCollectionId(collectionId);
+        reloadTable();
     }
 
-    return (
-        <div className="speciome-collections-list">
-            <CollectionDialog
-                show={creating}
-                onCancel={handleCreateCancelled}
-                onComplete={handleCreateCompleted}
-            />
-            <CreateSuccessAlert
-                collectionId={collectionId}
-                onClose={() => setCollectionId(null)}
-            />
-            <p>You do not have any collection yet</p>
-            <Button onClick={() => setCreating(true)}>
-                Create Collection
-            </Button>
-        </div>
-    );
+    function reloadTable() {
+        setFetching(true);
+        listCollections().then(listResponse => {
+            setCollections(listResponse.collections);
+            setFetching(false);
+        });
+    }
+
+    useEffect(() => {
+        reloadTable();
+    }, []);
+
+    if (fetching) {
+        return (<Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </Spinner>);
+    } else {
+        return (
+            <div className="speciome-collections-list">
+                <CollectionDialog
+                    show={creating}
+                    onCancel={handleCreateCancelled}
+                    onComplete={handleCreateCompleted}
+                />
+                <CollectionsTable collections={collections}/>
+                <Button onClick={() => setCreating(true)}>
+                    Create Collection
+                </Button>
+            </div>
+        );
+    }
 }
 
 export default CollectionsList;

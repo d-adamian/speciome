@@ -14,4 +14,11 @@ function addCollection(name) {
         .then(({collectionId}) => collectionId);
 }
 
-export {BASE_URL, addCollection};
+function listCollections() {
+    const url = `${BASE_URL}/collections`
+
+    return axios.get(url)
+        .then(response => response.data);
+}
+
+export {BASE_URL, addCollection, listCollections};
