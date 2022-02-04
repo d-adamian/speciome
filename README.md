@@ -47,3 +47,4 @@ In alphabetical order:
 * Olga Trubetskaia
 * Valeriia Rodina
 * Daniil Shakhmovedev
+* Daniil Zatiaev
