@@ -13,9 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Given that CSV file for importing is uploaded")
 public class ImportSamplesTest {
@@ -66,10 +66,11 @@ public class ImportSamplesTest {
         @Test
         @DisplayName("Then one sample from the file will be added to samples storage")
         public void testImportSingleSample() throws Exception {
-
             FileInputStream fileInputStream = loadCsvFromResources("samples.csv");
-            useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(1, useCaseFactory.listSamples().listSamples().totalCount());
+            List<Long> samplesId = useCaseFactory.importSamples().saveSamples(fileInputStream);
+            ListSamples.Result retrievedSamples = useCaseFactory.listSamples().listSamples();
+            assertEquals(1, retrievedSamples.totalCount());
+            assertEquals(samplesId.get(0), retrievedSamples.samples().get(0).sampleId());
         }
     }
 
@@ -80,12 +81,17 @@ public class ImportSamplesTest {
         @Test
         @DisplayName("Then all samples from the file will be added to samples storage")
         public void testImportSeveralSamples() throws Exception {
-
             FileInputStream fileInputStream = loadCsvFromResources("many_samples.csv");
-            useCaseFactory.importSamples().saveSamples(fileInputStream);
-            assertEquals(4, useCaseFactory.listSamples().listSamples().totalCount());
+            List<Long> samplesId = useCaseFactory.importSamples().saveSamples(fileInputStream);
+            ListSamples.Result retrievedSamples = useCaseFactory.listSamples().listSamples();
+            List<Long> retrievedSamplesId = retrievedSamples.samples().stream()
+                            .map(Sample::sampleId).collect(Collectors.toList());
+
+            assertEquals(4, retrievedSamples.totalCount());
+            assertEquals(samplesId, retrievedSamplesId);
         }
     }
+
     @Nested
     @DisplayName("When CSV with excess columns is imported")
     public class ImportExcessColumns {
@@ -96,10 +102,10 @@ public class ImportSamplesTest {
 
             FileInputStream fileInputStream = loadCsvFromResources("excess_columns.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
-            List<Sample> samples = useCaseFactory.listSamples().listSamples().samples();
-            Map<String, String> importedAttributes = samples.get(0).attributes();
+            ListSamples.Result retievedSamples = useCaseFactory.listSamples().listSamples();
+            Map<String, String> importedAttributes = retievedSamples.samples().get(0).attributes();
 
-            assertEquals(4, samples.size());
+            assertEquals(4, retievedSamples.totalCount());
 
             assertEquals("test name8", importedAttributes.get(Attributes.COLLECTOR_NAME));
             assertEquals("10 Oct", importedAttributes.get(Attributes.DATE_OF_COLLECTION));

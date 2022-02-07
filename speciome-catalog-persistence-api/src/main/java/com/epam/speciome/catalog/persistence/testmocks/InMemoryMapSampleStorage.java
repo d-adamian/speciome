@@ -5,8 +5,10 @@ import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InMemoryMapSampleStorage implements SampleStorage {
     private long maxSampleId = 0;
@@ -38,6 +40,11 @@ public class InMemoryMapSampleStorage implements SampleStorage {
     @Override
     public void updateSample(Long sampleId, SampleData sampleData) {
         samplesById.put(sampleId, sampleData);
+    }
+
+    @Override
+    public List<Long> addMultipleSamples(List<SampleData> samples) {
+        return samples.stream().map(this::addSample).collect(Collectors.toList());
     }
 
     public void clear() {

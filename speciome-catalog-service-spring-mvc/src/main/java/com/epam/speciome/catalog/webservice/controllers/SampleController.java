@@ -7,11 +7,7 @@ import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsE
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
-import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
-import com.epam.speciome.catalog.webservice.exceptions.InvalidFileContentException;
-import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
-import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
-import com.epam.speciome.catalog.webservice.exceptions.UnsupportedMediaTypeException;
+import com.epam.speciome.catalog.webservice.exceptions.*;
 import com.epam.speciome.catalog.webservice.models.ListSamplesResponse;
 import com.epam.speciome.catalog.webservice.models.SampleAttribute;
 import com.epam.speciome.catalog.webservice.models.SampleRequest;
@@ -265,26 +261,6 @@ public class SampleController {
         }
     }
 
-    private static Map<String, String> convertAttributes(List<SampleAttribute> sampleAttributes) {
-        return sampleAttributes.stream()
-                .collect(Collectors.toMap(SampleAttribute::getAttribute, SampleAttribute::getValue));
-    }
-
-    private static final class CreateSampleResponse {
-        private final Long sampleId;
-
-        CreateSampleResponse(Long sampleId) {
-            this.sampleId = sampleId;
-        }
-
-        @SuppressWarnings("unused") // getter is used for JSON
-        @Schema(description = "Internal sample identifier", example = "1")
-        @JsonProperty
-        Long getSampleId() {
-            return sampleId;
-        }
-    }
-
     @Operation(
             summary = "Download samples",
             description = "Download a CSV file with available samples"
@@ -315,20 +291,24 @@ public class SampleController {
     )
     @ApiResponses({
             @ApiResponse(
-                    description = "Import is successful", responseCode = "204"
+                    description = "Import is successful", responseCode = "207"
             ),
             @ApiResponse(
-                    description = "Invalid input file", responseCode = "400",
+                    description = "Invalid file content", responseCode = "400",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     description = "Not authenticated", responseCode = "401",
                     content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    description = "Unsupported media type", responseCode = "415",
+                    content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping(value = "/samples/upload/csv")
+    @PostMapping(value = "/samples/upload/csv", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.OK)
-    public void uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
+    public void uploadFile(@RequestPart("file") MultipartFile file) throws Exception {
         try {
             Set<String> ALLOWED_IMPORT_TYPES = Set.of("application/vnd.ms-excel", "text/csv");
             String contentType = file.getContentType();
@@ -337,8 +317,27 @@ public class SampleController {
             }
             useCaseFactory.importSamples().saveSamples(file.getInputStream());
         } catch (ImportFileWithMissingColumnsException e) {
-            throw new InvalidFileContentException(e.getMessage());
+            throw new UnsupportedFileContentException(e.getMessage());
+        }
+    }
+
+    private static Map<String, String> convertAttributes(List<SampleAttribute> sampleAttributes) {
+        return sampleAttributes.stream()
+                .collect(Collectors.toMap(SampleAttribute::getAttribute, SampleAttribute::getValue));
+    }
+
+    private static final class CreateSampleResponse {
+        private final Long sampleId;
+
+        CreateSampleResponse(Long sampleId) {
+            this.sampleId = sampleId;
         }
 
+        @SuppressWarnings("unused") // getter is used for JSON
+        @Schema(description = "Internal sample identifier", example = "1")
+        @JsonProperty
+        Long getSampleId() {
+            return sampleId;
+        }
     }
 }

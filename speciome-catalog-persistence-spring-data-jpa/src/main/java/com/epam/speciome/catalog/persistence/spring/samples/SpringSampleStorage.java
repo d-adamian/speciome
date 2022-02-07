@@ -65,4 +65,15 @@ public class SpringSampleStorage implements SampleStorage {
         sampleEntity.setId(sampleId);
         sampleJpaRepository.saveAndFlush(sampleEntity);
     }
+
+    @Override
+    public List<Long> addMultipleSamples(List<SampleData> samples) {
+        List<SampleEntity> entities = samples.stream()
+                .map(SampleEntity::fromSampleData)
+                .collect(Collectors.toList());
+
+        List<SampleEntity> savedEntities = sampleJpaRepository.saveAll(entities);
+        return savedEntities.stream().map(SampleEntity::getId)
+                .collect(Collectors.toList());
+    }
 }

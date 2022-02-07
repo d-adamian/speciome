@@ -177,7 +177,7 @@ public class SampleControllerTest {
     public void testImportFromCsv() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
                 .file(getTestCsv("src/test/resources/samples.csv"))
-                .contentType("text/csv"))
+                .contentType("multipart/form-data"))
                 .andExpect(status().isOk());
     }
 
@@ -185,15 +185,15 @@ public class SampleControllerTest {
     public void testImportExcessColumns() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
                         .file(getTestCsv("src/test/resources/excess_columns.csv"))
-                        .contentType("text/csv"))
+                        .contentType("multipart/form-data"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testImportInvalidData() throws Exception {
+    public void testImportUnsupportedContent() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
                         .file(getTestCsv("src/test/resources/invalid_data.csv"))
-                        .contentType("text/csv"))
+                        .contentType("multipart/form-data"))
                 .andExpect(status().isBadRequest());
     }
 
