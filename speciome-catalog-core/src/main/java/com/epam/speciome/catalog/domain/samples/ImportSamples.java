@@ -54,15 +54,12 @@ public final class ImportSamples {
         return attributes;
     }
 
-    public void saveSamples(InputStream stream) throws IOException {
+    public List<Long> saveSamples(InputStream stream) throws IOException {
         List<String[]> list = readFile(stream);
         if (!isAllCollumnsInCSVFile()) {
             throw new ImportFileWithMissingColumnsException();
         }
-        List<SampleData> data = readBody(list);
-        for (SampleData sample : data) {
-            sampleStorage.addSample(sample);
-        }
+        return sampleStorage.addMultipleSamples(readBody(list));
     }
 
     private boolean isAllCollumnsInCSVFile() {
