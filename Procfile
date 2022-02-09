@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/libs/speciome-catalog-service-spring-mvc.jar
+web: java -Dserver.port=$PORT -Dspring.profiles.active=heroku -jar build/libs/speciome-catalog-service-spring-mvc.jar
