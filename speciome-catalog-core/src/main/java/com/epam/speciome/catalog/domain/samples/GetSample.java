@@ -1,10 +1,8 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
-import com.epam.speciome.catalog.persistence.api.samples.SampleData;
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
-
-import java.util.Optional;
 
 public final class GetSample {
     private final SampleStorage sampleStorage;
@@ -14,11 +12,12 @@ public final class GetSample {
     }
 
     public Result getSample(Long sampleId) {
-        Optional<SampleData> sampleDataOptional = sampleStorage.getSampleById(sampleId);
-        return sampleDataOptional
-                .map(sampleData -> new Sample(sampleId, sampleData))
-                .map(sample -> new Result(sampleId, sample))
-                .orElseThrow(() -> new SampleNotFoundException(sampleId));
+        try {
+            Sample sample = new Sample(sampleId, sampleStorage.getSampleById(sampleId));
+            return new Result(sampleId, sample);
+        } catch (SampleIsNullException e) {
+            throw new SampleNotFoundException(sampleId, e);
+        }
     }
 
     public record Result(Long sampleId, Sample sample) {

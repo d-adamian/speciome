@@ -6,7 +6,6 @@ import com.epam.speciome.catalog.domain.collections.ListCollections;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.domain.users.GetUserDetails;
 import com.epam.speciome.catalog.domain.users.GetUserPassword;
-import com.epam.speciome.catalog.domain.users.LogInUser;
 import com.epam.speciome.catalog.domain.users.RegisterUser;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
@@ -25,10 +24,6 @@ public class UseCaseFactory {
 
     public RegisterUser registerUser() {
         return new RegisterUser(userStorage);
-    }
-
-    public LogInUser logInUser() {
-        return new LogInUser(userStorage);
     }
 
     public GetUserDetails getUserDetails() {

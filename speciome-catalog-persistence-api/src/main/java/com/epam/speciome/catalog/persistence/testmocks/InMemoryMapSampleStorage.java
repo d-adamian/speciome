@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.persistence.testmocks;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import com.epam.speciome.catalog.persistence.api.samples.ListSamplesResult;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
@@ -7,7 +8,6 @@ import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InMemoryMapSampleStorage implements SampleStorage {
@@ -28,8 +28,12 @@ public class InMemoryMapSampleStorage implements SampleStorage {
     }
 
     @Override
-    public Optional<SampleData> getSampleById(Long sampleId) {
-        return Optional.ofNullable(samplesById.get(sampleId));
+    public SampleData getSampleById(Long sampleId) {
+        SampleData sampleData = samplesById.get(sampleId);
+        if (sampleData == null) {
+            throw new SampleIsNullException(sampleId);
+        }
+        return sampleData;
     }
 
     @Override

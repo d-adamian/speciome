@@ -1,12 +1,12 @@
 package com.epam.speciome.catalog.persistence.testmocks;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.UserIsNullException;
 import com.epam.speciome.catalog.persistence.api.users.UserAlreadyExistsException;
 import com.epam.speciome.catalog.persistence.api.users.UserData;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public final class InMemoryMapUserStorage implements UserStorage {
     private final Map<String, UserData> userDataMap = new HashMap<>();
@@ -21,7 +21,11 @@ public final class InMemoryMapUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<UserData> loadUserData(String email) {
-        return Optional.ofNullable(userDataMap.get(email));
+    public UserData loadUserData(String email) {
+        UserData userData = userDataMap.get(email);
+        if (userData == null) {
+            throw new UserIsNullException(email);
+        }
+        return userData;
     }
 }

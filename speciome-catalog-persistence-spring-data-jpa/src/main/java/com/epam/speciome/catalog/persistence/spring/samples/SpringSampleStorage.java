@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.persistence.spring.samples;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import com.epam.speciome.catalog.persistence.api.samples.ListSamplesResult;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -38,7 +38,7 @@ public class SpringSampleStorage implements SampleStorage {
     }
 
     @Override
-    public Optional<SampleData> getSampleById(Long sampleId) {
+    public SampleData getSampleById(Long sampleId) {
         SampleEntity sampleEntity;
         try {
             sampleEntity = sampleJpaRepository.getById(sampleId);
@@ -51,7 +51,10 @@ public class SpringSampleStorage implements SampleStorage {
                 throw e;
             }
         }
-        return Optional.ofNullable(sampleEntity).map(SampleEntity::asSampleData);
+        if (sampleEntity == null) {
+            throw new SampleIsNullException(sampleId);
+        }
+        return SampleEntity.asSampleData(sampleEntity);
     }
 
     @Override

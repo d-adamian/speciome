@@ -42,7 +42,7 @@ public class GetUserDetailsTest {
 
         @BeforeEach
         public void setUp() {
-            user = useCaseFactory.logInUser().logIn(EMAIL, PASSWORD);
+            user = new User(EMAIL); // proper authentication is executed by Spring Security
         }
 
         @Test

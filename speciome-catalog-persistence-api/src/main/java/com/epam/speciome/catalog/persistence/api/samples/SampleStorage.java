@@ -1,14 +1,20 @@
 package com.epam.speciome.catalog.persistence.api.samples;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface SampleStorage {
     Long addSample(SampleData sampleData);
 
     ListSamplesResult listSamples();
 
-    Optional<SampleData> getSampleById(Long sampleId);
+    /**
+     *
+     * @throws SampleIsNullException
+     * if a Sample with the given id cannot be found
+     */
+    SampleData getSampleById(Long sampleId);
 
     void deleteSampleById(Long sampleId);
 

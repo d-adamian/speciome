@@ -1,10 +1,15 @@
 package com.epam.speciome.catalog.persistence.api.users;
 
-import java.util.Optional;
+import com.epam.speciome.catalog.persistence.api.exceptions.UserIsNullException;
 
 public interface UserStorage {
 
     void addUser(UserData userData);
 
-    Optional<UserData> loadUserData(String email);
+    /**
+     *
+     * @throws UserIsNullException
+     * if a User with the given email cannot be found
+     */
+    UserData loadUserData(String email);
 }

@@ -15,7 +15,7 @@ public final class GetUserDetails {
 
     public Response getUserDetails(User user) {
         if (user == null) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("User not found");
         } else {
             String email = user.email();
             return new Response(email);

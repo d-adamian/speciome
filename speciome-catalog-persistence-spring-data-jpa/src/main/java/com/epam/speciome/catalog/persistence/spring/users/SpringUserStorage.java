@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.persistence.spring.users;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.UserIsNullException;
 import com.epam.speciome.catalog.persistence.api.users.UserAlreadyExistsException;
 import com.epam.speciome.catalog.persistence.api.users.UserData;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
@@ -25,9 +26,13 @@ public class SpringUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<UserData> loadUserData(String email) {
-        return repository.findByEmail(email).stream()
+    public UserData loadUserData(String email) {
+        Optional<UserData> userDataOptional = repository.findByEmail(email).stream()
                 .map(UserEntity::toUserData)
                 .findFirst();
+        if (userDataOptional.isEmpty()) {
+            throw new UserIsNullException(email);
+        }
+        return userDataOptional.get();
     }
 }
