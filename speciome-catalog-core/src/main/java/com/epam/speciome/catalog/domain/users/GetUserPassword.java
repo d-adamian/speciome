@@ -1,6 +1,6 @@
 package com.epam.speciome.catalog.domain.users;
 
-import com.epam.speciome.catalog.persistence.api.users.UserData;
+import com.epam.speciome.catalog.persistence.api.exceptions.UserIsNullException;
 import com.epam.speciome.catalog.persistence.api.users.UserStorage;
 
 public final class GetUserPassword {
@@ -11,13 +11,16 @@ public final class GetUserPassword {
     }
 
     public String getUserPassword(String email) {
-        return userStorage.loadUserData(email).map(UserData::passwordHash)
-                .orElseThrow(UserNotFoundException::new);
+        try {
+            return userStorage.loadUserData(email).passwordHash();
+        } catch (UserIsNullException e) {
+            throw new UserNotFoundException(email, e);
+        }
     }
 
     public static final class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException() {
-            super("User not found");
+        public UserNotFoundException(String email, Throwable e) {
+            super("User not found for email: " + email, e);
         }
     }
 }

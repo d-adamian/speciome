@@ -3,13 +3,13 @@ package com.epam.speciome.catalog.persistence.spring.collections;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
 import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
+import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -40,7 +40,7 @@ public class SpringCollectionStorage implements CollectionStorage {
     }
 
     @Override
-    public Optional<CollectionData> getCollectionById(long collectionId) {
+    public CollectionData getCollectionById(long collectionId) {
         CollectionEntity collectionEntity;
         try {
             collectionEntity = collectionJpaRepository.getById(collectionId);
@@ -53,6 +53,10 @@ public class SpringCollectionStorage implements CollectionStorage {
                 throw e;
             }
         }
-        return Optional.ofNullable(collectionEntity).map(CollectionEntity::asCollectionData);
+        if (collectionEntity == null) {
+            throw new CollectionIsNullException(collectionId);
+        }
+        return CollectionEntity.asCollectionData(collectionEntity);
+
     }
 }

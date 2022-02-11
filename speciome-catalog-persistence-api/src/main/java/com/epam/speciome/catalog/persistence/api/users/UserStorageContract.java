@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.persistence.api.users;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.UserIsNullException;
 import com.google.common.annotations.VisibleForTesting;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +11,10 @@ public interface UserStorageContract {
     UserStorage userStorage();
 
     @Test
-    @DisplayName("When no users have been added. Then user is not present in storage")
-    default void testUserNotPresentInEmptyStorage() {
-        Assertions.assertThat(userStorage().loadUserData(getUserEmail())).isEmpty();
+    @DisplayName("When no users have been added. Then exception is thrown")
+    default void testExceptionIsThrown() {
+        Assertions.assertThatThrownBy(() ->userStorage().loadUserData(getUserEmail()))
+                        .isInstanceOf(UserIsNullException.class);
     }
 
     @Test
@@ -20,7 +22,7 @@ public interface UserStorageContract {
     default void testUserCanBeFoundWhenAdded() {
         UserStorage userStorage = userStorage();
         addUserToStorage(userStorage);
-        Assertions.assertThat(userStorage().loadUserData(getUserEmail())).isNotEmpty();
+        Assertions.assertThat(userStorage().loadUserData(getUserEmail())).isNotNull();
     }
 
     @Test
@@ -28,16 +30,17 @@ public interface UserStorageContract {
     default void testUserHasGivenAttributeValues() {
         UserStorage userStorage = userStorage();
         addUserToStorage(userStorage);
-        UserData userData = userStorage.loadUserData(getUserEmail()).orElseThrow();
+        UserData userData = userStorage.loadUserData(getUserEmail());
         Assertions.assertThat(userData.passwordHash()).isEqualTo(getPasswordHash());
     }
 
     @Test
-    @DisplayName("When user has been added to storage. Then other user can not be found in storage")
-    default void testOtherUserCanNotBeFound() {
+    @DisplayName("When user has been added to storage. Then retrieving an another user throws an exception")
+    default void testOtherUserThrowsException() {
         UserStorage userStorage = userStorage();
         addUserToStorage(userStorage);
-        Assertions.assertThat(userStorage.loadUserData("other@email.com")).isEmpty();
+        Assertions.assertThatThrownBy(() -> userStorage.loadUserData("other@email.com"))
+                        .isInstanceOf(UserIsNullException.class);
     }
 
     @Test

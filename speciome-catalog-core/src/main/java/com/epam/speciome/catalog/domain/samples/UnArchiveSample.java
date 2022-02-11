@@ -1,10 +1,12 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
-import java.util.Optional;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class UnArchiveSample {
     private final SampleStorage sampleStorage;
@@ -14,18 +16,19 @@ public class UnArchiveSample {
     }
 
     public Sample unArchiveSample(Long id) {
-        Optional<SampleData> sampleById = sampleStorage.getSampleById(id);
-        if (sampleById.isPresent()) {
-            SampleData sampleData = new SampleData(
-                    sampleById.get().createdAt(),
-                    sampleById.get().updatedAt(),
-                    sampleById.get().attributes(),
-                    false);
-            sampleStorage.updateSample(id, sampleData);
+        try {
+            SampleData sampleById = sampleStorage.getSampleById(id);
 
-            return new Sample(id,sampleData);
-        } else {
-            throw new SampleNotFoundException(id);
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+            SampleData sampleUnarchived = new SampleData(
+                    sampleById.createdAt(),
+                    now,
+                    sampleById.attributes(),
+                    false);
+            sampleStorage.updateSample(id, sampleUnarchived);
+            return new Sample(id,sampleUnarchived);
+        } catch (SampleIsNullException e) {
+            throw new SampleNotFoundException(id, e);
         }
     }
 }

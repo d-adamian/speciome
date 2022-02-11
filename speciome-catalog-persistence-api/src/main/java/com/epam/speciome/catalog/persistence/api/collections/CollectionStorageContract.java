@@ -1,14 +1,21 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.Optional;
 
 public interface CollectionStorageContract {
     CollectionStorage collectionStorage();
+
+    @Test
+    @DisplayName("When no collections have been added. Then retrieving collections throws an exception")
+    default void testExceptionIsThrown() {
+        Assertions.assertThatThrownBy(() -> collectionStorage().getCollectionById(1))
+                .isInstanceOf(CollectionIsNullException.class);
+    }
 
     @Test
     @DisplayName("When one collection has been added to storage. Then it can be retrieved back")
@@ -16,9 +23,18 @@ public interface CollectionStorageContract {
         CollectionStorage collectionStorage = collectionStorage();
         CollectionData collectionData = collectionOne();
         long collectionId = collectionStorage.addCollection(collectionData);
+        CollectionData getResult = collectionStorage.getCollectionById(collectionId);
 
-        Optional<CollectionData> getResult = collectionStorage.getCollectionById(collectionId);
         Assertions.assertThat(getResult).isNotNull();
+    }
+
+    @Test
+    @DisplayName("When a collection has been added to the storage. Then retrieving an another collection throws an exception")
+    default void testOtherCollectionThrowsException() {
+        CollectionStorage collectionStorage = collectionStorage();
+        collectionStorage.addCollection(collectionOne());
+        Assertions.assertThatThrownBy(() -> collectionStorage.getCollectionById(1000))
+                .isInstanceOf(CollectionIsNullException.class);
     }
 
     @Test

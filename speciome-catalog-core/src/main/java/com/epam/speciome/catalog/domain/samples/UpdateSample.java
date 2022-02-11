@@ -1,13 +1,13 @@
 package com.epam.speciome.catalog.domain.samples;
 
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 public final class UpdateSample {
     private final SampleStorage sampleStorage;
@@ -17,13 +17,11 @@ public final class UpdateSample {
     }
 
     public Result updateSample(Long sampleId, Map<String, String> attributes) {
-        Optional<SampleData> sampleDataOptional = sampleStorage.getSampleById(sampleId);
-
-        if (sampleDataOptional.isPresent()) {
-            return updateExistingSample(sampleId, sampleDataOptional.get(), attributes);
-        } else {
-            throw new SampleNotFoundException(sampleId);
-        }
+       try {
+           return updateExistingSample(sampleId, sampleStorage.getSampleById(sampleId), attributes);
+       } catch (SampleIsNullException e) {
+           throw new SampleNotFoundException(sampleId, e);
+       }
     }
 
     private Result updateExistingSample(Long sampleId, SampleData sampleData, Map<String, String> attributes) {

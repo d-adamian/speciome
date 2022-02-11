@@ -1,11 +1,16 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
-import java.util.Optional;
+import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 
 public interface CollectionStorage {
     long addCollection(CollectionData collectionData);
 
     ListCollectionsResult listCollections();
 
-    Optional<CollectionData> getCollectionById(long collectionId);
+    /**
+     *
+     * @throws CollectionIsNullException
+     * if a Collection with the given id cannot be found
+     */
+    CollectionData getCollectionById(long collectionId);
 }

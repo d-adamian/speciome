@@ -1,12 +1,12 @@
 package com.epam.speciome.catalog.persistence.api.samples;
 
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 public interface SampleStorageContract {
     SampleStorage sampleStorage();
@@ -28,8 +28,8 @@ public interface SampleStorageContract {
         Long sampleId = sampleStorage.addSample(sampleData);
         Assertions.assertThat(sampleId).isNotNull();
 
-        Optional<SampleData> getResult = sampleStorage.getSampleById(sampleId);
-        Assertions.assertThat(getResult).isNotEmpty().get().isEqualTo(sampleData);
+        SampleData getResult = sampleStorage.getSampleById(sampleId);
+        Assertions.assertThat(getResult).isNotNull().isEqualTo(sampleData);
     }
 
     @Test
@@ -55,7 +55,7 @@ public interface SampleStorageContract {
     }
 
     @Test
-    @DisplayName("When sample have been deleted. Then it can not be found")
+    @DisplayName("When sample have been deleted. Then retrieving that sample throws an exception")
     default void testSampleNotFoundAfterDeletion() {
         SampleStorage sampleStorage = sampleStorage();
         SampleData sample = sampleOne();
@@ -67,7 +67,9 @@ public interface SampleStorageContract {
         ListSamplesResult listSamplesResult = sampleStorage.listSamples();
         Assertions.assertThat(listSamplesResult.totalCount()).isEqualTo(0);
         Assertions.assertThat(listSamplesResult.loadSamplesById()).isEmpty();
-        Assertions.assertThat(sampleStorage.getSampleById(sampleId)).isEmpty();
+
+        Assertions.assertThatThrownBy(() -> sampleStorage.getSampleById(sampleId))
+                .isInstanceOf(SampleIsNullException.class);
     }
 
     @Test
@@ -79,9 +81,8 @@ public interface SampleStorageContract {
         Long sampleId = sampleStorage.addSample(sampleOne);
         sampleStorage.updateSample(sampleId, sampleTwo);
 
-        Optional<SampleData> updatedSample = sampleStorage.getSampleById(sampleId);
-        Assertions.assertThat(updatedSample).isNotEmpty()
-                .get().isEqualTo(sampleTwo);
+        SampleData updatedSample = sampleStorage.getSampleById(sampleId);
+        Assertions.assertThat(updatedSample).isNotNull().isEqualTo(sampleTwo);
     }
 
     private static SampleData sampleOne() {
