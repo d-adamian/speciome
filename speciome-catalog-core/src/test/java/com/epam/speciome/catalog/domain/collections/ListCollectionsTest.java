@@ -2,67 +2,82 @@ package com.epam.speciome.catalog.domain.collections;
 
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListCollectionsTest {
 
-    private final UseCaseFactory useCaseFactory = new TestsUseCaseFactory();
+    private UseCaseFactory useCaseFactory;
 
-    @Test
-    @DisplayName("When all collection in a list contains 0 elements ")
-    public void testEmptyStorageAllCollections() {
-        int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
-        assertEquals(0, sizeOfListCollections);
+    @BeforeEach
+    public void before() {
+        useCaseFactory = new TestsUseCaseFactory();
     }
 
     @Nested
-    public class OneCollectionAdded {
-        @BeforeEach
-        public void setUp() {
-            useCaseFactory.addCollection().addCollection("Brains");
-        }
+    @DisplayName("When no collections have been added to the storage")
+    public class EmptyStorage {
+
         @Test
-        @DisplayName("There is one collection available")
+        @DisplayName("Then storage does not have any collections")
+        public void testEmptyStorageAllCollections() {
+            int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
+            assertEquals(0, sizeOfListCollections);
+        }
+    }
+
+    @Nested
+    @DisplayName("When a collection has been added to the storage")
+    public class OneCollectionAdded {
+
+        @BeforeEach
+        public void before() {
+            useCaseFactory.addCollection().addCollection(new CollectionAttributes("Pines", "firstOwner@mail.com"));
+        }
+
+        @Test
+        @DisplayName("Then one collection can be retrieved")
         public void testStorageAllCollections() {
             int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
             assertEquals(1, sizeOfListCollections);
         }
 
         @Test
-        @DisplayName("The name is correct")
+        @DisplayName("Then name of the retrieved collection is correct")
         public void testNameOfCollections() {
             String collectionName = useCaseFactory.listCollections().listCollections().get(0).collectionName();
-            assertEquals("Brains", collectionName);
+            assertEquals("Pines", collectionName);
         }
     }
 
     @Nested
+    @DisplayName("When two collections have been added to the storage")
     public class TwoCollectionsAdded {
+
         @BeforeEach
-        public void setUp() {
-            useCaseFactory.addCollection().addCollection("Brains");
-            useCaseFactory.addCollection().addCollection("Cats");
+        public void before() {
+            useCaseFactory.addCollection().addCollection(new CollectionAttributes("Yew trees", "firstOwner@mail.com"));
+            useCaseFactory.addCollection().addCollection(new CollectionAttributes("Red maples", "secondOwner@mail.com"));
         }
+
         @Test
-        @DisplayName("There are 2 elements in collections list")
+        @DisplayName("Then the storage contains two collections")
         public void testStorageAllCollections() {
             int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
             assertEquals(2, sizeOfListCollections);
         }
 
         @Test
-        @DisplayName("The names are correct")
+        @DisplayName("Then names of retrieved collections are correct")
         public void testNameOfCollections() {
-            String collectionsList = useCaseFactory.listCollections().listCollections().toString();
-            assertTrue(collectionsList.contains("Brains"));
-            assertTrue(collectionsList.contains("Cats"));
+           List<Collection> retrievedCollections = useCaseFactory.listCollections().listCollections();
+
+            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.collectionName().equals("Yew trees")));
+            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.collectionName().equals("Red maples")));
         }
     }
-
 }

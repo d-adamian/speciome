@@ -5,54 +5,67 @@ import com.epam.speciome.catalog.domain.exceptions.AbsentCollectionNameException
 import com.epam.speciome.catalog.domain.exceptions.CollectionNotFoundException;
 import com.epam.speciome.catalog.tests.TestsUseCaseFactory;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
-@DisplayName("Given that collection storage is empty")
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class AddCollectionTest {
+
     private UseCaseFactory useCaseFactory;
-    private long firstCollectionId;
-    private long secondCollectionId;
-    private String firstAssignedName;
-    private String secondAssignedName;
 
     @BeforeEach
     public void setUp() {
         useCaseFactory = new TestsUseCaseFactory();
-        firstAssignedName = "Ferns";
-        secondAssignedName = "Reeds";
-        firstCollectionId = useCaseFactory.addCollection().addCollection(firstAssignedName);
     }
 
     @Nested
     @DisplayName("When one collection has been added")
     public class OneCollectionAdded {
 
+        private long firstId;
+        private Collection collection;
+
+        @BeforeEach
+        public void setUp() {
+            firstId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Elm trees", "firstUser@email.com"));
+            collection = useCaseFactory.getCollection().getCollection(firstId);
+        }
+
         @Test
         @DisplayName("Then that collection has non-empty identifier equal to assigned identifier")
         public void testCollectionHasNonEmptyIdentifier() {
-            Collection collection = getFirstCollection();
-            long collectionId = collection.collectionId();
-            Assertions.assertThat(collectionId).isNotNull();
-            Assertions.assertThat(collectionId).isEqualTo(firstCollectionId);
+            Assertions.assertThat(firstId).isNotNull();
         }
 
         @Test
         @DisplayName("Then no collection can be retrieved by other identifier")
         public void testNoOtherCollectionCanBeRetrieved() {
-            Assertions.assertThatThrownBy(() -> useCaseFactory.getCollection().getCollection(53566l))
+            Assertions.assertThatThrownBy(() -> useCaseFactory.getCollection().getCollection(53566L))
                     .isInstanceOf(CollectionNotFoundException.class);
         }
 
         @Test
         @DisplayName("Then the collection name is equal to the assigned name")
         public void testStorageHasOneCollection() {
-            Collection collection = getFirstCollection();
-            Assertions.assertThat(collection.collectionName()).isEqualTo(firstAssignedName);
+            Assertions.assertThat(collection.collectionName()).isEqualTo("Elm trees");
+        }
+
+        @Test
+        @DisplayName("Then dates when collection is created and updated are equal to today's date")
+        public void testCreateAndUpdateDatesAreCorrect() {
+            Collection collection = useCaseFactory.getCollection().getCollection(firstId);
+            LocalDateTime createdAt = collection.createdAt().toLocalDateTime();
+            LocalDateTime updatedAt = collection.updatedAt().toLocalDateTime();
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+
+            assertTrue(Duration.between(createdAt, now).getSeconds() <= 5);
+            assertTrue(Duration.between(updatedAt, now).getSeconds() <= 5);
         }
     }
 
@@ -64,7 +77,8 @@ public class AddCollectionTest {
         @Test
         @DisplayName("Then exception is thrown")
         public void testExceptionIsThrown() {
-            Assertions.assertThatThrownBy(() -> useCaseFactory.addCollection().addCollection(nullValue))
+            Assertions.assertThatThrownBy(() -> useCaseFactory.addCollection()
+                            .addCollection(new CollectionAttributes(nullValue, "user@mail.com")))
                     .isInstanceOf(AbsentCollectionNameException.class);
         }
     }
@@ -72,37 +86,29 @@ public class AddCollectionTest {
     @Nested
     @DisplayName("When two collections have been added")
     public class TwoCollectionsAdded {
-        private long collectionIdOne;
-        private long collectionIdTwo;
+
+        private long firstId;
+        private long secondId;
 
         @BeforeEach
-        void setUp() {
-            secondCollectionId = useCaseFactory.addCollection().addCollection(secondAssignedName);
-            collectionIdOne = getFirstCollection().collectionId();
-            collectionIdTwo = getSecondCollection().collectionId();
+        public void setUp() {
+            firstId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Willows", "secondUser@email.com"));
+            secondId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Myrtles", "secondUser@email.com"));
         }
 
         @Test
         @DisplayName("Then collections have different identifiers")
         public void testCollectionsHaveDifferentIdentifiers() {
-            Assertions.assertThat(collectionIdOne).isNotEqualTo(collectionIdTwo);
+            Assertions.assertThat(firstId).isNotEqualTo(secondId);
         }
 
         @Test
         @DisplayName("Then both collections are present")
         public void testTwoCollectionsArePresent() {
-            for (long collectionId : List.of(collectionIdOne, collectionIdTwo)) {
+            for (long collectionId : List.of(firstId, secondId)) {
                 Collection collection = useCaseFactory.getCollection().getCollection(collectionId);
                 Assertions.assertThat(collection.collectionId()).isEqualTo(collectionId);
             }
         }
-    }
-
-    private Collection getFirstCollection() {
-        return useCaseFactory.getCollection().getCollection(firstCollectionId);
-    }
-
-    private Collection getSecondCollection() {
-        return useCaseFactory.getCollection().getCollection(secondCollectionId);
     }
 }

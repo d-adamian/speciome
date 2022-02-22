@@ -2,6 +2,7 @@ package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.collections.Collection;
+import com.epam.speciome.catalog.domain.collections.CollectionAttributes;
 import com.epam.speciome.catalog.domain.exceptions.AbsentCollectionNameException;
 import com.epam.speciome.catalog.domain.exceptions.CollectionNotFoundException;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "Collections", description = "Collection Management API")
@@ -74,9 +76,10 @@ public class CollectionController {
     @PostMapping("/collection")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public CreateCollectionResponse createCollection(@RequestBody CollectionRequest request) {
+    public CreateCollectionResponse createCollection(Principal principal, @RequestBody CollectionRequest request) {
         try {
-            long collectionId = useCaseFactory.addCollection().addCollection(request.getCollectionName());
+            long collectionId = useCaseFactory.addCollection()
+                    .addCollection(new CollectionAttributes(request.getCollectionName(), principal.getName()));
             return new CreateCollectionResponse(collectionId);
         } catch (AbsentCollectionNameException e) {
             throw new InvalidInputException(e.getMessage());

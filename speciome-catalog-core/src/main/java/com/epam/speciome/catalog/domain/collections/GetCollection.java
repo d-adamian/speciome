@@ -13,7 +13,7 @@ public class GetCollection {
 
     public Collection getCollection(long collectionId) {
         try {
-            return new Collection(collectionId, collectionStorage.getCollectionById(collectionId));
+            return Collection.fromCollectionData(collectionId, collectionStorage.getCollectionById(collectionId));
         } catch (CollectionIsNullException e) {
             throw new CollectionNotFoundException(collectionId, e);
         }

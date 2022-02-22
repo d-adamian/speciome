@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
 import java.util.Map;
 
 public interface CollectionStorageContract {
@@ -67,10 +68,12 @@ public interface CollectionStorageContract {
     }
 
     private static CollectionData collectionOne() {
-        return new CollectionData("Herbs");
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return new CollectionData("Apple trees", now, now, "Mary Jones");
     }
 
     private static CollectionData collectionTwo() {
-        return new CollectionData("Animals");
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return new CollectionData("Bird cherry trees", now, now, "James Smith");
     }
 }

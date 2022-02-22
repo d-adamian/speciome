@@ -4,6 +4,10 @@ import com.epam.speciome.catalog.domain.exceptions.AbsentCollectionNameException
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 public class AddCollection {
     private final CollectionStorage collectionStorage;
 
@@ -11,11 +15,12 @@ public class AddCollection {
         this.collectionStorage = collectionStorage;
     }
 
-    public long addCollection(String collectionName) {
-        if (collectionName == null) {
+    public long addCollection(CollectionAttributes attributes) {
+        if (attributes.collectionName() == null) {
             throw new AbsentCollectionNameException();
         }
-        long collectionId = collectionStorage.addCollection(new CollectionData(collectionName));
-        return collectionId;
+        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+        Timestamp timestamp = Timestamp.valueOf(zdt.toLocalDateTime());
+        return collectionStorage.addCollection(new CollectionData(attributes.collectionName(), timestamp, timestamp, attributes.ownerEmail()));
     }
 }
