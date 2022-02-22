@@ -21,6 +21,7 @@ public class CollectionEntity {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private String ownerEmail;
+    private boolean archived;
 
     public long getId() {
         return id;
@@ -31,7 +32,7 @@ public class CollectionEntity {
     }
 
     public CollectionData asCollectionData() {
-        return new CollectionData(collectionName, createdAt, updatedAt, ownerEmail);
+        return new CollectionData(collectionName, createdAt, updatedAt, ownerEmail, archived);
     }
 
     public static CollectionEntity fromCollectionData(CollectionData collectionData) {
@@ -40,6 +41,7 @@ public class CollectionEntity {
         collectionEntity.createdAt = collectionData.createdAt();
         collectionEntity.updatedAt = collectionData.updatedAt();
         collectionEntity.ownerEmail = collectionData.ownerEmail();
+        collectionEntity.archived = collectionData.isArchived();
         return collectionEntity;
     }
 }

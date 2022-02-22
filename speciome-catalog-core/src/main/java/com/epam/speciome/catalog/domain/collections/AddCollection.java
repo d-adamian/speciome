@@ -21,6 +21,6 @@ public class AddCollection {
         }
         ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
         Timestamp timestamp = Timestamp.valueOf(zdt.toLocalDateTime());
-        return collectionStorage.addCollection(new CollectionData(attributes.collectionName(), timestamp, timestamp, attributes.ownerEmail()));
+        return collectionStorage.addCollection(new CollectionData(attributes.collectionName(), timestamp, timestamp, attributes.ownerEmail(), false));
     }
 }

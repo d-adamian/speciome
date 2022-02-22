@@ -12,6 +12,7 @@ public final class CollectionResponse {
     private final Timestamp createdAt;
     private final Timestamp updatedAt;
     private final String ownerEmail;
+    private final boolean archived;
 
 
     public CollectionResponse(Collection collection) {
@@ -20,6 +21,7 @@ public final class CollectionResponse {
         this.createdAt = collection.createdAt();
         this.updatedAt = collection.updatedAt();
         this.ownerEmail = collection.ownerEmail();
+        this.archived = collection.isArchived();
     }
 
     @Schema(description = "Internal collection identifier", example = "1")
@@ -47,5 +49,10 @@ public final class CollectionResponse {
     @Schema(description = "Email of the collection owner")
     @JsonProperty public String getOwnerEmail() {
         return ownerEmail;
+    }
+
+    @Schema(description = "Collection archival status")
+    @JsonProperty public boolean isArchived() {
+        return archived;
     }
 }
