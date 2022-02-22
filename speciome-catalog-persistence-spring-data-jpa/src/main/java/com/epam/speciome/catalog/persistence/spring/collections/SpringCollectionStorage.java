@@ -56,7 +56,6 @@ public class SpringCollectionStorage implements CollectionStorage {
         if (collectionEntity == null) {
             throw new CollectionIsNullException(collectionId);
         }
-        return CollectionEntity.asCollectionData(collectionEntity);
-
+        return collectionEntity.asCollectionData();
     }
 }

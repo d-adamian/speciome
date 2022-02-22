@@ -12,7 +12,7 @@ public class CollectionRequest {
         this.collectionName = collectionName;
     }
 
-    @Schema(description = "Collection name", example = "Ferns")
+    @Schema(description = "Collection name", example = "Myrtles")
     @JsonProperty
     public String getCollectionName() {
         return collectionName;

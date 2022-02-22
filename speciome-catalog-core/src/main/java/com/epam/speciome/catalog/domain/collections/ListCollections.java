@@ -19,8 +19,7 @@ public final class ListCollections {
         return listCollectionsResult.getCollectionDataMap()
                 .entrySet()
                 .stream()
-                .map(entry ->
-                        new Collection(entry.getKey(), entry.getValue()))
+                .map(entry -> Collection.fromCollectionData(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 }
