@@ -131,4 +131,58 @@ public class CollectionController {
             return collectionId;
         }
     }
+
+    @Operation(
+            summary = "Archive collection",
+            description = "Archive given collection"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Archived successfully", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Collection not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401"
+            )
+    })
+    @PutMapping("/collection/{collectionId}/archive")
+    public CollectionResponse archiveCollection(
+            @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") Long collectionId
+    ) {
+        try {
+            Collection archivedCollection = useCaseFactory.archiveCollection().archiveCollection(collectionId);
+            return new CollectionResponse(archivedCollection);
+        } catch (CollectionNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+    }
+
+    @Operation(
+            summary = "UnArchive collection",
+            description = "UnArchive given collection"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "UnArchived successfully", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Collection not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401"
+            )
+    })
+    @PutMapping("/collection/{collectionId}/unarchive")
+    public CollectionResponse unArchiveCollection(
+            @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") Long collectionId
+    ) {
+        try {
+            Collection unArchivedCollection = useCaseFactory.unArchiveCollection().unArchiveCollection(collectionId);
+            return new CollectionResponse(unArchivedCollection);
+        } catch (CollectionNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
+    }
 }

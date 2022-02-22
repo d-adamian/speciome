@@ -58,4 +58,11 @@ public class SpringCollectionStorage implements CollectionStorage {
         }
         return collectionEntity.asCollectionData();
     }
+
+    @Override
+    public void updateCollection(Long collectionId, CollectionData collectionData) {
+        CollectionEntity collectionEntity = CollectionEntity.fromCollectionData(collectionData);
+        collectionEntity.setId(collectionId);
+        collectionJpaRepository.saveAndFlush(collectionEntity);
+    }
 }

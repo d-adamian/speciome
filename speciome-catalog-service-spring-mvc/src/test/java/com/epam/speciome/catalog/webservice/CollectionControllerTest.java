@@ -1,5 +1,6 @@
 package com.epam.speciome.catalog.webservice;
 
+import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
 import com.epam.speciome.catalog.persistence.testmocks.InMemoryMapCollectionStorage;
 import com.epam.speciome.catalog.webservice.models.CollectionRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -59,6 +64,7 @@ public class CollectionControllerTest {
         mockMvc.perform(get("/collections"))
                 .andExpect(status().isOk());
     }
+
     @Test
     public void testListCollectionsReturnsCreatedCollection() throws Exception {
         String collectionName1 = "Berries";
@@ -79,5 +85,59 @@ public class CollectionControllerTest {
                 .getContentAsString();
         Assertions.assertTrue(contentAsString.contains(collectionName1));
         Assertions.assertTrue(contentAsString.contains(collectionName2));
+    }
+
+    @Test
+    public void testArchiveCollectionReturnsNotFoundWithoutCreatingCollections() throws Exception {
+        long collectionId = 1L;
+        mockMvc.perform(put("/collection/" + collectionId + "/archive"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUnArchiveCollectionReturnsNotFoundWithoutCreatingCollections() throws Exception {
+        long collectionId = 1L;
+        mockMvc.perform(put("/collection/" + collectionId + "/unarchive"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testWhenMakeCollectionArchiveReturnStatusSuccessfullyAndCorrectJson() throws Exception {
+        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+        Timestamp timestamp = Timestamp.valueOf(zdt.toLocalDateTime());
+        collectionStorage.addCollection(new CollectionData(
+                "Animals",
+                timestamp,
+                timestamp,
+                "test@mail.ru",
+                false));
+        long collectionId = 1L;
+        String responseBody = mockMvc.perform(put("/collection/" + collectionId + "/archive"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Assertions.assertTrue(responseBody.contains("\"archived\":true"));
+    }
+
+    @Test
+    public void testWhenMakeCollectionUnArchiveReturnStatusSuccessfullyAndCorrectJson() throws Exception {
+        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("UTC"));
+        Timestamp timestamp = Timestamp.valueOf(zdt.toLocalDateTime());
+        collectionStorage.addCollection(new CollectionData(
+                "Animals",
+                timestamp,
+                timestamp,
+                "test@mail.ru",
+                true));
+        long collectionId = 1L;
+        String responseBody = mockMvc.perform(put("/collection/" + collectionId + "/unarchive"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Assertions.assertTrue(responseBody.contains("\"archived\":false"));
     }
 }

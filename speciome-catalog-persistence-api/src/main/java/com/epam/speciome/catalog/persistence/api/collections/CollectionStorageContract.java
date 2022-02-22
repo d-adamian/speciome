@@ -69,11 +69,11 @@ public interface CollectionStorageContract {
 
     private static CollectionData collectionOne() {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        return new CollectionData("Apple trees", now, now, "Mary Jones");
+        return new CollectionData("Apple trees", now, now, "Mary Jones", false);
     }
 
     private static CollectionData collectionTwo() {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        return new CollectionData("Bird cherry trees", now, now, "James Smith");
+        return new CollectionData("Bird cherry trees", now, now, "James Smith", false);
     }
 }
