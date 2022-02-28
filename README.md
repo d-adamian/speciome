@@ -9,6 +9,12 @@ The following needs to be installed before building the project:
 * Java 17
 * NodeJS 16
 * NPM 7.15+
+* PostgreSQL 14.2:
+  * A database with the following configuration needs to be created:
+    * username: `postgres`
+    * password: `123`
+    * database name: `speciome`
+  * If you will specify your own database configuration, you need to modify `application-dev.properties` in `spring-data-jpa` module
 
 ### Project build & run
 * Build project - run from repository root
