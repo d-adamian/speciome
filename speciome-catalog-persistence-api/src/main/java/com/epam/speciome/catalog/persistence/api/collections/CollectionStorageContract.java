@@ -1,6 +1,10 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
+import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
+import com.epam.speciome.catalog.persistence.api.samples.ListSamplesResult;
+import com.epam.speciome.catalog.persistence.api.samples.SampleData;
+import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,4 +80,23 @@ public interface CollectionStorageContract {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         return new CollectionData("Bird cherry trees", now, now, "James Smith", false);
     }
+
+    @Test
+    @DisplayName("When collection have been deleted. Then retrieving that collection throws an exception")
+    default void testCollectionNotFoundAfterDeletion() {
+        CollectionStorage collectionStorage = collectionStorage();
+        CollectionData collection = collectionOne();
+
+        long collectionId = collectionStorage.addCollection(collection);
+        Assertions.assertThat(collectionStorage.listCollections().getTotalCount()).isEqualTo(1);
+
+        collectionStorage.removeCollectionById(collectionId);
+        ListCollectionsResult listCollectionsResult = collectionStorage.listCollections();
+        Assertions.assertThat(listCollectionsResult.getTotalCount()).isEqualTo(0);
+        Assertions.assertThat(listCollectionsResult.getCollectionDataMap()).isEmpty();
+
+        Assertions.assertThatThrownBy(() -> collectionStorage.getCollectionById(collectionId))
+                .isInstanceOf(CollectionIsNullException.class);
+    }
+
 }

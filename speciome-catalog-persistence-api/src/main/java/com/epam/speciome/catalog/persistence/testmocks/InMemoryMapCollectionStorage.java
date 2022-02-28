@@ -39,6 +39,11 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
         collectionDataMap.put(collectionId, collectionData);
     }
 
+    @Override
+    public void removeCollectionById(Long collectionId) {
+        collectionDataMap.remove(collectionId);
+    }
+
     public void clear() {
         collectionDataMap.clear();
         maxCollectionId = 1L;
