@@ -16,4 +16,6 @@ public interface CollectionStorage {
     CollectionData getCollectionById(long collectionId);
 
     void updateCollection(Long collectionId, CollectionData collectionData);
+
+    void removeCollectionById(Long collectionId);
 }

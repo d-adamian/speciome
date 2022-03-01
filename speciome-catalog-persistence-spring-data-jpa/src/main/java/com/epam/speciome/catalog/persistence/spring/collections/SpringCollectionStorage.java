@@ -65,4 +65,9 @@ public class SpringCollectionStorage implements CollectionStorage {
         collectionEntity.setId(collectionId);
         collectionJpaRepository.saveAndFlush(collectionEntity);
     }
+
+    @Override
+    public void removeCollectionById(Long collectionId) {
+        collectionJpaRepository.deleteById(collectionId);
+    }
 }

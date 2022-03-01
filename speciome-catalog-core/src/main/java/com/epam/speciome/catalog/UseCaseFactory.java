@@ -87,4 +87,9 @@ public class UseCaseFactory {
     public UnArchiveCollection unArchiveCollection() {
         return new UnArchiveCollection(collectionStorage);
     }
+
+    public RemoveCollection removeCollection() {
+        return new RemoveCollection(collectionStorage);
+    }
+
 }

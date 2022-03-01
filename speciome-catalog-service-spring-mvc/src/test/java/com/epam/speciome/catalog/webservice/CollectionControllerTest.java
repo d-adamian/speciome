@@ -140,4 +140,41 @@ public class CollectionControllerTest {
                 .getContentAsString();
         Assertions.assertTrue(responseBody.contains("\"archived\":false"));
     }
+
+    @Test
+    public void testDeleteNonExistentCollectionReturnsNotFound() throws Exception {
+        long collectionId = 12345L;
+        mockMvc.perform(delete("/collection/" + collectionId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteNonArchivedCollectionReturnsNotFound() throws Exception {
+        String putBody = createCollectionRequest("Berries");
+        long collectionId = 1;
+        String collectionPath = "/collection/" + collectionId;
+        mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(putBody))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.collectionId", Matchers.not(Matchers.emptyString())));
+        mockMvc.perform(delete(collectionPath))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testCollectionNotFoundAfterDeletion() throws Exception {
+        String putBody = createCollectionRequest("Berries");
+        long collectionId = 1;
+        String collectionPath = "/collection/" + collectionId;
+
+        mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(putBody))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.collectionId", Matchers.not(Matchers.emptyString())));
+
+
+        mockMvc.perform(put("/collection/" + collectionId + "/archive"));
+        mockMvc.perform(delete(collectionPath)).andExpect(status().isOk());
+        mockMvc.perform(get(collectionPath)).andExpect(status().isNotFound());
+    }
 }
