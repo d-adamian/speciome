@@ -35,18 +35,18 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "index.html", "asset-manifest.json", "favicon.ico",
                         "asset-manifest.json", "logo192.png", "logo512.png", "robots.txt").permitAll() // Allow access
                                                                              // to static pages from 'speciome-reactjs'
-                .mvcMatchers("/new-user").permitAll() // Allow registering new users
+                .mvcMatchers(ApiConstants.NEW_USER).permitAll() // Allow registering new users
                 .mvcMatchers("/swagger-ui.html").permitAll() // Allow access to Swagger UI
                 .mvcMatchers("/swagger-ui/**").permitAll()
                 .mvcMatchers("/v3/api-docs/**").permitAll() // Allow access to OpenAPI JSON endpoint
-                .mvcMatchers("/login").permitAll() // Allow access to login endpoint
+                .mvcMatchers(ApiConstants.LOGIN).permitAll() // Allow access to login endpoint
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage(ApiConstants.LOGIN)
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))

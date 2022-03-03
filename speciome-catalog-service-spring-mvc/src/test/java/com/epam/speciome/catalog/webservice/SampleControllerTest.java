@@ -45,7 +45,7 @@ public class SampleControllerTest {
 
     @Test
     public void testCreateSampleWithoutAttributesReturnsNonEmptySampleId() throws Exception {
-        mockMvc.perform(post("/sample"))
+        mockMvc.perform(post(ApiConstants.SAMPLE))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.sampleId", Matchers.not(Matchers.emptyString())));
@@ -54,27 +54,27 @@ public class SampleControllerTest {
     @Test
     public void testGetSampleReturnsNotFoundWithoutCreatingSample() throws Exception {
         long sampleId = 1L;
-        mockMvc.perform(get("/sample/" + sampleId))
+        mockMvc.perform(get(ApiConstants.SAMPLE + "/" + sampleId))
                 .andExpect(status().isNotFound());
     }
     @Test
     public void testArchiveSampleReturnsNotFoundWithoutCreatingSample() throws Exception {
         long sampleId = 1L;
-        mockMvc.perform(put("/sample/" + sampleId +  "/archive"))
+        mockMvc.perform(put(ApiConstants.SAMPLE + "/" + sampleId +  ApiConstants.ARCHIVE))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testUnArchiveSampleReturnsNotFoundWithoutCreatingSample() throws Exception {
         long sampleId = 1L;
-        mockMvc.perform(put("/sample/" + sampleId +  "/unarchive"))
+        mockMvc.perform(put(ApiConstants.SAMPLE + "/" + sampleId +  ApiConstants.UNARCHIVE))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testPostAndGetSampleWithoutAttributes() throws Exception {
         long sampleId = postSampleWithoutAttributes();
-        mockMvc.perform(get("/sample/" + sampleId))
+        mockMvc.perform(get(ApiConstants.SAMPLE + "/" + sampleId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -82,21 +82,21 @@ public class SampleControllerTest {
     @Test
     public void testPostSampleWithUnexpectedAttribute() throws Exception {
         String postBody = createSampleRequest("WRONG_ATTRIBUTE", "some_value");
-        mockMvc.perform(post("/sample").contentType(MediaType.APPLICATION_JSON).content(postBody))
+        mockMvc.perform(post(ApiConstants.SAMPLE).contentType(MediaType.APPLICATION_JSON).content(postBody))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testDeleteNonExistentSampleReturnsNotFound() throws Exception {
         long sampleId = 5L;
-        mockMvc.perform(delete("/sample/" + sampleId))
+        mockMvc.perform(delete(ApiConstants.SAMPLE + "/" + sampleId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testDeleteNonArchivedSampleReturnsNotFound() throws Exception {
         long sampleId = postSampleWithoutAttributes();
-        String samplePath = "/sample/" + sampleId;
+        String samplePath = ApiConstants.SAMPLE + "/" + sampleId;
         mockMvc.perform(delete(samplePath))
                 .andExpect(status().isForbidden());
     }
@@ -104,8 +104,8 @@ public class SampleControllerTest {
     @Test
     public void testSampleNotFoundAfterDeletion() throws Exception {
         long sampleId = postSampleWithoutAttributes();
-        String samplePath = "/sample/" + sampleId;
-        mockMvc.perform(put("/sample/" + sampleId +  "/archive"));
+        String samplePath = ApiConstants.SAMPLE + "/" + sampleId;
+        mockMvc.perform(put(ApiConstants.SAMPLE + "/" + sampleId +  ApiConstants.ARCHIVE));
         mockMvc.perform(delete(samplePath)).andExpect(status().isNoContent());
         mockMvc.perform(get(samplePath)).andExpect(status().isNotFound());
     }
@@ -113,7 +113,7 @@ public class SampleControllerTest {
     @Test
     public void testPutNonexistentSampleReturnsNotFound() throws Exception {
         long sampleId = 5L;
-        mockMvc.perform(put("/sample/" + sampleId))
+        mockMvc.perform(put(ApiConstants.SAMPLE + "/" + sampleId))
                 .andExpect(status().isNotFound());
     }
 
@@ -123,7 +123,7 @@ public class SampleControllerTest {
         String attribute = Attributes.COLLECTOR_NAME;
         String value = "Collector 1";
         String putBody = createSampleRequest(attribute, value);
-        String samplePath = "/sample/" + sampleId;
+        String samplePath = ApiConstants.SAMPLE + "/" + sampleId;
 
         mockMvc.perform(put(samplePath).contentType(MediaType.APPLICATION_JSON).content(putBody))
                 .andExpect(status().isNoContent());
@@ -134,13 +134,13 @@ public class SampleControllerTest {
 
     @Test
     public void testListSamplesNoInputParameters() throws Exception {
-        mockMvc.perform(get("/samples"))
+        mockMvc.perform(get(ApiConstants.SAMPLES))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void testListSamplesWrongInputParameters() throws Exception {
-        mockMvc.perform(get("/samples")
+        mockMvc.perform(get(ApiConstants.SAMPLES)
                         .param("archivalStatus", "anything"))
                 .andExpect(status().isBadRequest());
     }
@@ -148,7 +148,7 @@ public class SampleControllerTest {
     @Test
     public void testListUnarchivedSamplesReturnsUnarchivedSample() throws Exception {
         long sampleId = postSampleWithoutAttributes();
-        String postResponse = mockMvc.perform(get("/samples")
+        String postResponse = mockMvc.perform(get(ApiConstants.SAMPLES)
                         .param("archivalStatus", "UNARCHIVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -162,8 +162,8 @@ public class SampleControllerTest {
     @Test
     public void testListArchivedSamplesReturnsArchivedSample() throws Exception {
         long sampleId = postSampleWithoutAttributes();
-        mockMvc.perform(put("/sample/"+ sampleId + "/archive"));
-        String postResponse = mockMvc.perform(get("/samples")
+        mockMvc.perform(put(ApiConstants.SAMPLE + "/"+ sampleId + ApiConstants.ARCHIVE));
+        String postResponse = mockMvc.perform(get(ApiConstants.SAMPLES)
                         .param("archivalStatus", "ARCHIVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -175,7 +175,7 @@ public class SampleControllerTest {
 
     @Test
     public void testImportFromCsv() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(ApiConstants.SAMPLES_UPLOAD_CSV)
                 .file(getTestCsv("src/test/resources/samples.csv"))
                 .contentType("multipart/form-data"))
                 .andExpect(status().isOk());
@@ -183,7 +183,7 @@ public class SampleControllerTest {
 
     @Test
     public void testImportExcessColumns() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(ApiConstants.SAMPLES_UPLOAD_CSV)
                         .file(getTestCsv("src/test/resources/excess_columns.csv"))
                         .contentType("multipart/form-data"))
                 .andExpect(status().isOk());
@@ -191,7 +191,7 @@ public class SampleControllerTest {
 
     @Test
     public void testImportUnsupportedContent() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/samples/upload/csv")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(ApiConstants.SAMPLES_UPLOAD_CSV)
                         .file(getTestCsv("src/test/resources/invalid_data.csv"))
                         .contentType("multipart/form-data"))
                 .andExpect(status().isBadRequest());
@@ -199,14 +199,14 @@ public class SampleControllerTest {
 
     @Test
     public void testGetCsv() throws Exception {
-        String postResponse = mockMvc.perform(get("/samples/download"))
+        String postResponse = mockMvc.perform(get(ApiConstants.SAMPLES_DOWNLOAD))
                 .andExpect(content().contentType("application/csv"))
                 .andReturn().getResponse().getContentAsString();
         assertTrue(postResponse.contains("sampleTaxonomy"));
     }
 
     private long postSampleWithoutAttributes() throws Exception {
-        String postResponse = mockMvc.perform(post("/sample"))
+        String postResponse = mockMvc.perform(post(ApiConstants.SAMPLE))
                 .andReturn().getResponse().getContentAsString();
         return new ObjectMapper().readTree(postResponse).findValue("sampleId").asLong();
     }

@@ -16,29 +16,29 @@ public class UserRegistrationTest {
 
     @Test
     public void testUserRegistrationInvalidFormat() throws Exception {
-        mockMvc.perform(MockRequestsUtil.postJson("/new-user", "INVALID"))
+        mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, "INVALID"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testRegisterUserSuccess() throws Exception {
         String requestContent = MockRequestsUtil.registerUserRequest("user1@aaa.com", "secret1");
-        mockMvc.perform(MockRequestsUtil.postJson("/new-user", requestContent))
+        mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, requestContent))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     public void testRegisterUserInvalidEmail() throws Exception {
         String requestContent = MockRequestsUtil.registerUserRequest("not_an_email", "secret2");
-        mockMvc.perform(MockRequestsUtil.postJson("/new-user", requestContent))
+        mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, requestContent))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testRegisterUserTwice() throws Exception {
         String requestContent = MockRequestsUtil.registerUserRequest("user1@aaa.com", "secret2");
-        mockMvc.perform(MockRequestsUtil.postJson("/new-user", requestContent)).andDo(result ->
-                mockMvc.perform(MockRequestsUtil.postJson("/new-user", requestContent))
+        mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, requestContent)).andDo(result ->
+                mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, requestContent))
                         .andExpect(status().isBadRequest()));
     }
 

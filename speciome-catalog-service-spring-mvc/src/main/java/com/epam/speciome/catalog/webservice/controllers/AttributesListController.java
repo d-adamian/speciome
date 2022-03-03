@@ -1,6 +1,7 @@
 package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.domain.samples.Attributes;
+import com.epam.speciome.catalog.webservice.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +22,7 @@ public class AttributesListController {
                     description = "OK", responseCode = "200"
             )}
     )
-    @GetMapping(path = "/attributes")
+    @GetMapping(path = ApiConstants.ATTRIBUTES)
     public @ResponseBody
     List<String> listAttributes() {
         return Attributes.ALL;

@@ -24,7 +24,7 @@ public class AttributesListControllerTest {
     @Test
     public void testAllAttributesAreReturned() throws Exception {
         String expectedJson = new ObjectMapper().writeValueAsString(Attributes.ALL);
-        mockMvc.perform(get("/attributes"))
+        mockMvc.perform(get(ApiConstants.ATTRIBUTES))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(expectedJson));
