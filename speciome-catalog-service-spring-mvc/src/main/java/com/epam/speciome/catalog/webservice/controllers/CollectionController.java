@@ -5,6 +5,7 @@ import com.epam.speciome.catalog.domain.collections.Collection;
 import com.epam.speciome.catalog.domain.collections.CollectionAttributes;
 import com.epam.speciome.catalog.domain.exceptions.*;
 import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
+import com.epam.speciome.catalog.webservice.ApiConstants;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
 import com.epam.speciome.catalog.webservice.models.CollectionRequest;
@@ -45,7 +46,7 @@ public class CollectionController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @GetMapping("/collections")
+    @GetMapping(ApiConstants.COLLECTIONS)
     @ResponseBody
     public ListCollectionsResponse collectionsResponse() {
         List<Collection> collections = useCaseFactory.listCollections().listCollections();
@@ -73,7 +74,7 @@ public class CollectionController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping("/collection")
+    @PostMapping(ApiConstants.COLLECTION)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public CreateCollectionResponse createCollection(Principal principal, @RequestBody CollectionRequest request) {
@@ -104,7 +105,7 @@ public class CollectionController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @GetMapping("/collection/{collectionId}")
+    @GetMapping(ApiConstants.COLLECTION_BY_ID)
     @ResponseBody
     public CollectionResponse getCollection(
             @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") long collectionId
@@ -147,7 +148,7 @@ public class CollectionController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @PutMapping("/collection/{collectionId}/archive")
+    @PutMapping(ApiConstants.COLLECTION_BY_ID_ARCHIVE)
     public CollectionResponse archiveCollection(
             @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") Long collectionId
     ) {
@@ -174,7 +175,7 @@ public class CollectionController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @PutMapping("/collection/{collectionId}/unarchive")
+    @PutMapping(ApiConstants.COLLECTION_BY_ID_UNARCHIVE)
     public CollectionResponse unArchiveCollection(
             @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") Long collectionId
     ) {
@@ -189,7 +190,6 @@ public class CollectionController {
     @Operation(
             summary = "Delete not archived collection",
             description = "Deletes given not archived collection"
-
     )
     @ApiResponses({
             @ApiResponse(
@@ -205,7 +205,7 @@ public class CollectionController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @DeleteMapping("/collection/{collectionId}")
+    @DeleteMapping(ApiConstants.COLLECTION_BY_ID)
     @ResponseStatus(HttpStatus.OK)
     public void removeCollection(
             @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") Long collectionId
@@ -217,6 +217,5 @@ public class CollectionController {
         } catch (CollectionNotArchivedException e) {
             throw new ForbiddenException(e.getMessage());
         }
-
     }
 }

@@ -26,12 +26,12 @@ public class AuthenticationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        mockMvc.perform(MockRequestsUtil.postJson("/new-user", MockRequestsUtil.registerUserRequest(EMAIL, PASSWORD)));
+        mockMvc.perform(MockRequestsUtil.postJson(ApiConstants.NEW_USER, MockRequestsUtil.registerUserRequest(EMAIL, PASSWORD)));
     }
 
     @Test
     public void testUserDetailsUnauthorizedWithoutLogin() throws Exception {
-        mockMvc.perform(get("/user-details"))
+        mockMvc.perform(get(ApiConstants.USER_DETAILS))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -58,7 +58,7 @@ public class AuthenticationTest {
     @Test
     public void testUserDetailsReturnsEmailAfterLogin() throws Exception {
         mockMvc.perform(loginWithCredentials(EMAIL, PASSWORD)).andDo(
-                result -> mockMvc.perform(get("/user-details"))
+                result -> mockMvc.perform(get(ApiConstants.USER_DETAILS))
                         .andExpect(status().isOk())
                         .andExpect(content().string(EMAIL))
         );
@@ -68,12 +68,12 @@ public class AuthenticationTest {
     public void testUserDetailsUnauthorizedAfterLogout() throws Exception {
         mockMvc.perform(loginWithCredentials(EMAIL, PASSWORD)).andExpect(status().isNoContent());
         mockMvc.perform(logout()).andExpect(status().isNoContent());
-        mockMvc.perform(get("/user-details")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get(ApiConstants.USER_DETAILS)).andExpect(status().isUnauthorized());
     }
 
     private static SecurityMockMvcRequestBuilders.FormLoginRequestBuilder loginWithCredentials(
             String email, String password
     ) {
-        return formLogin("/login").userParameter("email").user(email).password(password);
+        return formLogin(ApiConstants.LOGIN).userParameter("email").user(email).password(password);
     }
 }

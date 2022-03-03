@@ -4,6 +4,7 @@ import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.users.GetUserDetails;
 import com.epam.speciome.catalog.domain.users.RegisterUser;
 import com.epam.speciome.catalog.domain.users.User;
+import com.epam.speciome.catalog.webservice.ApiConstants;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.models.UserCredentials;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +40,7 @@ public class UserController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @GetMapping(path = "/user-details")
+    @GetMapping(path = ApiConstants.USER_DETAILS)
     public @ResponseBody
     String getUserDetails(Principal principal) {
         String userEmail = principal.getName();
@@ -59,7 +60,7 @@ public class UserController {
                     description = "E-mail invalid or user already exists", responseCode = "400"
             )
     })
-    @PostMapping(path = "/new-user")
+    @PostMapping(path = ApiConstants.NEW_USER)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void registerUser(@RequestBody UserCredentials credentials) {
         try {
@@ -83,7 +84,7 @@ public class UserController {
                     description = "Credentials are invalid", responseCode = "401"
             )
     })
-    @PostMapping(path = "/login")
+    @PostMapping(path = ApiConstants.LOGIN)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void login(
             @RequestParam("email") @Parameter(description = "User email", example = "user@company.com") String email,

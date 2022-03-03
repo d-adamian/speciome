@@ -43,11 +43,11 @@ public class CollectionControllerTest {
         String putBody = createCollectionRequest("Berries");
         long collectionId = 1;
 
-        mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(putBody))
+        mockMvc.perform(post(ApiConstants.COLLECTION).contentType(MediaType.APPLICATION_JSON).content(putBody))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.collectionId", Matchers.not(Matchers.emptyString())));
-        String getResponse = mockMvc.perform(get("/collection/" + collectionId))
+        String getResponse = mockMvc.perform(get(ApiConstants.COLLECTION + "/" + collectionId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
@@ -61,7 +61,7 @@ public class CollectionControllerTest {
 
     @Test
     public void testListEmptyCollections() throws Exception {
-        mockMvc.perform(get("/collections"))
+        mockMvc.perform(get(ApiConstants.COLLECTIONS))
                 .andExpect(status().isOk());
     }
 
@@ -69,7 +69,7 @@ public class CollectionControllerTest {
     public void testListCollectionsReturnsCreatedCollection() throws Exception {
         String collectionName1 = "Berries";
         String collectionName2 = "Tomatoes";
-        String urlPath = "/collection";
+        String urlPath = ApiConstants.COLLECTION;
 
         String putBody = createCollectionRequest(collectionName1);
         String putBody2 = createCollectionRequest(collectionName2);
@@ -77,7 +77,7 @@ public class CollectionControllerTest {
         mockMvc.perform(post(urlPath).contentType(MediaType.APPLICATION_JSON).content(putBody));
         mockMvc.perform(post(urlPath).contentType(MediaType.APPLICATION_JSON).content(putBody2));
 
-        String contentAsString = mockMvc.perform(get("/collections"))
+        String contentAsString = mockMvc.perform(get(ApiConstants.COLLECTIONS))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -90,14 +90,14 @@ public class CollectionControllerTest {
     @Test
     public void testArchiveCollectionReturnsNotFoundWithoutCreatingCollections() throws Exception {
         long collectionId = 1L;
-        mockMvc.perform(put("/collection/" + collectionId + "/archive"))
+        mockMvc.perform(put(ApiConstants.COLLECTION + "/" + collectionId + ApiConstants.ARCHIVE))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testUnArchiveCollectionReturnsNotFoundWithoutCreatingCollections() throws Exception {
         long collectionId = 1L;
-        mockMvc.perform(put("/collection/" + collectionId + "/unarchive"))
+        mockMvc.perform(put(ApiConstants.COLLECTION + "/" + collectionId + ApiConstants.UNARCHIVE))
                 .andExpect(status().isNotFound());
     }
 
@@ -112,7 +112,7 @@ public class CollectionControllerTest {
                 "test@mail.ru",
                 false));
         long collectionId = 1L;
-        String responseBody = mockMvc.perform(put("/collection/" + collectionId + "/archive"))
+        String responseBody = mockMvc.perform(put(ApiConstants.COLLECTION + "/" + collectionId + ApiConstants.ARCHIVE))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -132,7 +132,7 @@ public class CollectionControllerTest {
                 "test@mail.ru",
                 true));
         long collectionId = 1L;
-        String responseBody = mockMvc.perform(put("/collection/" + collectionId + "/unarchive"))
+        String responseBody = mockMvc.perform(put(ApiConstants.COLLECTION + "/" + collectionId + ApiConstants.UNARCHIVE))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -144,7 +144,7 @@ public class CollectionControllerTest {
     @Test
     public void testDeleteNonExistentCollectionReturnsNotFound() throws Exception {
         long collectionId = 12345L;
-        mockMvc.perform(delete("/collection/" + collectionId))
+        mockMvc.perform(delete(ApiConstants.COLLECTION + "/" + collectionId))
                 .andExpect(status().isNotFound());
     }
 
@@ -152,8 +152,8 @@ public class CollectionControllerTest {
     public void testDeleteNonArchivedCollectionReturnsNotFound() throws Exception {
         String putBody = createCollectionRequest("Berries");
         long collectionId = 1;
-        String collectionPath = "/collection/" + collectionId;
-        mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(putBody))
+        String collectionPath = ApiConstants.COLLECTION + "/" + collectionId;
+        mockMvc.perform(post(ApiConstants.COLLECTION).contentType(MediaType.APPLICATION_JSON).content(putBody))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.collectionId", Matchers.not(Matchers.emptyString())));
@@ -165,15 +165,15 @@ public class CollectionControllerTest {
     public void testCollectionNotFoundAfterDeletion() throws Exception {
         String putBody = createCollectionRequest("Berries");
         long collectionId = 1;
-        String collectionPath = "/collection/" + collectionId;
+        String collectionPath = ApiConstants.COLLECTION + "/" + collectionId;
 
-        mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(putBody))
+        mockMvc.perform(post(ApiConstants.COLLECTION).contentType(MediaType.APPLICATION_JSON).content(putBody))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.collectionId", Matchers.not(Matchers.emptyString())));
 
 
-        mockMvc.perform(put("/collection/" + collectionId + "/archive"));
+        mockMvc.perform(put(ApiConstants.COLLECTION + "/" + collectionId + ApiConstants.ARCHIVE));
         mockMvc.perform(delete(collectionPath)).andExpect(status().isOk());
         mockMvc.perform(get(collectionPath)).andExpect(status().isNotFound());
     }

@@ -7,6 +7,7 @@ import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsE
 import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
 import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
 import com.epam.speciome.catalog.domain.samples.*;
+import com.epam.speciome.catalog.webservice.ApiConstants;
 import com.epam.speciome.catalog.webservice.exceptions.*;
 import com.epam.speciome.catalog.webservice.models.ListSamplesResponse;
 import com.epam.speciome.catalog.webservice.models.SampleAttribute;
@@ -58,7 +59,7 @@ public class SampleController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @GetMapping("/samples")
+    @GetMapping(ApiConstants.SAMPLES)
     @ResponseBody
     public ListSamplesResponse listSamples(
             @Schema(allowableValues = {"ALL", "UNARCHIVED", "ARCHIVED"}, defaultValue = "ALL")
@@ -95,7 +96,7 @@ public class SampleController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping("/sample")
+    @PostMapping(ApiConstants.SAMPLE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public CreateSampleResponse createSample(@RequestBody(required = false) SampleRequest request) {
@@ -131,7 +132,7 @@ public class SampleController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @GetMapping("/sample/{sampleId}")
+    @GetMapping(ApiConstants.SAMPLE_BY_ID)
     @ResponseBody
     public SampleResponse getSample(
             @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
@@ -163,7 +164,7 @@ public class SampleController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @DeleteMapping("/sample/{sampleId}")
+    @DeleteMapping(ApiConstants.SAMPLE_BY_ID)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSample(
             @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
@@ -192,7 +193,7 @@ public class SampleController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @PutMapping("/sample/{sampleId}")
+    @PutMapping(ApiConstants.SAMPLE_BY_ID)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateSample(
             @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId,
@@ -222,7 +223,7 @@ public class SampleController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @PutMapping("/sample/{sampleId}/archive")
+    @PutMapping(ApiConstants.SAMPLE_BY_ID_ARCHIVE)
     public SampleResponse archiveSample(
             @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
     ) {
@@ -249,7 +250,7 @@ public class SampleController {
                     description = "Not authenticated", responseCode = "401"
             )
     })
-    @PutMapping("/sample/{sampleId}/unarchive")
+    @PutMapping(ApiConstants.SAMPLE_BY_ID_UNARCHIVE)
     public SampleResponse unArchiveSample(
             @PathVariable("sampleId") @Parameter(description = "Sample identifier", example = "1") Long sampleId
     ) {
@@ -275,7 +276,7 @@ public class SampleController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @GetMapping("/samples/download")
+    @GetMapping(ApiConstants.SAMPLES_DOWNLOAD)
     public ResponseEntity<Resource> getFile() throws IOException {
         String filename = "samples.csv";
         InputStreamResource file = new InputStreamResource(useCaseFactory.exportSamples().exportSamples());
@@ -306,7 +307,7 @@ public class SampleController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping(value = "/samples/upload/csv", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = ApiConstants.SAMPLES_UPLOAD_CSV, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public void uploadFile(@RequestPart("file") MultipartFile file) throws Exception {
         try {
