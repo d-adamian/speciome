@@ -5,6 +5,7 @@ import {setupServer} from "msw/node";
 import {rest} from "msw";
 
 import {BASE_URL} from '../api/SampleAPI.js';
+import SamplesStore from "../stores/SamplesStore"
 import SamplesTable from './SamplesTable.js';
 
 const columnNames = ['col1_test', 'col2_test'];
@@ -36,26 +37,30 @@ const samples = [
 ];
 const numArchived = samples.filter(({archived}) => archived).length;
 
-const server = setupServer(
-    rest.get(`${BASE_URL}/attributes`, (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(columnNames));
-    }),
-    rest.get(`${BASE_URL}/samples`, (req, res, ctx) => {
-        const response = {
-            totalCount: samples.length,
-            samples: samples
-        }
-        return res(ctx.status(200), ctx.json(response));
-    }),
-)
+const server = setupServer();
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('Table rendering tests', () => {
-    beforeEach(() => render(<SamplesTable/>));
+beforeEach(() => {
+    server.use(
+        rest.get(`${BASE_URL}/attributes`, (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(columnNames));
+        }),
+        rest.get(`${BASE_URL}/samples`, (req, res, ctx) => {
+            const response = {
+                totalCount: samples.length,
+                samples: samples
+            }
+            return res(ctx.status(200), ctx.json(response));
+        })
+    )
+    const store = new SamplesStore();
+    render(<SamplesTable samplesStore={store}/>);
+})
 
+describe('Table rendering tests', () => {
     test('Table header is rendered correctly', async () => {
         for (const name of columnNames) {
             expect(await screen.findByText(name, {exact: true})).toBeInTheDocument();
@@ -105,7 +110,6 @@ describe('Table rendering tests', () => {
 });
 
 describe('Interaction tests', () => {
-    beforeEach(() => render(<SamplesTable/>));
 
     test('"Delete" button removes row and calls API method', async () => {
         const testCallback = jest.fn();

@@ -1,9 +1,10 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 import {setupServer} from "msw/node";
-
-import CollectionsList from "./CollectionsList";
 import {rest} from "msw";
+
 import {BASE_URL} from "../api/CollectionsAPI";
+import CollectionsList from "./CollectionsList";
+import CollectionStore from "../stores/CollectionStore";
 
 async function findCreateButton() {
     const createButton = await screen.findByRole('button', {name: 'Create Collection'});
@@ -16,9 +17,7 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-beforeEach(() => render(<CollectionsList/>));
-
-function setupListCollectionsEndpoint(collections) {
+function setupTest(collections) {
     server.use(
         rest.get(`${BASE_URL}/collections`, (req, res, ctx) => {
             const responsePayload = {
@@ -28,10 +27,12 @@ function setupListCollectionsEndpoint(collections) {
             return res(ctx.status(200), ctx.json(responsePayload));
         })
     );
+    const store = new CollectionStore();
+    render(<CollectionsList collectionStore={store}/>);
 }
 
 describe('Top view rendering without collections', () => {
-    beforeEach(() => setupListCollectionsEndpoint([]));
+    beforeEach(() => setupTest([]));
 
     test('"Create collection" button is displayed', async () => {
         const {createButton} = await findCreateButton();
@@ -51,7 +52,7 @@ describe('List rendering - two collections present', () => {
     const collection2 = {
         collectionName: 'Collection 2'
     }
-    beforeEach(() => setupListCollectionsEndpoint([collection1, collection2]));
+    beforeEach(() => setupTest([collection1, collection2]));
 
     test('"No collections" message is not displayed', async () => {
         const {createButton} = await findCreateButton();
@@ -72,7 +73,7 @@ describe('List rendering - two collections present', () => {
 });
 
 describe('Interaction tests', () => {
-    beforeEach(() => setupListCollectionsEndpoint([]));
+    beforeEach(() => setupTest([]));
 
     test('"Create collection" clicked - collection dialog is shown', async () => {
         const {createButton} = await findCreateButton();
