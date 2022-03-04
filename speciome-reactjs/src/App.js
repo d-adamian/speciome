@@ -18,6 +18,12 @@ import RegistrationForm from "./users/components/RegistrationForm";
 import SamplesTable from "./samples/components/SamplesTable";
 import CollectionsList from "./collections/components/CollectionsList";
 
+import CollectionStore from "./collections/stores/CollectionStore";
+import SamplesStore from "./samples/stores/SamplesStore";
+
+const collectionStore = new CollectionStore();
+const sampleStore = new SamplesStore();
+
 function App() {
     const [userEmail, setUserEmail] = useState('');
 
@@ -68,12 +74,12 @@ function App() {
             <Switch>
                 <Route exact path="/">
                     <WrappedPage userEmail={userEmail}>
-                        <SamplesTable/>
+                        <SamplesTable samplesStore={sampleStore}/>
                     </WrappedPage>
                 </Route>
                 <Route exact path="/collections">
                     <WrappedPage userEmail={userEmail}>
-                        <CollectionsList/>
+                        <CollectionsList collectionStore={collectionStore}/>
                     </WrappedPage>
                 </Route>
                 <Route exact path="/register">

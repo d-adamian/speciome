@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
+import {observer} from "mobx-react-lite"
+import {Button, Spinner, Table} from "react-bootstrap";
+
 import CollectionDialog from "./CollectionDialog";
 
-import {Button, Spinner, Table} from "react-bootstrap";
-import {listCollections} from "../api/CollectionsAPI";
 
 function CollectionsTable(props) {
     const {collections} = props;
@@ -36,33 +37,21 @@ function CollectionsTable(props) {
     )
 }
 
-function CollectionsList() {
-    const [collections, setCollections] = useState([]);
-    const [creating, setCreating] = useState(false);
-    const [fetching, setFetching] = useState(true);
+const CollectionsList = observer(({ collectionStore }) => {
+    useEffect(() => {
+        collectionStore.reloadCollections();
+    }, [collectionStore]);
 
     function handleCreateCancelled() {
-        setCreating(false);
+        collectionStore.stopCreatingCollection();
     }
 
-    function handleCreateCompleted(collectionId) {
-        setCreating(false);
-        reloadTable();
+    function handleCreateCompleted() {
+        collectionStore.stopCreatingCollection();
+        collectionStore.reloadCollections();
     }
 
-    function reloadTable() {
-        setFetching(true);
-        listCollections().then(listResponse => {
-            setCollections(listResponse.collections);
-            setFetching(false);
-        });
-    }
-
-    useEffect(() => {
-        reloadTable();
-    }, []);
-
-    if (fetching) {
+    if (collectionStore.fetching) {
         return (<Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
         </Spinner>);
@@ -70,17 +59,17 @@ function CollectionsList() {
         return (
             <div className="speciome-collections-list">
                 <CollectionDialog
-                    show={creating}
+                    show={collectionStore.creatingCollection}
                     onCancel={handleCreateCancelled}
                     onComplete={handleCreateCompleted}
                 />
-                <CollectionsTable collections={collections}/>
-                <Button onClick={() => setCreating(true)}>
+                <CollectionsTable collections={collectionStore.collections}/>
+                <Button onClick={() => collectionStore.startCreatingCollection()}>
                     Create Collection
                 </Button>
             </div>
         );
     }
-}
+})
 
 export default CollectionsList;
