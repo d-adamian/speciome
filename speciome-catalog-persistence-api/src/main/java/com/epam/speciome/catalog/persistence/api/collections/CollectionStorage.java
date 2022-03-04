@@ -4,7 +4,10 @@ import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullExce
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 
 public interface CollectionStorage {
+
     long addCollection(CollectionData collectionData);
+
+    void updateCollection(Long collectionId, CollectionData collectionData);
 
     ListCollectionsResult listCollections();
 
@@ -15,7 +18,6 @@ public interface CollectionStorage {
      */
     CollectionData getCollectionById(long collectionId);
 
-    void updateCollection(Long collectionId, CollectionData collectionData);
 
     void removeCollectionById(Long collectionId);
 }

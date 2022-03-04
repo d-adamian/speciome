@@ -3,7 +3,9 @@ package com.epam.speciome.catalog.webservice.controllers;
 import com.epam.speciome.catalog.UseCaseFactory;
 import com.epam.speciome.catalog.domain.collections.Collection;
 import com.epam.speciome.catalog.domain.collections.CollectionAttributes;
-import com.epam.speciome.catalog.domain.exceptions.*;
+import com.epam.speciome.catalog.domain.exceptions.AbsentCollectionNameException;
+import com.epam.speciome.catalog.domain.exceptions.CollectionNotArchivedException;
+import com.epam.speciome.catalog.domain.exceptions.CollectionNotFoundException;
 import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
 import com.epam.speciome.catalog.webservice.ApiConstants;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Collections", description = "Collection Management API")
 @RestController
@@ -84,6 +87,37 @@ public class CollectionController {
             return new CreateCollectionResponse(collectionId);
         } catch (AbsentCollectionNameException e) {
             throw new InvalidInputException(e.getMessage());
+        }
+    }
+
+    @Operation(
+            summary = "Update collection",
+            description = "Update collection's name with given ID"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    description = "Updated successfully", responseCode = "204"
+            ),
+            @ApiResponse(
+                    description = "Collection not found", responseCode = "404"
+            ),
+            @ApiResponse(
+                    description = "Not authenticated", responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
+    @PutMapping("/collection/{collectionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCollection(
+            @PathVariable("collectionId") @Parameter(description = "Collection identifier", example = "1") long collectionId,
+            @RequestBody(required = false) CollectionRequest request) {
+
+        CollectionRequest collectionRequest = Optional.ofNullable(request).orElse(new CollectionRequest(""));
+        String collectionName = collectionRequest.getCollectionName();
+        try {
+            useCaseFactory.updateCollection().updateCollection(collectionId, collectionName);
+        } catch (CollectionNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
     }
 

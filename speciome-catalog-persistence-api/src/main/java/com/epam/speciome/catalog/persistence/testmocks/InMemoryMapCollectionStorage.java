@@ -1,8 +1,8 @@
 package com.epam.speciome.catalog.persistence.testmocks;
 
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
-import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
+import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 
 import java.util.HashMap;
@@ -21,6 +21,11 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
     }
 
     @Override
+    public void updateCollection(Long collectionId, CollectionData collectionData) {
+        collectionDataMap.put(collectionId, collectionData);
+    }
+
+    @Override
     public ListCollectionsResult listCollections() {
         return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap);
     }
@@ -34,10 +39,6 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
         return retrievedCollection;
     }
 
-    @Override
-    public void updateCollection(Long collectionId, CollectionData collectionData) {
-        collectionDataMap.put(collectionId, collectionData);
-    }
 
     @Override
     public void removeCollectionById(Long collectionId) {

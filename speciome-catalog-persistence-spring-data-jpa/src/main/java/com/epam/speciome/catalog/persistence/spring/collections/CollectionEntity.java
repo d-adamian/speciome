@@ -23,6 +23,14 @@ public class CollectionEntity {
     private String ownerEmail;
     private boolean archived;
 
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
+    }
+
     public long getId() {
         return id;
     }
