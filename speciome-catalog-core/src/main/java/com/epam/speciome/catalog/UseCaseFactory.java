@@ -1,5 +1,9 @@
 package com.epam.speciome.catalog;
 
+import com.epam.speciome.catalog.domain.collections.AddCollection;
+import com.epam.speciome.catalog.domain.collections.GetCollection;
+import com.epam.speciome.catalog.domain.collections.ListCollections;
+import com.epam.speciome.catalog.domain.collections.UpdateCollection;
 import com.epam.speciome.catalog.domain.collections.*;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.domain.users.GetUserDetails;
@@ -70,6 +74,10 @@ public class UseCaseFactory {
 
     public AddCollection addCollection() {
         return new AddCollection(collectionStorage);
+    }
+
+    public UpdateCollection updateCollection() {
+        return new UpdateCollection(collectionStorage);
     }
 
     public GetCollection getCollection() {

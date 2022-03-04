@@ -177,4 +177,28 @@ public class CollectionControllerTest {
         mockMvc.perform(delete(collectionPath)).andExpect(status().isOk());
         mockMvc.perform(get(collectionPath)).andExpect(status().isNotFound());
     }
+
+    @Test
+    public void testPutNonExistingCollectionReturnNotFound()throws Exception{
+        long collectionId = 5L;
+        mockMvc.perform(put("/collection/"+collectionId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testSuccessfulPutStatus()throws Exception{
+        long collectionId = postCollectionWithoutAttributes();
+        String mockTestRequest = createCollectionRequest("mock_collection_name");
+        mockMvc.perform(put("/collection/"+collectionId).contentType(MediaType.APPLICATION_JSON).content(mockTestRequest))
+                .andExpect(status().isNoContent());
+
+
+    }
+    private long postCollectionWithoutAttributes() throws Exception {
+        String mockTestRequest = createCollectionRequest("mock_collection_name");
+        String postResponse = mockMvc.perform(post("/collection").contentType(MediaType.APPLICATION_JSON).content(mockTestRequest))
+                .andReturn().getResponse().getContentAsString();
+        return new ObjectMapper().readTree(postResponse).findValue("collectionId").asLong();
+    }
+
 }

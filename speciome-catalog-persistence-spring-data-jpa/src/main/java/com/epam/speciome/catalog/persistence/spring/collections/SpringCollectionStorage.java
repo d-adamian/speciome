@@ -28,6 +28,15 @@ public class SpringCollectionStorage implements CollectionStorage {
     }
 
     @Override
+    public void updateCollection(Long collectionId, CollectionData collectionData) {
+        CollectionEntity collectionEntity = CollectionEntity.fromCollectionData(collectionData);
+        collectionEntity.setId(collectionId);
+        collectionJpaRepository.saveAndFlush(collectionEntity);
+    }
+
+
+
+    @Override
     public ListCollectionsResult listCollections() {
         List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll();
         Map<Long, CollectionData> collectionDataMap = collectionEntityList
@@ -59,12 +68,7 @@ public class SpringCollectionStorage implements CollectionStorage {
         return collectionEntity.asCollectionData();
     }
 
-    @Override
-    public void updateCollection(Long collectionId, CollectionData collectionData) {
-        CollectionEntity collectionEntity = CollectionEntity.fromCollectionData(collectionData);
-        collectionEntity.setId(collectionId);
-        collectionJpaRepository.saveAndFlush(collectionEntity);
-    }
+
 
     @Override
     public void removeCollectionById(Long collectionId) {
