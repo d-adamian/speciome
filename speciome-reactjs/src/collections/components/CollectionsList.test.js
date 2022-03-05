@@ -1,10 +1,21 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {setupServer} from "msw/node";
 import {rest} from "msw";
 
 import {BASE_URL} from "../api/CollectionsAPI";
 import CollectionsList from "./CollectionsList";
 import CollectionStore from "../stores/CollectionStore";
+
+const collections = [
+    {
+        collectionId: 1,
+        collectionName: 'Collection 1'
+    },
+    {
+        collectionId: 2,
+        collectionName: 'Collection 2'
+    }
+]
 
 async function findCreateButton() {
     const createButton = await screen.findByRole('button', {name: 'Create Collection'});
@@ -27,6 +38,13 @@ function setupTest(collections) {
             return res(ctx.status(200), ctx.json(responsePayload));
         })
     );
+    collections.forEach(({collectionId}) => {
+       server.use(
+           rest.delete(`${BASE_URL}/collection/${collectionId}`, ((req, res, ctx) => {
+               return res(ctx.status(200), ctx.json({}));
+           }))
+       )
+    });
     const store = new CollectionStore();
     render(<CollectionsList collectionStore={store}/>);
 }
@@ -46,13 +64,7 @@ describe('Top view rendering without collections', () => {
 });
 
 describe('List rendering - two collections present', () => {
-    const collection1 = {
-        collectionName: 'Collection 1'
-    };
-    const collection2 = {
-        collectionName: 'Collection 2'
-    }
-    beforeEach(() => setupTest([collection1, collection2]));
+    beforeEach(() => setupTest(collections));
 
     test('"No collections" message is not displayed', async () => {
         const {createButton} = await findCreateButton();
@@ -66,18 +78,34 @@ describe('List rendering - two collections present', () => {
         const {createButton} = await findCreateButton();
         expect(createButton).not.toBeNull();
 
-        [collection1, collection2].forEach(({collectionName}) => {
+        collections.forEach(({collectionName}) => {
             expect(screen.queryByText(collectionName, {exact: true})).not.toBeNull();
         })
     });
+
+    test('"Remove" button is displayed for each collection', async () => {
+        await findCreateButton();
+
+        const removeButtons = screen.getAllByRole('button', {name: 'Remove'});
+        expect(removeButtons).toHaveLength(2);
+    })
 });
 
 describe('Interaction tests', () => {
-    beforeEach(() => setupTest([]));
+    beforeEach(() => setupTest(collections));
 
     test('"Create collection" clicked - collection dialog is shown', async () => {
         const {createButton} = await findCreateButton();
         fireEvent.click(createButton);
         expect(screen.queryByRole('button', {name: 'Save'})).not.toBeNull();
     });
+
+    test('One of two collections removed - one left', async () => {
+        await findCreateButton(); // Wait for initial rendering
+
+        const removeButtons = screen.getAllByRole('button', {name: 'Remove'});
+        fireEvent.click(removeButtons[0]);
+
+        await waitFor(() => expect(screen.getAllByRole('button', {name: 'Remove'})).toHaveLength(1));
+    })
 });

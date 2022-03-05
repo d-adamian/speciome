@@ -21,4 +21,10 @@ function listCollections() {
         .then(response => response.data);
 }
 
-export {BASE_URL, addCollection, listCollections};
+function deleteCollection(collectionId) {
+    const url = `${BASE_URL}/collection/${collectionId}`
+
+    return axios.delete(url);
+}
+
+export {BASE_URL, addCollection, listCollections, deleteCollection};
