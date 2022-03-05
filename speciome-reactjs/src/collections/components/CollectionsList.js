@@ -5,8 +5,8 @@ import {Button, Spinner, Table} from "react-bootstrap";
 import CollectionDialog from "./CollectionDialog";
 
 
-function CollectionsTable(props) {
-    const {collections} = props;
+const CollectionsTable = observer(({collectionStore}) => {
+    const collections = collectionStore.collections;
 
     if (collections.length === 0) {
         return (<p>You do not have any collection yet</p>);
@@ -18,15 +18,26 @@ function CollectionsTable(props) {
                 <th>
                     Name
                 </th>
+                <th>
+
+                </th>
             </tr>
             </thead>
             <tbody>
             {
-                collections.map(({collectionName}, index) => {
+                collections.map(({collectionId, collectionName}, index) => {
                     return (
                         <tr key={index}>
                             <td>
                                 {collectionName}
+                            </td>
+                            <td>
+                                <Button
+                                    variant="danger"
+                                    onClick={() => collectionStore.removeCollection(collectionId)}
+                                >
+                                    Remove
+                                </Button>
                             </td>
                         </tr>
                     )
@@ -35,9 +46,9 @@ function CollectionsTable(props) {
             </tbody>
         </Table>
     )
-}
+})
 
-const CollectionsList = observer(({ collectionStore }) => {
+const CollectionsList = observer(({collectionStore}) => {
     useEffect(() => {
         collectionStore.reloadCollections();
     }, [collectionStore]);
@@ -63,7 +74,7 @@ const CollectionsList = observer(({ collectionStore }) => {
                     onCancel={handleCreateCancelled}
                     onComplete={handleCreateCompleted}
                 />
-                <CollectionsTable collections={collectionStore.collections}/>
+                <CollectionsTable collectionStore={collectionStore}/>
                 <Button onClick={() => collectionStore.startCreatingCollection()}>
                     Create Collection
                 </Button>

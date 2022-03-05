@@ -1,6 +1,6 @@
-import { makeAutoObservable } from "mobx"
+import {makeAutoObservable} from "mobx"
 
-import { listCollections } from "../api/CollectionsAPI";
+import {deleteCollection, listCollections} from "../api/CollectionsAPI";
 
 export default class CollectionStore {
     creatingCollection = false
@@ -13,6 +13,15 @@ export default class CollectionStore {
 
     addCollection(collection) {
         this.collections.push(collection);
+    }
+
+    removeCollection(collectionIdToRemove) {
+        deleteCollection(collectionIdToRemove).then(() => {
+            const updatedCollections = this.collections.filter(
+                ({collectionId}) => collectionId !== collectionIdToRemove
+            );
+            this.setCollections(updatedCollections)
+        })
     }
 
     startCreatingCollection() {
