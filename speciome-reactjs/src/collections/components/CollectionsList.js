@@ -18,17 +18,40 @@ const CollectionsTable = observer(({collectionStore}) => {
                     Name
                 </th>
                 <th>
+                    Created by
+                </th>
+                <th>
+                    Created/Updated
+                </th>
+                <th>
 
                 </th>
             </tr>
             </thead>
             <tbody>
             {
-                collections.map(({collectionId, collectionName, archived}, index) => {
+                collections.map((collection, index) => {
+                    const {
+                        collectionId,
+                        collectionName,
+                        ownerEmail,
+                        archived,
+                        createdAt,
+                        updatedAt
+                    } = collection;
+
                     return (
                         <tr key={index}>
                             <td>
                                 {collectionName}
+                            </td>
+                            <td>
+                                {ownerEmail}
+                            </td>
+                            <td>
+                                {new Date(createdAt).toLocaleString('en-GB')}
+                                /
+                                {new Date(updatedAt).toLocaleString('en-GB')}
                             </td>
                             <td>
                                 {
@@ -89,7 +112,7 @@ const CollectionsList = observer(({collectionStore}) => {
         </Spinner>);
     } else {
         return (
-            <div className="speciome-collections-list">
+            <div>
                 <CollectionDialog
                     show={collectionStore.creatingCollection}
                     onCancel={handleCreateCancelled}

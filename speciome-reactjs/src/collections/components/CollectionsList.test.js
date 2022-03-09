@@ -6,15 +6,22 @@ import {BASE_URL} from "../api/CollectionsAPI";
 import CollectionsList from "./CollectionsList";
 import CollectionStore from "../stores/CollectionStore";
 
+const ownerEmail = "aaa@bbb.com";
 const collections = [
     {
         collectionId: 1,
         collectionName: 'Collection 1',
+        createdAt: "2022-03-09T06:57:38.452+00:00",
+        updatedAt: "2022-03-09T07:18:38.452+00:00",
+        ownerEmail: ownerEmail,
         archived: true
     },
     {
         collectionId: 2,
         collectionName: 'Collection 2',
+        createdAt: "2022-02-10T06:57:38.452+00:00",
+        updatedAt: "2022-02-10T07:57:38.452+00:00",
+        ownerEmail: ownerEmail,
         archived: false
     }
 ]
@@ -90,7 +97,18 @@ describe('List rendering - two collections present', () => {
 
         const buttons = screen.getAllByRole('button', {name: label});
         expect(buttons).toHaveLength(1);
-    })
+    });
+
+    test("Owner email is displayed for each collection", async () => {
+        const emails = await screen.findAllByText(ownerEmail);
+        expect(emails).toHaveLength(collections.length);
+    });
+
+    test("Date is displayed for collection", async() => {
+        const expectedDateString = "09/03/2022";
+        const date = await screen.findByText(expectedDateString, {exact: false});
+        expect(date).not.toBeNull();
+    });
 });
 
 describe('Interaction tests', () => {
