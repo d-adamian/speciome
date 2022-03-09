@@ -1,15 +1,12 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
-import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
-import com.epam.speciome.catalog.persistence.api.samples.ListSamplesResult;
-import com.epam.speciome.catalog.persistence.api.samples.SampleData;
-import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public interface CollectionStorageContract {
@@ -72,13 +69,15 @@ public interface CollectionStorageContract {
     }
 
     private static CollectionData collectionOne() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        return new CollectionData("Apple trees", now, now, "Mary Jones", false);
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+        Timestamp timestamp = Timestamp.valueOf(now);
+        return new CollectionData("Apple trees", timestamp, timestamp, "Mary Jones", false);
     }
 
     private static CollectionData collectionTwo() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        return new CollectionData("Bird cherry trees", now, now, "James Smith", false);
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+        Timestamp timestamp = Timestamp.valueOf(now);
+        return new CollectionData("Bird cherry trees", timestamp, timestamp, "James Smith", false);
     }
 
     @Test
