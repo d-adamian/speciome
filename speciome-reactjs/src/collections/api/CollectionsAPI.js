@@ -14,10 +14,10 @@ function addCollection(name) {
         .then(({collectionId}) => collectionId);
 }
 
-function listCollections() {
-    const url = `${BASE_URL}/collections`
+function archiveCollection(collectionId) {
+    const url = `${BASE_URL}/collection/${collectionId}/archive`;
 
-    return axios.get(url)
+    return axios.put(url)
         .then(response => response.data);
 }
 
@@ -27,4 +27,18 @@ function deleteCollection(collectionId) {
     return axios.delete(url);
 }
 
-export {BASE_URL, addCollection, listCollections, deleteCollection};
+function listCollections() {
+    const url = `${BASE_URL}/collections`
+
+    return axios.get(url)
+        .then(response => response.data);
+}
+
+function unArchiveCollection(collectionId) {
+    const url = `${BASE_URL}/collection/${collectionId}/unarchive`;
+
+    return axios.put(url)
+        .then(response => response.data);
+}
+
+export {BASE_URL, addCollection, archiveCollection, deleteCollection, listCollections, unArchiveCollection};

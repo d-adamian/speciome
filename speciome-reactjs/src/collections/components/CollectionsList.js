@@ -4,7 +4,6 @@ import {Button, Spinner, Table} from "react-bootstrap";
 
 import CollectionDialog from "./CollectionDialog";
 
-
 const CollectionsTable = observer(({collectionStore}) => {
     const collections = collectionStore.collections;
 
@@ -25,19 +24,41 @@ const CollectionsTable = observer(({collectionStore}) => {
             </thead>
             <tbody>
             {
-                collections.map(({collectionId, collectionName}, index) => {
+                collections.map(({collectionId, collectionName, archived}, index) => {
                     return (
                         <tr key={index}>
                             <td>
                                 {collectionName}
                             </td>
                             <td>
-                                <Button
-                                    variant="danger"
-                                    onClick={() => collectionStore.removeCollection(collectionId)}
-                                >
-                                    Remove
-                                </Button>
+                                {
+                                    archived ?
+                                        (
+                                            <div>
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => collectionStore.restoreCollectionAction(collectionId)}
+                                                >
+                                                    Restore
+                                                </Button>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={() => collectionStore.removeCollection(collectionId)}
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </div>
+                                        ) :
+                                        (
+                                            <Button
+                                                variant="warning"
+                                                onClick={() => collectionStore.archiveCollectionAction(collectionId)}
+                                            >
+                                                Archive
+                                            </Button>
+
+                                        )
+                                }
                             </td>
                         </tr>
                     )

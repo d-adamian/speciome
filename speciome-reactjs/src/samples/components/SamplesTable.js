@@ -54,7 +54,7 @@ function TableRow(props) {
                     (
                         <div>
                             <Button variant="primary" disabled={editDisabled} onClick={onEdit}>Edit</Button>
-                            <Button variant="danger" onClick={onArchive}>Archive</Button>
+                            <Button variant="warning" onClick={onArchive}>Archive</Button>
                         </div>
                     )
                 }

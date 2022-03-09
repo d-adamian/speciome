@@ -1,6 +1,6 @@
 import {makeAutoObservable} from "mobx"
 
-import {deleteCollection, listCollections} from "../api/CollectionsAPI";
+import {archiveCollection, deleteCollection, listCollections, unArchiveCollection} from "../api/CollectionsAPI";
 
 export default class CollectionStore {
     creatingCollection = false
@@ -22,6 +22,29 @@ export default class CollectionStore {
             );
             this.setCollections(updatedCollections)
         })
+    }
+
+    archiveCollectionAction(collectionId) {
+        archiveCollection(collectionId).then((collection) => {
+            this.replaceCollectionInState(collectionId, collection);
+        })
+    }
+
+    restoreCollectionAction(collectionId) {
+        unArchiveCollection(collectionId).then((collection) => {
+            this.replaceCollectionInState(collectionId, collection);
+        })
+    }
+
+    replaceCollectionInState(collectionId, changedCollection) {
+        const updatedCollections = this.collections.map((collection) => {
+            if (collection.collectionId === collectionId) {
+                return changedCollection;
+            } else {
+                return collection;
+            }
+        });
+        this.setCollections(updatedCollections);
     }
 
     startCreatingCollection() {

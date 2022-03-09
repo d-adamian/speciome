@@ -9,11 +9,13 @@ import CollectionStore from "../stores/CollectionStore";
 const collections = [
     {
         collectionId: 1,
-        collectionName: 'Collection 1'
+        collectionName: 'Collection 1',
+        archived: true
     },
     {
         collectionId: 2,
-        collectionName: 'Collection 2'
+        collectionName: 'Collection 2',
+        archived: false
     }
 ]
 
@@ -39,11 +41,11 @@ function setupTest(collections) {
         })
     );
     collections.forEach(({collectionId}) => {
-       server.use(
-           rest.delete(`${BASE_URL}/collection/${collectionId}`, ((req, res, ctx) => {
-               return res(ctx.status(200), ctx.json({}));
-           }))
-       )
+        server.use(
+            rest.delete(`${BASE_URL}/collection/${collectionId}`, ((req, res, ctx) => {
+                return res(ctx.status(200), ctx.json({}));
+            }))
+        )
     });
     const store = new CollectionStore();
     render(<CollectionsList collectionStore={store}/>);
@@ -83,11 +85,11 @@ describe('List rendering - two collections present', () => {
         })
     });
 
-    test('"Remove" button is displayed for each collection', async () => {
+    test.each(['Remove', 'Archive'])('"%s" button is displayed once', async (label) => {
         await findCreateButton();
 
-        const removeButtons = screen.getAllByRole('button', {name: 'Remove'});
-        expect(removeButtons).toHaveLength(2);
+        const buttons = screen.getAllByRole('button', {name: label});
+        expect(buttons).toHaveLength(1);
     })
 });
 
@@ -108,4 +110,38 @@ describe('Interaction tests', () => {
 
         await waitFor(() => expect(screen.getAllByRole('button', {name: 'Remove'})).toHaveLength(1));
     })
+
+    test('"Archive" button pushed - collection archived, API endpoint called', async () => {
+        const archiveCallback = jest.fn();
+        const restoreCallback = jest.fn();
+
+        collections.forEach((collection) => {
+            server.use(
+                rest.put(`${BASE_URL}/collection/${collection.collectionId}/archive`, (req, res, ctx) => {
+                    archiveCallback(collection.collectionId);
+                    const updatedCollection = {...collection, archived: true}
+                    return res(ctx.status(204), ctx.json(updatedCollection));
+                }),
+                rest.put(`${BASE_URL}/collection/${collection.collectionId}/unarchive`, (req, res, ctx) => {
+                    restoreCallback(collection.collectionId);
+                    const updatedCollection = {...collection, archived: false}
+                    return res(ctx.status(204), ctx.json(updatedCollection));
+                })
+            )
+        });
+
+        await findCreateButton(); // Wait for initial rendering
+
+        const archiveButton = screen.getByRole('button', {name: 'Archive'});
+        fireEvent.click(archiveButton);
+
+        const restoreButton = await screen.findByRole('button', {name: 'Restore'});
+        expect(restoreButton).not.toBeNull();
+
+        fireEvent.click(restoreButton);
+        await waitFor(() => expect(screen.getAllByRole('button', {name: 'Archive'})).toHaveLength(1));
+
+        expect(archiveCallback).toHaveBeenCalledTimes(1);
+        expect(restoreCallback).toHaveBeenCalledTimes(1);
+    });
 });
