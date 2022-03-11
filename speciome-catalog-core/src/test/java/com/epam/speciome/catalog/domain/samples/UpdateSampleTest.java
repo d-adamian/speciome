@@ -59,19 +59,19 @@ public class UpdateSampleTest {
         @Test
         @DisplayName("Then sample attributes are equal to given values")
         public void testAttributesAreSet() {
-            Assertions.assertThat(updatedSample.attributes()).containsAllEntriesOf(attributes);
+            Assertions.assertThat(updatedSample.getAttributes()).containsAllEntriesOf(attributes);
         }
 
         @Test
         @DisplayName("Then sample update date is increased")
         public void testUpdateDateIsIncreased() {
-            Assertions.assertThat(updatedSample.updatedAt()).isAfter(originalSample.updatedAt());
+            Assertions.assertThat(updatedSample.getUpdatedAt()).isAfter(originalSample.getUpdatedAt());
         }
 
         @Test
         @DisplayName("Then sample creation date is unchanged")
         public void testCreationDateIsUnchanged() {
-            Assertions.assertThat(originalSample.createdAt()).isEqualTo(updatedSample.createdAt());
+            Assertions.assertThat(originalSample.getCreatedAt()).isEqualTo(updatedSample.getCreatedAt());
         }
 
         @Test

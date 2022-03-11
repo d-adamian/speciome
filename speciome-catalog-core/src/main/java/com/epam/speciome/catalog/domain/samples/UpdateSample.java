@@ -35,7 +35,7 @@ public final class UpdateSample {
                 sampleData.isArchived()
         );
         sampleStorage.updateSample(sampleId, updatedData);
-        Sample sample = new Sample(sampleId, updatedData);
+        Sample sample = Sample.fromSampleData(sampleId, updatedData);
         return new Result(sample);
     }
 

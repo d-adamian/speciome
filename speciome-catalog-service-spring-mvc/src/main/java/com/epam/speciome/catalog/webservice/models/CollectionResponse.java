@@ -16,11 +16,11 @@ public final class CollectionResponse {
 
 
     public CollectionResponse(Collection collection) {
-        this.collectionId = collection.collectionId();
-        this.collectionName = collection.collectionName();
-        this.createdAt = collection.createdAt();
-        this.updatedAt = collection.updatedAt();
-        this.ownerEmail = collection.ownerEmail();
+        this.collectionId = collection.getCollectionId();
+        this.collectionName = collection.getCollectionName();
+        this.createdAt = collection.getCreatedAt();
+        this.updatedAt = collection.getUpdatedAt();
+        this.ownerEmail = collection.getOwnerEmail();
         this.archived = collection.isArchived();
     }
 

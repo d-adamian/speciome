@@ -78,7 +78,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then single sample has non-empty identifier equal to assigned identifier")
         public void testSampleHasNonEmptyIdentifier() {
             Sample sample = getFirstSample();
-            Long sampleId = sample.sampleId();
+            Long sampleId = sample.getSampleId();
             Assertions.assertThat(sampleId).isNotNull();
             Assertions.assertThat(sampleId).isEqualTo(assignedSampleId);
         }
@@ -111,8 +111,8 @@ public class AddSampleToEmptyCollectionTest {
 
             TemporalUnitWithinOffset tolerance = new TemporalUnitWithinOffset(5, ChronoUnit.SECONDS);
 
-            ZonedDateTime createdAt = sample.createdAt();
-            ZonedDateTime updatedAt = sample.updatedAt();
+            ZonedDateTime createdAt = sample.getCreatedAt();
+            ZonedDateTime updatedAt = sample.getUpdatedAt();
             Assertions.assertThat(creationTime)
                     .isNotNull()
                     .isCloseTo(createdAt, tolerance)
@@ -122,7 +122,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then sample has mandatory attributes")
         public void testSampleHasAttributes() {
-            Map<String, String> attributes = getFirstSample().attributes();
+            Map<String, String> attributes = getFirstSample().getAttributes();
             Assertions.assertThat(attributes.keySet())
                     .containsExactlyInAnyOrderElementsOf(Attributes.ALL);
         }
@@ -130,7 +130,7 @@ public class AddSampleToEmptyCollectionTest {
         @Test
         @DisplayName("Then all attributes are empty")
         public void testAllAttributesAreEmpty() {
-            Map<String, String> attributes = getFirstSample().attributes();
+            Map<String, String> attributes = getFirstSample().getAttributes();
             Assertions.assertThat(attributes.values()).containsOnly("");
         }
     }
@@ -152,7 +152,7 @@ public class AddSampleToEmptyCollectionTest {
             Long sampleId = useCaseFactory.addSample().addSample(attributes).sampleId();
             Sample sample = useCaseFactory.getSample().getSample(sampleId).sample();
 
-            Map<String, String> sampleAttributes = sample.attributes();
+            Map<String, String> sampleAttributes = sample.getAttributes();
             Assertions.assertThat(sampleAttributes).containsExactlyEntriesOf(attributes);
         }
     }
@@ -169,7 +169,7 @@ public class AddSampleToEmptyCollectionTest {
         @DisplayName("Then attributes are empty for non-provided values")
         public void testAttributesAreEmptyForNonProvidedValues() {
             useCaseFactory.addSample().addSample(attributes);
-            Map<String, String> sampleAttributes = getFirstSample().attributes();
+            Map<String, String> sampleAttributes = getFirstSample().getAttributes();
 
             Sets.SetView<String> expectedEmptyAttributes = Sets.difference(
                     Set.copyOf(Attributes.ALL), attributes.keySet()
@@ -218,7 +218,7 @@ public class AddSampleToEmptyCollectionTest {
             for (Long sampleId : List.of(sampleIdOne, sampleIdTwo)) {
                 GetSample.Result getResult = useCaseFactory.getSample().getSample(sampleId);
                 Assertions.assertThat(getResult.sampleId()).isEqualTo(sampleId);
-                Assertions.assertThat(getResult.sample().sampleId()).isEqualTo(sampleId);
+                Assertions.assertThat(getResult.sample().getSampleId()).isEqualTo(sampleId);
             }
         }
     }

@@ -70,7 +70,7 @@ public class ImportSamplesTest {
             List<Long> samplesId = useCaseFactory.importSamples().saveSamples(fileInputStream);
             ListSamples.Result retrievedSamples = useCaseFactory.listSamples().listSamples();
             assertEquals(1, retrievedSamples.totalCount());
-            assertEquals(samplesId.get(0), retrievedSamples.samples().get(0).sampleId());
+            assertEquals(samplesId.get(0), retrievedSamples.samples().get(0).getSampleId());
         }
     }
 
@@ -85,7 +85,7 @@ public class ImportSamplesTest {
             List<Long> samplesId = useCaseFactory.importSamples().saveSamples(fileInputStream);
             ListSamples.Result retrievedSamples = useCaseFactory.listSamples().listSamples();
             List<Long> retrievedSamplesId = retrievedSamples.samples().stream()
-                            .map(Sample::sampleId).collect(Collectors.toList());
+                                                .map(Sample::getSampleId).collect(Collectors.toList());
 
             assertEquals(4, retrievedSamples.totalCount());
             assertEquals(samplesId, retrievedSamplesId);
@@ -103,7 +103,7 @@ public class ImportSamplesTest {
             FileInputStream fileInputStream = loadCsvFromResources("excess_columns.csv");
             useCaseFactory.importSamples().saveSamples(fileInputStream);
             ListSamples.Result retievedSamples = useCaseFactory.listSamples().listSamples();
-            Map<String, String> importedAttributes = retievedSamples.samples().get(0).attributes();
+            Map<String, String> importedAttributes = retievedSamples.samples().get(0).getAttributes();
 
             assertEquals(4, retievedSamples.totalCount());
 

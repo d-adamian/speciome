@@ -49,7 +49,7 @@ public class ListCollectionsTest {
         @Test
         @DisplayName("Then name of the retrieved collection is correct")
         public void testNameOfCollections() {
-            String collectionName = useCaseFactory.listCollections().listCollections().get(0).collectionName();
+            String collectionName = useCaseFactory.listCollections().listCollections().get(0).getCollectionName();
             assertEquals("Pines", collectionName);
         }
     }
@@ -76,8 +76,8 @@ public class ListCollectionsTest {
         public void testNameOfCollections() {
            List<Collection> retrievedCollections = useCaseFactory.listCollections().listCollections();
 
-            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.collectionName().equals("Yew trees")));
-            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.collectionName().equals("Red maples")));
+            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.getCollectionName().equals("Yew trees")));
+            assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.getCollectionName().equals("Red maples")));
         }
     }
 }

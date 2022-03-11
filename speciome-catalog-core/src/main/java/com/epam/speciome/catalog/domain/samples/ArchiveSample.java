@@ -26,7 +26,7 @@ public final class ArchiveSample {
                     sampleById.attributes(),
                     true);
             sampleStorage.updateSample(id, sampleArchived);
-            return new Sample(id, sampleArchived);
+            return Sample.fromSampleData(id, sampleArchived);
         } catch (SampleIsNullException e) {
             throw new SampleNotFoundException(id, e);
         }

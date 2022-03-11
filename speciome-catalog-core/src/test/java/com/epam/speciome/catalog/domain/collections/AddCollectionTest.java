@@ -53,15 +53,15 @@ public class AddCollectionTest {
         @Test
         @DisplayName("Then the collection name is equal to the assigned name")
         public void testStorageHasOneCollection() {
-            Assertions.assertThat(collection.collectionName()).isEqualTo("Elm trees");
+            Assertions.assertThat(collection.getCollectionName()).isEqualTo("Elm trees");
         }
 
         @Test
         @DisplayName("Then dates when collection is created and updated are equal to today's date")
         public void testCreateAndUpdateDatesAreCorrect() {
             Collection collection = useCaseFactory.getCollection().getCollection(firstId);
-            LocalDateTime createdAt = collection.createdAt().toLocalDateTime();
-            LocalDateTime updatedAt = collection.updatedAt().toLocalDateTime();
+            LocalDateTime createdAt = collection.getCreatedAt().toLocalDateTime();
+            LocalDateTime updatedAt = collection.getUpdatedAt().toLocalDateTime();
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
             assertTrue(Duration.between(createdAt, now).getSeconds() <= 5);
@@ -107,7 +107,7 @@ public class AddCollectionTest {
         public void testTwoCollectionsArePresent() {
             for (long collectionId : List.of(firstId, secondId)) {
                 Collection collection = useCaseFactory.getCollection().getCollection(collectionId);
-                Assertions.assertThat(collection.collectionId()).isEqualTo(collectionId);
+                Assertions.assertThat(collection.getCollectionId()).isEqualTo(collectionId);
             }
         }
     }

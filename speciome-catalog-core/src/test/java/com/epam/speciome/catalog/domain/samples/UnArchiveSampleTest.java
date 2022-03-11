@@ -39,7 +39,7 @@ class UnArchiveSampleTest {
     @Test
     @DisplayName("Sample Ids should be the same")
     public void eqalsId() {
-        assertEquals(0L, useCaseFactory.unArchiveSample().unArchiveSample(0L).sampleId());
+        assertEquals(0L, useCaseFactory.unArchiveSample().unArchiveSample(0L).getSampleId());
     }
 
     @Test
