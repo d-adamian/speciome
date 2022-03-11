@@ -26,7 +26,7 @@ public class UnArchiveSample {
                     sampleById.attributes(),
                     false);
             sampleStorage.updateSample(id, sampleUnarchived);
-            return new Sample(id,sampleUnarchived);
+            return Sample.fromSampleData(id,sampleUnarchived);
         } catch (SampleIsNullException e) {
             throw new SampleNotFoundException(id, e);
         }

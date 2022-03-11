@@ -13,7 +13,7 @@ public final class GetSample {
 
     public Result getSample(Long sampleId) {
         try {
-            Sample sample = new Sample(sampleId, sampleStorage.getSampleById(sampleId));
+            Sample sample = Sample.fromSampleData(sampleId, sampleStorage.getSampleById(sampleId));
             return new Result(sampleId, sample);
         } catch (SampleIsNullException e) {
             throw new SampleNotFoundException(sampleId, e);

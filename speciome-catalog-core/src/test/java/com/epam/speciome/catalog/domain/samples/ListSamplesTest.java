@@ -55,7 +55,7 @@ public class ListSamplesTest {
             if (archivalStatus.equals(ArchivalStatus.ARCHIVED)) {
                 Assertions.assertThat(samplesCount).isEqualTo(0);
             } else if (archivalStatus.equals(ArchivalStatus.ALL) || archivalStatus.equals(ArchivalStatus.UNARCHIVED)){
-                long resultId = listResult.samples().get(0).sampleId();
+                long resultId = listResult.samples().get(0).getSampleId();
                 Assertions.assertThat(samplesCount).isEqualTo(1);
                 Assertions.assertThat(sampleId).isEqualTo(resultId);
             }
@@ -83,7 +83,7 @@ public class ListSamplesTest {
             if (archivalStatus.equals(ArchivalStatus.UNARCHIVED)) {
                 Assertions.assertThat(samplesCount).isEqualTo(0);
             } else if (archivalStatus.equals(ArchivalStatus.ALL) || archivalStatus.equals(ArchivalStatus.ARCHIVED)) {
-                long resultId = listResult.samples().get(0).sampleId();
+                long resultId = listResult.samples().get(0).getSampleId();
                 Assertions.assertThat(samplesCount).isEqualTo(1);
                 Assertions.assertThat(sampleId).isEqualTo(resultId);
             }

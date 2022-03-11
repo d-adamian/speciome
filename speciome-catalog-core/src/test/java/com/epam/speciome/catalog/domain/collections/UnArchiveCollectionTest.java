@@ -58,14 +58,14 @@ public class UnArchiveCollectionTest {
     @Test
     @DisplayName("Collection's id after creation should be the same with start conditions before creation")
     public void returnTheSameIdsAfterCreationWithStartConditions() {
-        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).collectionId());
+        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).getCollectionId());
     }
 
     @Test
     @DisplayName("Collection's id after archive should be the same with start conditions before creation")
     public void returnTheSameIdsAfterArchiveWithStartConditions() {
         useCaseFactory.archiveCollection().archiveCollection(1L);
-        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).collectionId());
+        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).getCollectionId());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class UnArchiveCollectionTest {
     public void returnTheSameIdsAfterUnArchiveWithStartConditions() {
         useCaseFactory.archiveCollection().archiveCollection(1L);
         useCaseFactory.unArchiveCollection().unArchiveCollection(1L);
-        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).collectionId());
+        assertEquals(1L, useCaseFactory.getCollection().getCollection(1L).getCollectionId());
     }
 
     @Nested

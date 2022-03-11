@@ -92,10 +92,10 @@ class ExportSamplesTest {
     private String getSampleAttributesByID(int id) {
         Sample sample = useCaseFactory.listSamples().listSamples().samples().get(id);
         StringJoiner stringJoiner = new StringJoiner(",");
-        stringJoiner.add(sample.sampleId().toString());
+        stringJoiner.add(sample.getSampleId().toString());
 
         for (String attribute : Attributes.ALL) {
-            stringJoiner.add(sample.attributes().get(attribute));
+            stringJoiner.add(sample.getAttributes().get(attribute));
         }
         return stringJoiner.toString();
     }

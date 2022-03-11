@@ -26,7 +26,7 @@ public final class ListSamples {
 
         Map<Long, SampleData> samplesMap = sampleStorage.listSamples().loadSamplesById();
         List<Sample> samples = samplesMap.entrySet().stream()
-                .map(entry -> new Sample(entry.getKey(), entry.getValue()))
+                .map(entry -> Sample.fromSampleData(entry.getKey(), entry.getValue()))
                 .filter(sample -> sampleMatches(sample, status))
                 .collect(Collectors.toList());
         return new Result(samples.size(), samples);
@@ -45,15 +45,10 @@ public final class ListSamples {
     }
 
     private boolean sampleMatches(Sample sample, ArchivalStatus archivalStatus) {
-        switch (archivalStatus) {
-            case ALL:
-                return true;
-            case ARCHIVED:
-                return sample.isArchived();
-            case UNARCHIVED:
-                return !sample.isArchived();
-            default:
-                throw new ArchivalStatusException(archivalStatus.toString());
-        }
+        return switch (archivalStatus) {
+            case ALL -> true;
+            case ARCHIVED -> sample.isArchived();
+            case UNARCHIVED -> !sample.isArchived();
+        };
     }
 }

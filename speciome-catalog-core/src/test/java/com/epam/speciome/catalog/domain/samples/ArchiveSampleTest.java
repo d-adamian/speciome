@@ -48,7 +48,7 @@ class ArchiveSampleTest {
     @Test
     @DisplayName("Sample Ids should be the same")
     public void eqalsId() {
-        assertEquals(0L, useCaseFactory.archiveSample().archiveSample(0L).sampleId());
+        assertEquals(0L, useCaseFactory.archiveSample().archiveSample(0L).getSampleId());
     }
 
     @Nested
