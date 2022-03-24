@@ -6,14 +6,20 @@ import {rest} from "msw";
 import CollectionDialog from "./CollectionDialog";
 import {BASE_URL} from "../api/CollectionsAPI";
 
+const EXISTING_COLLECTION = {
+    collectionId: 1,
+    collectionName: 'Existing collection'
+};
+
 function findControls() {
     const nameInput = screen.getByRole('textbox', {name: 'Name'});
     const saveButton = screen.queryByRole('button', {name: 'Save'});
+    const updateButton = screen.queryByRole('button', {name: 'Update'});
     const warning = screen.queryByText('Collection name is empty');
-    return {nameInput, saveButton, warning};
+    return {nameInput, saveButton, warning, updateButton};
 }
 
-describe('Dialog rendering', () => {
+describe('Dialog rendering for new collection creation', () => {
     beforeEach(() => render(<CollectionDialog/>));
 
     test('Heading is displayed', () => {
@@ -27,6 +33,22 @@ describe('Dialog rendering', () => {
     test('Collection name text input is shown', () => {
         expect(screen.getByRole('textbox', {name: 'Name'})).not.toBeNull();
     })
+});
+
+describe('Dialog rendering for editing existing collection', () => {
+    beforeEach(() => render(<CollectionDialog collection={EXISTING_COLLECTION}/>));
+
+    test('Heading is displayed', () => {
+        expect(screen.queryByText('Edit collection')).not.toBeNull();
+    });
+
+    test.each(['Update', 'Cancel'])('"%s" button is rendered', (label) => {
+        expect(screen.queryByRole('button', {name: label})).not.toBeNull();
+    });
+
+    test('Collection name is displayed', () => {
+        expect(screen.queryByDisplayValue(EXISTING_COLLECTION.collectionName)).not.toBeNull();
+    });
 });
 
 describe('Input validation tests', () => {
@@ -75,7 +97,7 @@ describe('Interaction tests', () => {
         afterEach(() => server.resetHandlers());
         afterAll(() => server.close());
 
-        test('POST API call done on "Save"', async () => {
+        test('POST API call done on "Save" for new collection', async () => {
             const onComplete = jest.fn();
             render(<CollectionDialog onComplete={onComplete}/>);
 
@@ -97,6 +119,30 @@ describe('Interaction tests', () => {
 
             expect(onComplete).toHaveBeenCalledTimes(1);
             expect(onComplete).toHaveBeenCalledWith(collectionId);
-        })
-    })
+        });
+
+        test('PUT API call done on "Update" for existing collection', async () => {
+            const onComplete = jest.fn();
+            render(<CollectionDialog collection={EXISTING_COLLECTION} onComplete={onComplete}/>);
+
+            const putCallback = jest.fn();
+            const {collectionId} = EXISTING_COLLECTION;
+            server.use(
+                rest.put(`${BASE_URL}/collection/${collectionId}`, (req, res, ctx) => {
+                    putCallback();
+                    return res(ctx.status(204), ctx.json({}));
+                })
+            );
+
+            const {nameInput, updateButton} = findControls();
+
+            fireEvent.change(nameInput, {target: {value: 'Changed name'}});
+            fireEvent.click(updateButton);
+
+            await waitFor(() => expect(putCallback).toHaveBeenCalledTimes(1));
+
+            expect(onComplete).toHaveBeenCalledTimes(1);
+            expect(onComplete).toHaveBeenCalledWith(collectionId);
+        });
+    });
 });
