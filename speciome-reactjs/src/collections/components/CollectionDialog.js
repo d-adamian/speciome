@@ -1,7 +1,7 @@
 import Button from "react-bootstrap/Button";
 import {Form, Modal} from "react-bootstrap";
 import {useState} from "react";
-import {addCollection} from "../api/CollectionsAPI";
+import {addCollection, updateCollection} from "../api/CollectionsAPI";
 
 function EmptyNameWarning(props) {
     if (props.isNameEmpty) {
@@ -12,32 +12,52 @@ function EmptyNameWarning(props) {
 }
 
 function CollectionDialog(props) {
-    const {onCancel, onComplete, show} = props
+    const {collection, onCancel, onComplete, show} = props;
+    const isNewCollection = collection === null | collection === undefined;
+    const initialName = isNewCollection ? '' : collection.collectionName;
+
     const [name, setName] = useState('');
     const isNameEmpty = name === undefined || name.length === 0;
 
+    function setNameOnShow() {
+        setName(initialName);
+    }
+
     function handleSave() {
-        addCollection(name).then((collectionId) => {
-            setName('');
-            onComplete(collectionId);
-        })
+        if (isNewCollection) {
+            addCollection(name).then((collectionId) => {
+                onComplete(collectionId);
+            });
+        } else {
+            const {collectionId} = collection;
+            const modifiedCollection = {
+                collectionName: name
+            }
+            updateCollection(collectionId, modifiedCollection).then(() => {
+                onComplete(collectionId);
+            });
+        }
     }
 
     function handleCancel() {
-        setName('');
+        setName(initialName);
         onCancel();
     }
 
     return (
-        <Modal show={show} onHide={() => handleCancel()}>
+        <Modal
+            show={show}
+            onHide={() => handleCancel()}
+            onShow={() => setNameOnShow()}
+        >
             <Modal.Header closeButton>
-                Create new collection
+                {isNewCollection ? "Create new collection" : "Edit collection"}
             </Modal.Header>
             <Modal.Body>
                 <Form.Group controlId="collectionName">
                     <Form.Label>Name</Form.Label>
                     <Form.Control
-                        placeholder="My new collection"
+                        placeholder={isNewCollection ? "My new collection" : ''}
                         value={name}
                         onChange={event => setName(event.target.value)}
                     />
@@ -50,7 +70,7 @@ function CollectionDialog(props) {
                     disabled={isNameEmpty}
                     onClick={() => handleSave()}
                 >
-                    Save
+                    {isNewCollection? "Save" : "Update"}
                 </Button>
                 <Button
                     variant='outline-primary'

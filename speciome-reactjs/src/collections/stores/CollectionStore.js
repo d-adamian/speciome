@@ -3,7 +3,8 @@ import {makeAutoObservable} from "mobx"
 import {archiveCollection, deleteCollection, listCollections, unArchiveCollection} from "../api/CollectionsAPI";
 
 export default class CollectionStore {
-    creatingCollection = false
+    editingCollection = false;
+    editedCollectionId = null;
     fetching = true
     collections = []
 
@@ -48,11 +49,18 @@ export default class CollectionStore {
     }
 
     startCreatingCollection() {
-        this.creatingCollection = true;
+        this.editingCollection = true;
+        this.editedCollectionId = null;
     }
 
-    stopCreatingCollection() {
-        this.creatingCollection = false;
+    stopEditingCollection() {
+        this.editingCollection = false;
+        this.editedCollectionId = null;
+    }
+
+    startEditingCollection(collectionId) {
+        this.editingCollection = true;
+        this.editedCollectionId = collectionId;
     }
 
     reloadCollections() {
@@ -61,6 +69,10 @@ export default class CollectionStore {
             this.setCollections(listResponse.collections);
             this.setFetching(false);
         })
+    }
+
+    get editedCollection() {
+        return this.collections.find(({collectionId}) => collectionId === this.editedCollectionId);
     }
 
     setCollections(collections) {

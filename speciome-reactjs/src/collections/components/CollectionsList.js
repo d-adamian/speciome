@@ -73,13 +73,20 @@ const CollectionsTable = observer(({collectionStore}) => {
                                             </div>
                                         ) :
                                         (
-                                            <Button
-                                                variant="warning"
-                                                onClick={() => collectionStore.archiveCollectionAction(collectionId)}
-                                            >
-                                                Archive
-                                            </Button>
-
+                                            <div>
+                                                <Button
+                                                    variant="warning"
+                                                    onClick={() => collectionStore.archiveCollectionAction(collectionId)}
+                                                >
+                                                    Archive
+                                                </Button>
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => collectionStore.startEditingCollection(collectionId)}
+                                                >
+                                                    Edit
+                                                </Button>
+                                            </div>
                                         )
                                 }
                             </td>
@@ -98,11 +105,11 @@ const CollectionsList = observer(({collectionStore}) => {
     }, [collectionStore]);
 
     function handleCreateCancelled() {
-        collectionStore.stopCreatingCollection();
+        collectionStore.stopEditingCollection();
     }
 
     function handleCreateCompleted() {
-        collectionStore.stopCreatingCollection();
+        collectionStore.stopEditingCollection();
         collectionStore.reloadCollections();
     }
 
@@ -114,7 +121,8 @@ const CollectionsList = observer(({collectionStore}) => {
         return (
             <div>
                 <CollectionDialog
-                    show={collectionStore.creatingCollection}
+                    collection={collectionStore.editedCollection}
+                    show={collectionStore.editingCollection}
                     onCancel={handleCreateCancelled}
                     onComplete={handleCreateCompleted}
                 />

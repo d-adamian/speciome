@@ -41,4 +41,15 @@ function unArchiveCollection(collectionId) {
         .then(response => response.data);
 }
 
-export {BASE_URL, addCollection, archiveCollection, deleteCollection, listCollections, unArchiveCollection};
+function updateCollection(collectionId, collection) {
+    const url = `${BASE_URL}/collection/${collectionId}`
+    const payload = collection;
+
+    return axios.put(url, payload)
+        .then(response => response.data);
+}
+
+export {
+    BASE_URL, addCollection, archiveCollection, deleteCollection, listCollections, unArchiveCollection,
+    updateCollection
+};
