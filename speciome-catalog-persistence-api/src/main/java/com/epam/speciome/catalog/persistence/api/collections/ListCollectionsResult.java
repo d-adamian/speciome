@@ -1,15 +1,22 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
+import java.util.List;
 import java.util.Map;
 
 public class ListCollectionsResult {
 
     private final int totalCount;
     private final Map<Long, CollectionData> collectionDataMap;
+    private List<Long> order = null;
 
     public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap) {
         this.totalCount = totalCount;
         this.collectionDataMap = Map.copyOf(collectionDataMap);
+    }
+    public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap, List<Long> orderList) {
+        this.totalCount = totalCount;
+        this.collectionDataMap = Map.copyOf(collectionDataMap);
+        this.order = orderList;
     }
 
     public int getTotalCount() {
@@ -20,4 +27,7 @@ public class ListCollectionsResult {
         return Map.copyOf(collectionDataMap);
     }
 
+    public List<Long> getOrder() {
+        return order;
+    }
 }

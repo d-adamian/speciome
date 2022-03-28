@@ -51,8 +51,9 @@ public class CollectionController {
     })
     @GetMapping(ApiConstants.COLLECTIONS)
     @ResponseBody
-    public ListCollectionsResponse collectionsResponse() {
-        List<Collection> collections = useCaseFactory.listCollections().listCollections();
+    public ListCollectionsResponse collectionsResponse(@RequestParam  (value = "sortBy",required = false,defaultValue = "no value") String sortBy ,
+                                                       @RequestParam (value = "orderBy",required = false, defaultValue = "no value") String orderBy) {
+        List<Collection> collections = useCaseFactory.listCollections().listCollections(sortBy, orderBy);
         List<CollectionResponse> collectionsToOutput =
                 collections.stream().map(CollectionResponse::new).toList();
 

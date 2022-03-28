@@ -30,6 +30,12 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
         return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap);
     }
 
+    //TODO
+    @Override
+    public ListCollectionsResult sortedListCollections(String sortBy, String orderBy) {
+        return null;
+    }
+
     @Override
     public CollectionData getCollectionById(long collectionId) {
         CollectionData retrievedCollection = collectionDataMap.get(collectionId);

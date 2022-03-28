@@ -25,7 +25,7 @@ public class ListCollectionsTest {
         @Test
         @DisplayName("Then storage does not have any collections")
         public void testEmptyStorageAllCollections() {
-            int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
+            int sizeOfListCollections = useCaseFactory.listCollections().listCollections("","").size();
             assertEquals(0, sizeOfListCollections);
         }
     }
@@ -42,14 +42,14 @@ public class ListCollectionsTest {
         @Test
         @DisplayName("Then one collection can be retrieved")
         public void testStorageAllCollections() {
-            int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
+            int sizeOfListCollections = useCaseFactory.listCollections().listCollections("","").size();
             assertEquals(1, sizeOfListCollections);
         }
 
         @Test
         @DisplayName("Then name of the retrieved collection is correct")
         public void testNameOfCollections() {
-            String collectionName = useCaseFactory.listCollections().listCollections().get(0).getCollectionName();
+            String collectionName = useCaseFactory.listCollections().listCollections("","").get(0).getCollectionName();
             assertEquals("Pines", collectionName);
         }
     }
@@ -67,14 +67,14 @@ public class ListCollectionsTest {
         @Test
         @DisplayName("Then the storage contains two collections")
         public void testStorageAllCollections() {
-            int sizeOfListCollections = useCaseFactory.listCollections().listCollections().size();
+            int sizeOfListCollections = useCaseFactory.listCollections().listCollections("","").size();
             assertEquals(2, sizeOfListCollections);
         }
 
         @Test
         @DisplayName("Then names of retrieved collections are correct")
         public void testNameOfCollections() {
-           List<Collection> retrievedCollections = useCaseFactory.listCollections().listCollections();
+           List<Collection> retrievedCollections = useCaseFactory.listCollections().listCollections("","");
 
             assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.getCollectionName().equals("Yew trees")));
             assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.getCollectionName().equals("Red maples")));

@@ -57,7 +57,7 @@ public class RemoveCollectionTest {
         public void testSuccessfulDeletion() {
             useCaseFactory.archiveCollection().archiveCollection(collectionId);
             useCaseFactory.removeCollection().removeCollection(collectionId);
-            assertTrue(useCaseFactory.listCollections().listCollections().isEmpty());
+            assertTrue(useCaseFactory.listCollections().listCollections("","").isEmpty());
         }
     }
 }
