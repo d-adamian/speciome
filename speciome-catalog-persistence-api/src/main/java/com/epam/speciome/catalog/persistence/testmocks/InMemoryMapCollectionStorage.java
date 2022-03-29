@@ -5,6 +5,7 @@ import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,11 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
     //TODO
     @Override
     public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
+
+        Comparator<Map.Entry<Long, CollectionData>> comparator = (e1,e2) -> {
+            return isDecrease ?
+                    e1.getValue().
+        };
         return null;
     }
 

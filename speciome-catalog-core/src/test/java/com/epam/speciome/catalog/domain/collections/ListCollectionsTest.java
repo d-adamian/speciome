@@ -80,4 +80,15 @@ public class ListCollectionsTest {
             assertTrue(retrievedCollections.stream().anyMatch(collection -> collection.getCollectionName().equals("Red maples")));
         }
     }
+
+    @Nested
+    @DisplayName("When the storage contains list of collections")
+    public class SortedCollectionListTest{
+
+
+        @Test
+        public void testSortedCollectionList(){
+            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("id","asc");
+        }
+    }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Map;
 
 public interface CollectionStorageContract {
@@ -98,4 +99,26 @@ public interface CollectionStorageContract {
                 .isInstanceOf(CollectionIsNullException.class);
     }
 
+    @Test
+    @DisplayName("When we get collection list with sort params. Then it return sorted list by params")
+    default void testSampleSortedList() {
+        CollectionStorage collectionStorage = collectionStorage();
+        Long firstSampleId = collectionStorage.addSample(sampleOne());
+        Long secondSampleId = collectionStorage.addSample(sampleTwo());
+        Long thirdSampleId = collectionStorage.addSample(sampleThree());
+
+        ListCollectionsResult sortedListSamplesResultByKey2Acs = collectionStorage.sortedListCollections("key2",false);
+        Iterator<Map.Entry<Long, CollectionData>> iterator = sortedListSamplesResultByKey2Acs.;
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+
+        ListCollectionsResult sortedListSamplesResultByKey1Desc = collectionStorage.sortedListCollections("key1",false);
+        iterator = sortedListSamplesResultByKey1Desc.loadSamplesById().entrySet().iterator();
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+    }
 }
