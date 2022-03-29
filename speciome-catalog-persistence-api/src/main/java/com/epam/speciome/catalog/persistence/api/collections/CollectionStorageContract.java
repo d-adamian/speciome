@@ -108,7 +108,7 @@ public interface CollectionStorageContract {
         Long thirdSampleId = collectionStorage.addSample(sampleThree());
 
         ListCollectionsResult sortedListSamplesResultByKey2Acs = collectionStorage.sortedListCollections("key2",false);
-        Iterator<Map.Entry<Long, CollectionData>> iterator = sortedListSamplesResultByKey2Acs.;
+        Iterator<Map.Entry<Long, CollectionData>> iterator = sortedListSamplesResultByKey2Acs.getCollectionDataMap().entrySet().iterator();
 
         Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
         Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
