@@ -10,7 +10,7 @@ public interface CollectionStorage {
 
     ListCollectionsResult listCollections();
 
-    ListCollectionsResult sortedListCollections(String sortBy, String orderBy);
+    ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease);
 
     /**
      *

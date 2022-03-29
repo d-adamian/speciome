@@ -49,17 +49,19 @@ public class SpringCollectionStorage implements CollectionStorage {
         return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap);
     }
 
-    //TODO add param into ()
     @Override
-    public ListCollectionsResult sortedListCollections(String sortBy, String orderBy) {
+    public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+
+        if (isDecrease) sort = Sort.by(Sort.Direction.DESC, sortBy);
 
         List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll(sort);
+
         Map<Long, CollectionData> collectionDataMap = collectionEntityList
                 .stream()
-                .collect(LinkedHashMap::new,(map, item) -> map.put(item.getId(), item.asCollectionData()),Map::putAll);
-        return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap,collectionEntityList
+                .collect(LinkedHashMap::new, (map, item) -> map.put(item.getId(), item.asCollectionData()), Map::putAll);
+        return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap, collectionEntityList
                 .stream()
                 .map(e -> e.getId()).collect(Collectors.toList()));
     }

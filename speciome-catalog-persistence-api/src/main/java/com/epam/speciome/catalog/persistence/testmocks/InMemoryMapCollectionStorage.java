@@ -32,7 +32,7 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
 
     //TODO
     @Override
-    public ListCollectionsResult sortedListCollections(String sortBy, String orderBy) {
+    public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
         return null;
     }
 
