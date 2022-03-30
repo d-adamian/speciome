@@ -33,8 +33,6 @@ public final class ListCollections {
 
         ListCollectionsResult listCollectionsResult;
 
-        List<Collection> result = new ArrayList<>();
-
         if (withParams) {
             SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
 
