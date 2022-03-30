@@ -5,9 +5,8 @@ import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryMapCollectionStorage implements CollectionStorage {
     private long maxCollectionId = 1L;
@@ -35,11 +34,41 @@ public class InMemoryMapCollectionStorage implements CollectionStorage {
     @Override
     public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
 
-        Comparator<Map.Entry<Long, CollectionData>> comparator = (e1,e2) -> {
-            return isDecrease ?
-                    e1.getValue().
-        };
-        return null;
+
+        Comparator<Map.Entry<Long, CollectionData>> comparator;
+        comparator = (e1, e2) -> isDecrease ?
+                e2.getValue().collectionName().compareTo(e1.getValue().collectionName()) :
+                e1.getValue().collectionName().compareTo(e2.getValue().collectionName());
+
+        if (sortBy.equals("id")) {
+            comparator = (e1, e2) -> isDecrease ?
+                    e2.getKey().compareTo(e1.getKey()) :
+                    e1.getKey().compareTo(e2.getKey());
+
+        }
+        if (sortBy.equals("createdAtUtc")) {
+            comparator = (e1, e2) -> isDecrease ?
+                    e2.getValue().createdAt().compareTo(e1.getValue().createdAt()) :
+                    e1.getValue().createdAt().compareTo(e2.getValue().createdAt());
+
+        }
+        if (sortBy.equals("updatedAtUtc")) {
+            comparator = (e1, e2) -> isDecrease ?
+                    e2.getValue().updatedAt().compareTo(e1.getValue().updatedAt()) :
+                    e1.getValue().updatedAt().compareTo(e2.getValue().updatedAt());
+
+        }
+        if (sortBy.equals("ownerEmail")) {
+            comparator = (e1, e2) -> isDecrease ?
+                    e2.getValue().ownerEmail().compareTo(e1.getValue().ownerEmail()):
+                    e1.getValue().ownerEmail().compareTo(e2.getValue().ownerEmail());
+
+        }
+        Map<Long, CollectionData> resultMap = new LinkedHashMap<>();
+        collectionDataMap.entrySet().stream().sorted(comparator).forEachOrdered(e -> resultMap.put(e.getKey(), e.getValue()));
+
+        return new ListCollectionsResult(resultMap.size(), resultMap, new ArrayList<>(resultMap.keySet()));
+
     }
 
     @Override

@@ -8,12 +8,15 @@ import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
 public class SpringSampleStorage implements SampleStorage {
+
     private final SampleJpaRepository sampleJpaRepository;
 
     public SpringSampleStorage(SampleJpaRepository sampleJpaRepository) {
@@ -79,4 +82,6 @@ public class SpringSampleStorage implements SampleStorage {
         return savedEntities.stream().map(SampleEntity::getId)
                 .collect(Collectors.toList());
     }
+
+
 }

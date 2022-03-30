@@ -30,4 +30,5 @@ public class ListCollectionsResult {
     public List<Long> getOrder() {
         return order;
     }
+
 }
