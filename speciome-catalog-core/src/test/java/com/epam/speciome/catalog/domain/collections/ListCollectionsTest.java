@@ -94,9 +94,9 @@ public class ListCollectionsTest {
 
         @BeforeEach
         public void setUp() {
-            firstCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("1st_mock_collection_name","3d_mock_collection_owner"));
-            secondCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("2nd_mock_collection_name","1st_mock_collection_owner"));
-            thirdCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("3d_mock_collection_name","2nd_mock_collection_owner"));
+            firstCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Anna_fern_collection","Williams@epam.com"));
+            secondCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Ben_lemon_tree_collection","Browns@epam.com"));
+            thirdCollectionId = useCaseFactory.addCollection().addCollection(new CollectionAttributes("Sam_cat_collection","Johnson@epam.com"));
         }
 
         @Test

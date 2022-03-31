@@ -12,18 +12,22 @@ public class SortCollectionListParams {
     public static final List<String> ATTRIBUTES =
             new ArrayList<>(Arrays.asList("id", "collectionName", "createdAtUtc", "updatedAtUtc", "ownerEmail", "archived"));
     private final String sortAttribute;
-    private final boolean isDecrease;
+    private final boolean isDescend;
 
-    public SortCollectionListParams(String sortAttribute, String isDecrease) {
-        if (isDecrease == null || !(isDecrease.equalsIgnoreCase(ORDER_ASC) || isDecrease.equalsIgnoreCase(ORDER_DESC)))
+    public SortCollectionListParams(String sortAttribute, String isDescend) {
+        if (isDescend == null)
             throw new SortAttributeException("'orderBy' don't present");
-        if (sortAttribute == null || !ATTRIBUTES.contains(sortAttribute))
+        if (sortAttribute == null)
             throw new SortAttributeException("'sortBy' don't present");
+        if (!(isDescend.equalsIgnoreCase(ORDER_ASC) || isDescend.equalsIgnoreCase(ORDER_DESC)))
+            throw new SortAttributeException("Incorrect 'orderBy' attribute!");
+        if (!ATTRIBUTES.contains(sortAttribute))
+            throw new SortAttributeException("Incorrect 'sortBy' attribute!");
         this.sortAttribute = sortAttribute;
-        if (isDecrease.equalsIgnoreCase(ORDER_DESC)) {
-            this.isDecrease = true;
+        if (isDescend.equalsIgnoreCase(ORDER_DESC)) {
+            this.isDescend = true;
         } else {
-            this.isDecrease = false;
+            this.isDescend = false;
         }
 
     }
@@ -32,7 +36,7 @@ public class SortCollectionListParams {
         return sortAttribute;
     }
 
-    public boolean isDecrease() {
-        return isDecrease;
+    public boolean isDescend() {
+        return isDescend;
     }
 }
