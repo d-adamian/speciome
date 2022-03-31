@@ -14,11 +14,11 @@ describe('Rendering tests without sorting', () => {
     beforeEach(() => render(<ColumnHeader name={columnName}/>));
 
     test('Column name is displayed', () => {
-        expect(screen.queryByText(columnName)).not.toBeNull();
+        expect(screen.queryByText(columnName, {exact: true})).not.toBeNull();
     });
 
     test.each(['ascending', 'descending'])('"%s" icon is displayed in grey color', (iconTitle) => {
-        const icon = screen.queryByTitle(iconTitle);
+        const icon = screen.queryByTitle(iconTitle, {exact: true});
         expect(icon).not.toBeNull();
         expect(icon.getAttribute('fill')).toBe('grey');
     });
