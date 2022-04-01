@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.MultiValueMapAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -143,6 +144,42 @@ public class SampleControllerTest {
         mockMvc.perform(get(ApiConstants.SAMPLES)
                         .param("archivalStatus", "anything"))
                 .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get(ApiConstants.SAMPLES)
+                .params(new MultiValueMapAdapter<>(Map.of(
+                        "archivalStatus", List.of("UNARCHIVED"),
+                        "sortby", List.of("collectorName"),
+                        "orderby", List.of("some incorrect name")))))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get(ApiConstants.SAMPLES)
+                        .params(new MultiValueMapAdapter<>(Map.of(
+                                "archivalStatus", List.of("UNARCHIVED"),
+                                "sortby", List.of("some incorrect name"),
+                                "orderby", List.of("desc")))))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get(ApiConstants.SAMPLES)
+                        .params(new MultiValueMapAdapter<>(Map.of(
+                                "archivalStatus", List.of("UNARCHIVED"),
+                                "orderby", List.of("desc")))))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get(ApiConstants.SAMPLES)
+                        .params(new MultiValueMapAdapter<>(Map.of(
+                                "archivalStatus", List.of("UNARCHIVED"),
+                                "sortby", List.of("some incorrect name")))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testListSamplesCorrectInputParameters() throws Exception {
+        mockMvc.perform(get(ApiConstants.SAMPLES)
+                        .params(new MultiValueMapAdapter<>(Map.of(
+                                "archivalStatus", List.of("UNARCHIVED"),
+                                "sortby", List.of("collectorName"),
+                                "orderby", List.of("desc")))))
+                .andExpect(status().isOk());
     }
 
     @Test
