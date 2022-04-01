@@ -1,11 +1,7 @@
 package com.epam.speciome.catalog.webservice.controllers;
 
 import com.epam.speciome.catalog.UseCaseFactory;
-import com.epam.speciome.catalog.domain.exceptions.ArchivalStatusException;
-import com.epam.speciome.catalog.domain.exceptions.SampleNotArchivedException;
-import com.epam.speciome.catalog.domain.exceptions.ImportFileWithMissingColumnsException;
-import com.epam.speciome.catalog.domain.exceptions.SampleNotFoundException;
-import com.epam.speciome.catalog.domain.exceptions.UnexpectedAttributeException;
+import com.epam.speciome.catalog.domain.exceptions.*;
 import com.epam.speciome.catalog.domain.samples.*;
 import com.epam.speciome.catalog.webservice.ApiConstants;
 import com.epam.speciome.catalog.webservice.exceptions.*;
@@ -43,7 +39,7 @@ public class SampleController {
 
     @Operation(
             summary = "List samples",
-            description = "Returns samples with required archival status"
+            description = "Returns samples with required archival status and sorted by attributes if needed"
     )
     @ApiResponses({
             @ApiResponse(
@@ -64,16 +60,20 @@ public class SampleController {
     public ListSamplesResponse listSamples(
             @Schema(allowableValues = {"ALL", "UNARCHIVED", "ARCHIVED"}, defaultValue = "ALL")
             @RequestParam(value = "archivalStatus", required = false)
-            @Parameter(description = "Which samples to list") String archivalStatus
+            @Parameter(description = "Which samples to list") String archivalStatus,
+            @RequestParam(value = "sortby", required = false)
+            @Parameter(description = "By which attribute will be sorted list") String sortAttribute,
+            @RequestParam(value = "orderby", required = false)
+            @Parameter(description = "By which order will be sorted list") String orderAttribute
     ) {
         try {
-            Optional<ArchivalStatus> optionalStatus = ArchivalStatus.defineArchivalStatus(archivalStatus);
-            ListSamples.Result result = useCaseFactory.listSamples().listSamples(optionalStatus);
+            SortSampleListParams params = new SortSampleListParams(archivalStatus, sortAttribute, orderAttribute);
+            ListSamples.Result result = useCaseFactory.listSamples().listSamples(params);
             List<SampleResponse> samples = result.samples().stream()
                     .map(SampleResponse::new)
                     .collect(Collectors.toList());
             return new ListSamplesResponse(result.totalCount(), samples);
-        } catch (ArchivalStatusException e) {
+        } catch (ArchivalStatusException | SortedAttributeException e) {
             throw new InvalidInputException(e.getMessage());
         }
     }

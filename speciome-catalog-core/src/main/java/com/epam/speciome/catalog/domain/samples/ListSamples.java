@@ -5,6 +5,7 @@ import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import com.google.common.collect.ImmutableList;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,13 +19,23 @@ public final class ListSamples {
     }
 
     public Result listSamples() {
-        return listSamples(Optional.of(ArchivalStatus.ALL));
+        return listSamples(new SortSampleListParams(Optional.of(ArchivalStatus.ALL), Optional.empty(), Optional.empty()));
     }
 
     public Result listSamples(Optional<ArchivalStatus> archivalStatus) {
-        ArchivalStatus status = archivalStatus.orElse(ArchivalStatus.ALL);
+        return listSamples(new SortSampleListParams(archivalStatus, Optional.empty(), Optional.empty()));
+    }
 
-        Map<Long, SampleData> samplesMap = sampleStorage.listSamples().loadSamplesById();
+    public Result listSamples(SortSampleListParams params) {
+
+        Map<Long, SampleData> samplesMap = params.getSortedAttribute().isEmpty() ?
+                sampleStorage.listSamples().loadSamplesById() :
+                sampleStorage.listSamplesSortedByParams(
+                    params.getSortedAttribute().get(),
+                    params.getOrderedAttribute().orElse(true))
+                    .loadSamplesById();
+
+        ArchivalStatus status = params.getArchivalStatusAttribute().orElse(ArchivalStatus.ALL);
         List<Sample> samples = samplesMap.entrySet().stream()
                 .map(entry -> Sample.fromSampleData(entry.getKey(), entry.getValue()))
                 .filter(sample -> sampleMatches(sample, status))
@@ -49,6 +60,7 @@ public final class ListSamples {
             case ALL -> true;
             case ARCHIVED -> sample.isArchived();
             case UNARCHIVED -> !sample.isArchived();
+            default -> throw new ArchivalStatusException(archivalStatus.toString());
         };
     }
 }
