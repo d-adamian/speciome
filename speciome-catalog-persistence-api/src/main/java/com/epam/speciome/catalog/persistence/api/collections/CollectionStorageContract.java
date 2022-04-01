@@ -113,7 +113,7 @@ public interface CollectionStorageContract {
         Long thirdSampleId = collectionStorage.addCollection(collectionThree());
 
         ListCollectionsResult resultWithOrderByCollectionName = collectionStorage.sortedListCollections("collectionName",false);
-        List<Long> order = resultWithOrderByCollectionName.getOrder();
+        List<Long> order = resultWithOrderByCollectionName.getOrderList();
         Map<Long,CollectionData> mapWithOrder =
                 order.stream().collect(LinkedHashMap::new,
                         (map, item) -> map.put(item, resultWithOrderByCollectionName.getCollectionDataMap().get(item)),Map::putAll);
@@ -126,7 +126,7 @@ public interface CollectionStorageContract {
 
         ListCollectionsResult resultWithOrderByOwnerEmail = collectionStorage.sortedListCollections("ownerEmail",false);
 
-        order = resultWithOrderByOwnerEmail.getOrder();
+        order = resultWithOrderByOwnerEmail.getOrderList();
         mapWithOrder = order.stream().collect(LinkedHashMap::new,
                 (map, item) -> map.put(item, resultWithOrderByOwnerEmail.getCollectionDataMap().get(item)),Map::putAll);
         iterator = mapWithOrder.entrySet().iterator();

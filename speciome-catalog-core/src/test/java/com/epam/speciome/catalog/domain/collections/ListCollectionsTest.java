@@ -91,6 +91,8 @@ public class ListCollectionsTest {
         long firstCollectionId;
         long secondCollectionId;
         long thirdCollectionId;
+        String ASC = "asc";
+        String DESC = "desc";
 
         @BeforeEach
         public void setUp() {
@@ -101,28 +103,28 @@ public class ListCollectionsTest {
 
         @Test
         public void testSortCollectionListByCollectionNameAsc(){
-            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("collectionName","asc");
+            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("collectionName",ASC);
             assertEquals((long) sortedCollectionList.get(0).getCollectionId(), firstCollectionId);
             assertEquals((long) sortedCollectionList.get(1).getCollectionId(), secondCollectionId);
             assertEquals((long) sortedCollectionList.get(2).getCollectionId(), thirdCollectionId);
         }
         @Test
         public void testSortCollectionListByCollectionNameDesc(){
-            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("collectionName","desc");
+            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("collectionName",DESC);
             assertEquals((long) sortedCollectionList.get(0).getCollectionId(), thirdCollectionId);
             assertEquals((long) sortedCollectionList.get(1).getCollectionId(), secondCollectionId);
             assertEquals((long) sortedCollectionList.get(2).getCollectionId(), firstCollectionId);
         }
         @Test
         public void testSortCollectionListByOwnerEmailAsc(){
-            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("ownerEmail","asc");
+            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("ownerEmail",ASC);
             assertEquals((long) sortedCollectionList.get(0).getCollectionId(), secondCollectionId);
             assertEquals((long) sortedCollectionList.get(1).getCollectionId(), thirdCollectionId);
             assertEquals((long) sortedCollectionList.get(2).getCollectionId(), firstCollectionId);
         }
         @Test
         public void testSortCollectionListByOwnerEmailDesc(){
-            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("ownerEmail","desc");
+            List<Collection> sortedCollectionList = useCaseFactory.listCollections().listCollections("ownerEmail",DESC);
             assertEquals((long) sortedCollectionList.get(0).getCollectionId(), firstCollectionId);
             assertEquals((long) sortedCollectionList.get(1).getCollectionId(), thirdCollectionId);
             assertEquals((long) sortedCollectionList.get(2).getCollectionId(), secondCollectionId);
@@ -130,7 +132,7 @@ public class ListCollectionsTest {
         @Test
         public void assertThatSortCollectionListThrowsSortAttributeException(){
             Assertions.assertThrows(SortAttributeException.class,
-                    ()-> new SortCollectionListParams("incorrect_mock_sort_attribute_value","asc"));
+                    ()-> new SortCollectionListParams("incorrect_mock_sort_attribute_value",ASC));
             Assertions.assertThrows(SortAttributeException.class,
                     ()-> new SortCollectionListParams("collectionName","incorrect_mock_order_attribute_value"));
             Assertions.assertThrows(SortAttributeException.class,

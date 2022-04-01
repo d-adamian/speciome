@@ -7,7 +7,7 @@ public class ListCollectionsResult {
 
     private final int totalCount;
     private final Map<Long, CollectionData> collectionDataMap;
-    private List<Long> order = null;
+    private List<Long> orderList = null;
 
     public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap) {
         this.totalCount = totalCount;
@@ -16,7 +16,7 @@ public class ListCollectionsResult {
     public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap, List<Long> orderList) {
         this.totalCount = totalCount;
         this.collectionDataMap = Map.copyOf(collectionDataMap);
-        this.order = orderList;
+        this.orderList = orderList;
     }
 
     public int getTotalCount() {
@@ -27,8 +27,8 @@ public class ListCollectionsResult {
         return Map.copyOf(collectionDataMap);
     }
 
-    public List<Long> getOrder() {
-        return order;
+    public List<Long> getOrderList() {
+        return orderList;
     }
 
 }

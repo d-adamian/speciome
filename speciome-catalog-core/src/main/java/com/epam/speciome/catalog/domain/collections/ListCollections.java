@@ -1,6 +1,5 @@
 package com.epam.speciome.catalog.domain.collections;
 
-import com.epam.speciome.catalog.domain.exceptions.SortAttributeException;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
 import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
@@ -19,37 +18,37 @@ public final class ListCollections {
 
     public List<Collection> listCollections(String sortBy, String orderBy) {
 
-        boolean withParams = sortBy != null && orderBy != null;
-
-            return getResult(withParams, sortBy, orderBy);
+        if (sortBy != null && orderBy != null) {
+            return getResult(sortBy, orderBy);
+        } else {
+            return getResult();
+        }
 
     }
 
-    public List<Collection> getResult(boolean withParams, String sortBy, String orderBy) {
+    public List<Collection> getResult(String sortBy, String orderBy) {
 
         ListCollectionsResult listCollectionsResult;
 
-        if (withParams) {
-            SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
+        SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
 
-            listCollectionsResult = collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend());
+        listCollectionsResult = collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend());
 
-            Map<Long, CollectionData> resultMap = listCollectionsResult.getCollectionDataMap();
+        Map<Long, CollectionData> resultMap = listCollectionsResult.getCollectionDataMap();
 
-            return collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend())
-                    .getOrder()
-                    .stream()
-                    .map(entry -> Collection.fromCollectionData(entry, resultMap.get(entry)))
-                    .collect(Collectors.toList());
+        return collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend())
+                .getOrderList()
+                .stream()
+                .map(entry -> Collection.fromCollectionData(entry, resultMap.get(entry)))
+                .collect(Collectors.toList());
 
+    }
 
-        } else {
-            return collectionStorage.listCollections().getCollectionDataMap()
-                    .entrySet()
-                    .stream()
-                    .map(entry -> Collection.fromCollectionData(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toList());
-        }
-
+    public List<Collection> getResult() {
+        return collectionStorage.listCollections().getCollectionDataMap()
+                .entrySet()
+                .stream()
+                .map(entry -> Collection.fromCollectionData(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

@@ -82,6 +82,4 @@ public class SpringSampleStorage implements SampleStorage {
         return savedEntities.stream().map(SampleEntity::getId)
                 .collect(Collectors.toList());
     }
-
-
 }
