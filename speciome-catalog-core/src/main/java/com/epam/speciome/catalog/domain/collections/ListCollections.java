@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public final class ListCollections {
     private final CollectionStorage collectionStorage;
-//    private final static List<String> values = Arrays.asList("collectionName", "createdAtUtc", "updatedAtUtc", "ownerEmail");
 
     public ListCollections(CollectionStorage collectionStorage) {
         this.collectionStorage = collectionStorage;
