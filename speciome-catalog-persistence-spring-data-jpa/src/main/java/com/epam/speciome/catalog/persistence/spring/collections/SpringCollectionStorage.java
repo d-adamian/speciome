@@ -1,13 +1,15 @@
 package com.epam.speciome.catalog.persistence.spring.collections;
 
 import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
-import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
+import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
+import org.springframework.data.domain.Sort;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +37,6 @@ public class SpringCollectionStorage implements CollectionStorage {
     }
 
 
-
     @Override
     public ListCollectionsResult listCollections() {
         List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll();
@@ -46,6 +47,23 @@ public class SpringCollectionStorage implements CollectionStorage {
                         CollectionEntity::asCollectionData
                 ));
         return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap);
+    }
+
+    @Override
+    public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
+
+        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+
+        if (isDecrease) sort = Sort.by(Sort.Direction.DESC, sortBy);
+
+        List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll(sort);
+
+        Map<Long, CollectionData> collectionDataMap = collectionEntityList
+                .stream()
+                .collect(LinkedHashMap::new, (map, item) -> map.put(item.getId(), item.asCollectionData()), Map::putAll);
+        return new ListCollectionsResult(collectionDataMap.size(), collectionDataMap, collectionEntityList
+                .stream()
+                .map(e -> e.getId()).collect(Collectors.toList()));
     }
 
     @Override
@@ -67,7 +85,6 @@ public class SpringCollectionStorage implements CollectionStorage {
         }
         return collectionEntity.asCollectionData();
     }
-
 
 
     @Override

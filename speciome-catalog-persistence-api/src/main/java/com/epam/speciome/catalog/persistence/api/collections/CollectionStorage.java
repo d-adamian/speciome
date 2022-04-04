@@ -1,7 +1,6 @@
 package com.epam.speciome.catalog.persistence.api.collections;
 
 import com.epam.speciome.catalog.persistence.api.exceptions.CollectionIsNullException;
-import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 
 public interface CollectionStorage {
 
@@ -10,6 +9,8 @@ public interface CollectionStorage {
     void updateCollection(Long collectionId, CollectionData collectionData);
 
     ListCollectionsResult listCollections();
+
+    ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease);
 
     /**
      *
