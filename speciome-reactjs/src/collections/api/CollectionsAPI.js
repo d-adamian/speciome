@@ -27,11 +27,17 @@ function deleteCollection(collectionId) {
     return axios.delete(url);
 }
 
-function listCollections() {
+function listCollections(sortBy, orderBy) {
     const url = `${BASE_URL}/collections`
 
-    return axios.get(url)
-        .then(response => response.data);
+    if (sortBy) {
+        const params = { sortBy, orderBy };
+        return axios.get(url, { params: params })
+            .then(response => response.data);
+    } else {
+        return axios.get(url)
+            .then(response => response.data);
+    }
 }
 
 function unArchiveCollection(collectionId) {

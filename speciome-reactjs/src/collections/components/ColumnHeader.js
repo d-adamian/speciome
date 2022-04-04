@@ -1,7 +1,7 @@
 import {SortDown, SortUp} from 'react-bootstrap-icons';
 
-const ascendingTitle = 'ascending';
-const descendingTitle = 'descending';
+const ascendingTitle = 'asc';
+const descendingTitle = 'desc';
 
 const selectedColor = 'black';
 const notSelectedColor = 'grey'
@@ -41,17 +41,17 @@ function DescendingIcon(props) {
 }
 
 function ColumnHeader(props) {
-    const {name, sortBy, sortDirection, onSortAscending, onSortDescending, onClearSort} = props;
+    const {column, displayName, sortBy, sortDirection, onSortAscending, onSortDescending, onClearSort} = props;
 
-    const sameColumn = name === sortBy;
-    const showAscending = sameColumn ? sortDirection === 'ascending' : true;
-    const ascendingSelected = sameColumn && sortDirection === 'ascending';
+    const sameColumn = column === sortBy;
+    const showAscending = sameColumn ? sortDirection === ascendingTitle : true;
+    const ascendingSelected = sameColumn && sortDirection === ascendingTitle;
 
-    const showDescending = sameColumn ? sortDirection === 'descending' : true;
-    const descendingSelected = sameColumn && sortDirection === 'descending';
+    const showDescending = sameColumn ? sortDirection === descendingTitle : true;
+    const descendingSelected = sameColumn && sortDirection === descendingTitle;
     return (
         <div>
-            {name}
+            {displayName}
             {showAscending ?
                 <AscendingIcon
                     selected={ascendingSelected}

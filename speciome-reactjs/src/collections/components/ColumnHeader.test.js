@@ -5,20 +5,20 @@ import ColumnHeader from './ColumnHeader.js';
 const columnName = 'column name';
 
 function findIcons() {
-    const ascendingIcon = screen.queryByTitle('ascending', {exact: true});
-    const descendingIcon = screen.queryByTitle('descending', {exact: true});
+    const ascendingIcon = screen.queryByTitle('asc', {exact: true});
+    const descendingIcon = screen.queryByTitle('desc', {exact: true});
     return {ascendingIcon, descendingIcon};
 }
 
 describe('Rendering tests without sorting', () => {
-    beforeEach(() => render(<ColumnHeader name={columnName}/>));
+    beforeEach(() => render(<ColumnHeader column={columnName} displayName={columnName}/>));
 
     test('Column name is displayed', () => {
         expect(screen.queryByText(columnName, {exact: true})).not.toBeNull();
     });
 
-    test.each(['ascending', 'descending'])('"%s" icon is displayed in grey color', (iconTitle) => {
-        const icon = screen.queryByTitle(iconTitle, {exact: true});
+    test.each(['asc', 'desc'])('"%s" icon is displayed in grey color', (iconTitle) => {
+        const icon = screen.getByTitle(iconTitle, {exact: true});
         expect(icon).not.toBeNull();
         expect(icon.getAttribute('fill')).toBe('grey');
     });
@@ -26,7 +26,7 @@ describe('Rendering tests without sorting', () => {
 
 describe('Rendering tests with sorting', () => {
     test('Same column - one icon displayed in black', () => {
-        render(<ColumnHeader name={columnName} sortBy={columnName} sortDirection={'ascending'}/>);
+        render(<ColumnHeader column={columnName} displayName={columnName} sortBy={columnName} sortDirection={'asc'}/>);
 
         const {ascendingIcon, descendingIcon} = findIcons();
 
@@ -37,7 +37,7 @@ describe('Rendering tests with sorting', () => {
 
     test('Other column - two columns displayed in grey', () => {
         const otherColumn = 'other column';
-        render(<ColumnHeader name={columnName} sortBy={otherColumn} sortDirection={'ascending'}/>);
+        render(<ColumnHeader column={columnName} displayName={columnName} sortBy={otherColumn} sortDirection={'asc'}/>);
 
         const {ascendingIcon, descendingIcon} = findIcons();
 
@@ -55,7 +55,8 @@ describe('Callback tests', () => {
             const onSortDescending = jest.fn();
 
             render(<ColumnHeader
-                name={columnName}
+                column={columnName}
+                displayName={columnName}
                 onSortAscending={onSortAscending}
                 onSortDescending={onSortDescending}/>
             );
@@ -86,7 +87,7 @@ describe('Callback tests', () => {
             const onClearSort = jest.fn();
 
             render(<ColumnHeader
-                name={columnName}
+                column={columnName}
                 sortBy={columnName}
                 sortDirection={sortDirection}
                 onClearSort={onClearSort}/>
@@ -95,7 +96,7 @@ describe('Callback tests', () => {
         }
 
         test('Ascending icon clicked - onClearSort called', () => {
-            const {onClearSort} = setupMocks('ascending');
+            const {onClearSort} = setupMocks('asc');
             const {ascendingIcon} = findIcons();
 
             fireEvent.click(ascendingIcon);
@@ -103,12 +104,11 @@ describe('Callback tests', () => {
         });
 
         test('Descending icon clicked - onSortDescending called', () => {
-            const {onClearSort} = setupMocks('descending');
+            const {onClearSort} = setupMocks('desc');
             const {descendingIcon} = findIcons();
 
             fireEvent.click(descendingIcon);
             expect(onClearSort).toHaveBeenCalledTimes(1);
         });
     });
-    // Sorting selected - onClearSort
 });

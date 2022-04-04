@@ -5,7 +5,9 @@ import {archiveCollection, deleteCollection, listCollections, unArchiveCollectio
 export default class CollectionStore {
     editingCollection = false;
     editedCollectionId = null;
-    fetching = true
+    fetching = true;
+    sortingColumn = null;
+    sortingOrder = null;
     collections = []
 
     constructor() {
@@ -65,7 +67,7 @@ export default class CollectionStore {
 
     reloadCollections() {
         this.setFetching(true);
-        listCollections().then(listResponse => {
+        listCollections(this.sortingColumn, this.sortingOrder).then(listResponse => {
             this.setCollections(listResponse.collections);
             this.setFetching(false);
         })
@@ -81,5 +83,17 @@ export default class CollectionStore {
 
     setFetching(fetching) {
         this.fetching = fetching;
+    }
+
+    setSort(sortBy, order) {
+        this.sortingColumn = sortBy;
+        this.sortingOrder = order;
+        this.reloadCollections();
+    }
+
+    resetSort() {
+        this.sortingColumn = null;
+        this.sortingOrder = null;
+        this.reloadCollections();
     }
 }

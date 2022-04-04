@@ -3,6 +3,7 @@ import {observer} from "mobx-react-lite"
 import {Button, Spinner, Table} from "react-bootstrap";
 
 import CollectionDialog from "./CollectionDialog";
+import ColumnHeader from "./ColumnHeader";
 
 const CollectionsTable = observer(({collectionStore}) => {
     const collections = collectionStore.collections;
@@ -15,7 +16,15 @@ const CollectionsTable = observer(({collectionStore}) => {
             <thead>
             <tr>
                 <th>
-                    Name
+                    <ColumnHeader
+                        displayName='Name'
+                        column='collectionName'
+                        sortBy={collectionStore.sortingColumn}
+                        sortDirection={collectionStore.sortingOrder}
+                        onSortAscending={() => collectionStore.setSort('collectionName', 'asc')}
+                        onSortDescending={() => collectionStore.setSort('collectionName', 'desc')}
+                        onClearSort={() => collectionStore.resetSort()}
+                    />
                 </th>
                 <th>
                     Created by
