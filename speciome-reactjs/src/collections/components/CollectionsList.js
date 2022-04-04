@@ -5,6 +5,23 @@ import {Button, Spinner, Table} from "react-bootstrap";
 import CollectionDialog from "./CollectionDialog";
 import ColumnHeader from "./ColumnHeader";
 
+function HeaderWithSort(props) {
+    const {collectionStore, column, displayName} = props;
+    return (
+        <th>
+            <ColumnHeader
+                displayName={displayName}
+                column={column}
+                sortBy={collectionStore.sortingColumn}
+                sortDirection={collectionStore.sortingOrder}
+                onSortAscending={() => collectionStore.setSort(column, 'asc')}
+                onSortDescending={() => collectionStore.setSort(column, 'desc')}
+                onClearSort={() => collectionStore.resetSort()}
+            />
+        </th>
+    );
+}
+
 const CollectionsTable = observer(({collectionStore}) => {
     const collections = collectionStore.collections;
 
@@ -15,29 +32,11 @@ const CollectionsTable = observer(({collectionStore}) => {
         <Table>
             <thead>
             <tr>
-                <th>
-                    <ColumnHeader
-                        displayName='Name'
-                        column='collectionName'
-                        sortBy={collectionStore.sortingColumn}
-                        sortDirection={collectionStore.sortingOrder}
-                        onSortAscending={() => collectionStore.setSort('collectionName', 'asc')}
-                        onSortDescending={() => collectionStore.setSort('collectionName', 'desc')}
-                        onClearSort={() => collectionStore.resetSort()}
-                    />
-                </th>
-                <th>
-                    Created by
-                </th>
-                <th>
-                    Creation date
-                </th>
-                <th>
-                    Update date
-                </th>
-                <th>
-
-                </th>
+                <HeaderWithSort column='collectionName' displayName='Name' collectionStore={collectionStore}/>
+                <HeaderWithSort column='ownerEmail' displayName='Created by' collectionStore={collectionStore}/>
+                <HeaderWithSort column='createdAtUtc' displayName='Creation date' collectionStore={collectionStore}/>
+                <HeaderWithSort column='updatedAtUtc' displayName='Update date' collectionStore={collectionStore}/>
+                <th/>
             </tr>
             </thead>
             <tbody>
