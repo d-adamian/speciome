@@ -21,7 +21,10 @@ const CollectionsTable = observer(({collectionStore}) => {
                     Created by
                 </th>
                 <th>
-                    Created/Updated
+                    Creation date
+                </th>
+                <th>
+                    Update date
                 </th>
                 <th>
 
@@ -50,7 +53,8 @@ const CollectionsTable = observer(({collectionStore}) => {
                             </td>
                             <td>
                                 {new Date(createdAt).toLocaleString('en-GB')}
-                                /
+                            </td>
+                            <td>
                                 {new Date(updatedAt).toLocaleString('en-GB')}
                             </td>
                             <td>

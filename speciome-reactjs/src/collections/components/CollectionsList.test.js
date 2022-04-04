@@ -106,8 +106,8 @@ describe('List rendering - two collections present', () => {
 
     test("Date is displayed for collection", async() => {
         const expectedDateString = "09/03/2022";
-        const date = await screen.findByText(expectedDateString, {exact: false});
-        expect(date).not.toBeNull();
+        const date = await screen.findAllByText(expectedDateString, {exact: false});
+        expect(date).toHaveLength(2);
     });
 });
 
