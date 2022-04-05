@@ -17,14 +17,23 @@ function deleteSample(sampleId) {
     return axios.delete(url);
 }
 
-function findSamples(archivalStatus) {
+function findSamples(archivalStatus, sortBy, orderBy) {
     const url = `${BASE_URL}/samples`
 
-    return axios.get(url, {
-        params: {
-            archivalStatus: archivalStatus
-        }
-    }).then(response => response.data);
+    if (sortBy) {
+        const params = {
+            archivalStatus: archivalStatus,
+            sortby: sortBy,
+            orderby: orderBy
+        };
+        return axios.get(url, {params})
+            .then(response => response.data);
+    } else {
+        const params = {archivalStatus};
+        return axios.get(url, {params})
+            .then(response => response.data);
+    }
+
 }
 
 function listAttributes() {

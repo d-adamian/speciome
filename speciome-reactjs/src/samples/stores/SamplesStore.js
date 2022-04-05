@@ -17,6 +17,8 @@ export default class SamplesStore {
     columnNames = []
     archivalStatus = 'ALL'
     samples = []
+    sortingColumn = null;
+    sortingOrder = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -25,7 +27,7 @@ export default class SamplesStore {
     reloadSamples() {
         this.fetching = true;
         listAttributes().then(attributes => {
-            findSamples(this.archivalStatus).then(response => {
+            findSamples(this.archivalStatus, this.sortingColumn, this.sortingOrder).then(response => {
                 this.updateTable(attributes, response.samples);
             });
         });
@@ -119,4 +121,15 @@ export default class SamplesStore {
         this.reloadSamples();
     }
 
+    setSort(sortBy, order) {
+        this.sortingColumn = sortBy;
+        this.sortingOrder = order;
+        this.reloadSamples();
+    }
+
+    resetSort() {
+        this.sortingColumn = null;
+        this.sortingOrder = null;
+        this.reloadSamples();
+    }
 }

@@ -11,15 +11,27 @@ import Table from 'react-bootstrap/Table'
 
 import ImportDialog from "./ImportDialog"
 import EditableRow from "./EditableRow"
+import SortingIcons from '../../utils/components/SortingIcons';
 
 function TableHeader(props) {
+    const { columnNames, samplesStore } = props;
     return (
         <thead>
         <tr>
             <th/>
             {
-                props.columnNames.map((name, index) => (
-                    <th key={index}>{name}</th>
+                columnNames.map((name, index) => (
+                    <th>
+                        <SortingIcons
+                            displayName={name}
+                            column={name}
+                            sortBy={samplesStore.sortingColumn}
+                            sortDirection={samplesStore.sortingOrder}
+                            onSortAscending={() => samplesStore.setSort(name, 'asc')}
+                            onSortDescending={() => samplesStore.setSort(name, 'desc')}
+                            onClearSort={() => samplesStore.resetSort()}
+                        />
+                    </th>
                 ))
             }
             <th/>
@@ -116,7 +128,7 @@ const SamplesTable = observer(({ samplesStore }) => {
                 </Row>
                 <Row>
                     <Table>
-                        <TableHeader columnNames={samplesStore.columnNames}/>
+                        <TableHeader columnNames={samplesStore.columnNames} samplesStore={samplesStore}/>
                         <tbody>
                         {samplesStore.samples &&
                         samplesStore.samples.map((sample, index) => {
