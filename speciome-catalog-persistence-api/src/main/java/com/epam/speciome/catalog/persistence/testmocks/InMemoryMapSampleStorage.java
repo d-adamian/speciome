@@ -5,9 +5,7 @@ import com.epam.speciome.catalog.persistence.api.samples.ListSamplesResult;
 import com.epam.speciome.catalog.persistence.api.samples.SampleData;
 import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryMapSampleStorage implements SampleStorage {
@@ -25,6 +23,20 @@ public class InMemoryMapSampleStorage implements SampleStorage {
     @Override
     public ListSamplesResult listSamples() {
         return new ListSamplesResult(samplesById.size(), samplesById);
+    }
+
+    @Override
+    public ListSamplesResult listSamplesSortedByParams(String sortBy, boolean orderBy) {
+
+        Comparator<Map.Entry<Long, SampleData>> comparator = (e1, e2) -> {
+            return orderBy ?
+                    e1.getValue().attributes().get(sortBy).compareTo(e2.getValue().attributes().get(sortBy)) :
+                    e2.getValue().attributes().get(sortBy).compareTo(e1.getValue().attributes().get(sortBy));
+        };
+        Map<Long, SampleData> resultMap = new LinkedHashMap<>();
+        samplesById.entrySet().stream().sorted(comparator).forEachOrdered(e->resultMap.put(e.getKey(), e.getValue()));
+
+        return new ListSamplesResult(resultMap.size(), resultMap);
     }
 
     @Override

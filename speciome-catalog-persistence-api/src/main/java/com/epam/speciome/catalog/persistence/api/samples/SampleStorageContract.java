@@ -2,11 +2,14 @@ package com.epam.speciome.catalog.persistence.api.samples;
 
 import com.epam.speciome.catalog.persistence.api.exceptions.SampleIsNullException;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 public interface SampleStorageContract {
     SampleStorage sampleStorage();
@@ -85,12 +88,37 @@ public interface SampleStorageContract {
         Assertions.assertThat(updatedSample).isNotNull().isEqualTo(sampleTwo);
     }
 
+    @Test
+    @DisplayName("When we get sample list with sort params. Then it return sorted list by params")
+    default void testSampleSortedList() {
+        SampleStorage sampleStorage = sampleStorage();
+        Long firstSampleId = sampleStorage.addSample(sampleOne());
+        Long secondSampleId = sampleStorage.addSample(sampleTwo());
+        Long thirdSampleId = sampleStorage.addSample(sampleThree());
+
+        ListSamplesResult sortedListSamplesResultByKey2Acs = sampleStorage.listSamplesSortedByParams("key2", true);
+        Iterator<Map.Entry<Long, SampleData>> iterator = sortedListSamplesResultByKey2Acs.loadSamplesById().entrySet().iterator();
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+
+        ListSamplesResult sortedListSamplesResultByKey1Desc = sampleStorage.listSamplesSortedByParams("key1", false);
+        iterator = sortedListSamplesResultByKey1Desc.loadSamplesById().entrySet().iterator();
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+    }
+
+
+
     private static SampleData sampleOne() {
         // we add withNano(0) to avoid failing tests for time variables
         // when there are some minor difference at the ending of output time variables
         ZonedDateTime createdAt = ZonedDateTime.now().minusDays(1).withNano(0);
         ZonedDateTime updatedAt = ZonedDateTime.now().minusHours(1).withNano(0);
-        Map<String, String> attributes = Map.of("key1", "value1", "key2", "value2");
+        Map<String, String> attributes = Map.of("key1", "B", "key2", "value6");
         return new SampleData(createdAt, updatedAt, attributes, false);
     }
 
@@ -99,7 +127,16 @@ public interface SampleStorageContract {
         // when there are some minor difference at the ending of output time variables
         ZonedDateTime createdAt = ZonedDateTime.now().minusDays(3).withNano(0);
         ZonedDateTime updatedAt = ZonedDateTime.now().minusMinutes(25).withNano(0);
-        Map<String, String> attributes = Map.of("key3", "value3", "key4", "value4");
+        Map<String, String> attributes = Map.of("key1", "A", "key2", "value4");
+        return new SampleData(createdAt, updatedAt, attributes, false);
+    }
+
+    private static SampleData sampleThree() {
+        // we add withNano(0) to avoid failing tests for time variables
+        // when there are some minor difference at the ending of output time variables
+        ZonedDateTime createdAt = ZonedDateTime.now().minusDays(5).withNano(0);
+        ZonedDateTime updatedAt = ZonedDateTime.now().minusMinutes(30).withNano(0);
+        Map<String, String> attributes = Map.of("key1", "C", "key2", "value8");
         return new SampleData(createdAt, updatedAt, attributes, false);
     }
 }

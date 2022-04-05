@@ -7,11 +7,8 @@ import com.epam.speciome.catalog.persistence.api.samples.SampleStorage;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import javax.persistence.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -81,5 +78,19 @@ public class SpringSampleStorage implements SampleStorage {
         List<SampleEntity> savedEntities = sampleJpaRepository.saveAll(entities);
         return savedEntities.stream().map(SampleEntity::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ListSamplesResult listSamplesSortedByParams(String sortBy, boolean orderBy) {
+
+        //TODO : make listSamplesSortedByParams() method of sampleJpaRepository in Criteria API (EPMLSTRSPM-88)
+        List<SampleEntity> sampleEntityList = orderBy ?
+                sampleJpaRepository.sortedSampleEntityListAcs(sortBy) :
+                sampleJpaRepository.sortedSampleEntityListDesc(sortBy);
+
+        Map<Long, SampleData> sortedSamples = new LinkedHashMap<>();
+        sampleEntityList.forEach(e -> sortedSamples.put(e.getId(), SampleEntity.asSampleData(e)));
+
+        return new ListSamplesResult(sortedSamples.size(), sortedSamples);
     }
 }
