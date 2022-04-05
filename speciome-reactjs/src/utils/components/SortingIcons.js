@@ -40,7 +40,7 @@ function DescendingIcon(props) {
         <DescendingIconNotSelected onSortDescending={onSortDescending}/>;
 }
 
-function ColumnHeader(props) {
+function SortingIcons(props) {
     const {column, displayName, sortBy, sortDirection, onSortAscending, onSortDescending, onClearSort} = props;
 
     const sameColumn = column === sortBy;
@@ -72,4 +72,4 @@ function ColumnHeader(props) {
     );
 }
 
-export default ColumnHeader;
+export default SortingIcons;

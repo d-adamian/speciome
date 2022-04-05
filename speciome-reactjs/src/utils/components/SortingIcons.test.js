@@ -1,6 +1,6 @@
 import {fireEvent, render, screen} from "@testing-library/react";
 
-import ColumnHeader from './ColumnHeader.js';
+import SortingIcons from './SortingIcons.js';
 
 const columnName = 'column name';
 
@@ -11,7 +11,7 @@ function findIcons() {
 }
 
 describe('Rendering tests without sorting', () => {
-    beforeEach(() => render(<ColumnHeader column={columnName} displayName={columnName}/>));
+    beforeEach(() => render(<SortingIcons column={columnName} displayName={columnName}/>));
 
     test('Column name is displayed', () => {
         expect(screen.queryByText(columnName, {exact: true})).not.toBeNull();
@@ -26,7 +26,7 @@ describe('Rendering tests without sorting', () => {
 
 describe('Rendering tests with sorting', () => {
     test('Same column - one icon displayed in black', () => {
-        render(<ColumnHeader column={columnName} displayName={columnName} sortBy={columnName} sortDirection={'asc'}/>);
+        render(<SortingIcons column={columnName} displayName={columnName} sortBy={columnName} sortDirection={'asc'}/>);
 
         const {ascendingIcon, descendingIcon} = findIcons();
 
@@ -37,7 +37,7 @@ describe('Rendering tests with sorting', () => {
 
     test('Other column - two columns displayed in grey', () => {
         const otherColumn = 'other column';
-        render(<ColumnHeader column={columnName} displayName={columnName} sortBy={otherColumn} sortDirection={'asc'}/>);
+        render(<SortingIcons column={columnName} displayName={columnName} sortBy={otherColumn} sortDirection={'asc'}/>);
 
         const {ascendingIcon, descendingIcon} = findIcons();
 
@@ -54,7 +54,7 @@ describe('Callback tests', () => {
             const onSortAscending = jest.fn();
             const onSortDescending = jest.fn();
 
-            render(<ColumnHeader
+            render(<SortingIcons
                 column={columnName}
                 displayName={columnName}
                 onSortAscending={onSortAscending}
@@ -86,7 +86,7 @@ describe('Callback tests', () => {
         const setupMocks = (sortDirection) => {
             const onClearSort = jest.fn();
 
-            render(<ColumnHeader
+            render(<SortingIcons
                 column={columnName}
                 sortBy={columnName}
                 sortDirection={sortDirection}

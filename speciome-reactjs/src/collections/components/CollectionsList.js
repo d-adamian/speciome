@@ -3,13 +3,13 @@ import {observer} from "mobx-react-lite"
 import {Button, Spinner, Table} from "react-bootstrap";
 
 import CollectionDialog from "./CollectionDialog";
-import ColumnHeader from "./ColumnHeader";
+import SortingIcons from "../../utils/components/SortingIcons";
 
 function HeaderWithSort(props) {
     const {collectionStore, column, displayName} = props;
     return (
         <th>
-            <ColumnHeader
+            <SortingIcons
                 displayName={displayName}
                 column={column}
                 sortBy={collectionStore.sortingColumn}
