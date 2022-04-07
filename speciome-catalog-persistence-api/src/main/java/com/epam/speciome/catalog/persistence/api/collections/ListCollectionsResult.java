@@ -7,11 +7,12 @@ public class ListCollectionsResult {
 
     private final int totalCount;
     private final Map<Long, CollectionData> collectionDataMap;
-    private List<Long> orderList = null;
+    private List<Long> orderList;
 
     public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap) {
         this.totalCount = totalCount;
         this.collectionDataMap = Map.copyOf(collectionDataMap);
+        this.orderList = collectionDataMap.keySet().stream().toList();
     }
     public ListCollectionsResult(int totalCount, Map<Long, CollectionData> collectionDataMap, List<Long> orderList) {
         this.totalCount = totalCount;

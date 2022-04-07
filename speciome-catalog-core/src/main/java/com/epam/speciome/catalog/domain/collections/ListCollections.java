@@ -27,16 +27,13 @@ public final class ListCollections {
 
     public List<Collection> getResult(String sortBy, String orderBy) {
 
-        ListCollectionsResult listCollectionsResult;
+                SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
 
-        SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
-
-        listCollectionsResult = collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend());
+        ListCollectionsResult listCollectionsResult = collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend());
 
         Map<Long, CollectionData> resultMap = listCollectionsResult.getCollectionDataMap();
 
-        return collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend())
-                .getOrderList()
+        return listCollectionsResult.getOrderList()
                 .stream()
                 .map(entry -> Collection.fromCollectionData(entry, resultMap.get(entry)))
                 .collect(Collectors.toList());

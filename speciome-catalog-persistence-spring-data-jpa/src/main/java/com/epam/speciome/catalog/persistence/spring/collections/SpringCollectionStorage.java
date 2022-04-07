@@ -52,9 +52,9 @@ public class SpringCollectionStorage implements CollectionStorage {
     @Override
     public ListCollectionsResult sortedListCollections(String sortBy, boolean isDecrease) {
 
-        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
-
-        if (isDecrease) sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Sort.Direction direction = isDecrease ?
+                Sort.Direction.DESC : Sort.Direction.ASC;
+                Sort sort = Sort.by(direction, sortBy);
 
         List<CollectionEntity> collectionEntityList = collectionJpaRepository.findAll(sort);
 
