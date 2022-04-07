@@ -6,8 +6,9 @@ import com.epam.speciome.catalog.domain.collections.CollectionAttributes;
 import com.epam.speciome.catalog.domain.exceptions.AbsentCollectionNameException;
 import com.epam.speciome.catalog.domain.exceptions.CollectionNotArchivedException;
 import com.epam.speciome.catalog.domain.exceptions.CollectionNotFoundException;
-import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
+import com.epam.speciome.catalog.domain.exceptions.SortAttributeException;
 import com.epam.speciome.catalog.webservice.ApiConstants;
+import com.epam.speciome.catalog.webservice.exceptions.ForbiddenException;
 import com.epam.speciome.catalog.webservice.exceptions.InvalidInputException;
 import com.epam.speciome.catalog.webservice.exceptions.NotFoundException;
 import com.epam.speciome.catalog.webservice.models.CollectionRequest;
@@ -51,12 +52,16 @@ public class CollectionController {
     })
     @GetMapping(ApiConstants.COLLECTIONS)
     @ResponseBody
-    public ListCollectionsResponse collectionsResponse() {
-        List<Collection> collections = useCaseFactory.listCollections().listCollections();
-        List<CollectionResponse> collectionsToOutput =
-                collections.stream().map(CollectionResponse::new).toList();
-
-        return new ListCollectionsResponse(collections.size(), collectionsToOutput);
+    public ListCollectionsResponse collectionsResponse(@RequestParam(value = "sortBy", required = false) String sortBy,
+                                                       @RequestParam(value = "orderBy", required = false) String orderBy) {
+        try {
+            List<Collection> collections = useCaseFactory.listCollections().listCollections(sortBy, orderBy);
+            List<CollectionResponse> collectionsToOutput =
+                    collections.stream().map(CollectionResponse::new).toList();
+            return new ListCollectionsResponse(collections.size(), collectionsToOutput);
+        } catch (SortAttributeException e) {
+            throw new InvalidInputException(e.getMessage());
+        }
     }
 
     @Operation(

@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface CollectionStorageContract {
@@ -80,6 +83,12 @@ public interface CollectionStorageContract {
         return new CollectionData("Bird cherry trees", timestamp, timestamp, "James Smith", false);
     }
 
+    private static CollectionData collectionThree() {
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+        Timestamp timestamp = Timestamp.valueOf(now);
+        return new CollectionData("Cat plant", timestamp, timestamp, "Anna Smith", true);
+    }
+
     @Test
     @DisplayName("When collection have been deleted. Then retrieving that collection throws an exception")
     default void testCollectionNotFoundAfterDeletion() {
@@ -98,4 +107,55 @@ public interface CollectionStorageContract {
                 .isInstanceOf(CollectionIsNullException.class);
     }
 
+    @Test
+    @DisplayName("When we get collection list with sort params. Then it return sorted list by params")
+    default void testSampleSortedList() {
+
+        CollectionStorage collectionStorage = collectionStorage();
+
+        Long firstSampleId = collectionStorage.addCollection(collectionOne());
+        Long secondSampleId = collectionStorage.addCollection(collectionTwo());
+        Long thirdSampleId = collectionStorage.addCollection(collectionThree());
+
+        ListCollectionsResult resultWithOrderByCollectionName = collectionStorage.sortedListCollections("collectionName", false);
+
+        List<Long> order = resultWithOrderByCollectionName.getOrderList();
+
+        Map<Long, CollectionData> mapWithOrder = order
+                .stream()
+                .collect(
+                        LinkedHashMap::new,
+                        (map, item) -> map
+                                .put(item, resultWithOrderByCollectionName
+                                        .getCollectionDataMap()
+                                        .get(item)),
+                        Map::putAll);
+
+        Iterator<Map.Entry<Long, CollectionData>> iterator = mapWithOrder.entrySet().iterator();
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+
+        ListCollectionsResult resultWithOrderByOwnerEmail = collectionStorage.sortedListCollections("ownerEmail", false);
+
+        order = resultWithOrderByOwnerEmail.getOrderList();
+
+        mapWithOrder = order
+                .stream()
+                .collect(
+                        LinkedHashMap::new,
+                        (map, item) -> map
+                                .put(item, resultWithOrderByOwnerEmail
+                                        .getCollectionDataMap()
+                                        .get(item)),
+                        Map::putAll);
+
+        iterator = mapWithOrder.entrySet().iterator();
+
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(thirdSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(secondSampleId);
+        Assertions.assertThat(iterator.next().getKey()).isEqualTo(firstSampleId);
+    }
 }
+
