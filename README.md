@@ -47,10 +47,11 @@ In alphabetical order:
 * Aleksandr Postnikov
 * Aleksandra Davydova
 * Anna Bogdanova
+* Daniil Zatiaev
+* Daniil Shakhmovedev
 * Dmitrii Adamian
 * Iaroslav Shmorgunov
 * Olga Bogdanova
 * Olga Trubetskaia
+* Petr Piatkov
 * Valeriia Rodina
-* Daniil Shakhmovedev
-* Daniil Zatiaev

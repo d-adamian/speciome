@@ -1,9 +1,11 @@
 package com.epam.speciome.catalog.domain.collections;
 
-import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
+import com.epam.speciome.catalog.persistence.api.collections.CollectionData;
 import com.epam.speciome.catalog.persistence.api.collections.CollectionStorage;
+import com.epam.speciome.catalog.persistence.api.collections.ListCollectionsResult;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class ListCollections {
@@ -13,10 +15,33 @@ public final class ListCollections {
         this.collectionStorage = collectionStorage;
     }
 
-    public List<Collection> listCollections() {
-        ListCollectionsResult listCollectionsResult = collectionStorage.listCollections();
+    public List<Collection> listCollections(String sortBy, String orderBy) {
 
-        return listCollectionsResult.getCollectionDataMap()
+        if (sortBy != null && orderBy != null) {
+            return getResult(sortBy, orderBy);
+        } else {
+            return getResult();
+        }
+
+    }
+
+    public List<Collection> getResult(String sortBy, String orderBy) {
+
+                SortCollectionListParams params = new SortCollectionListParams(sortBy, orderBy);
+
+        ListCollectionsResult listCollectionsResult = collectionStorage.sortedListCollections(params.getSortAttribute(), params.isDescend());
+
+        Map<Long, CollectionData> resultMap = listCollectionsResult.getCollectionDataMap();
+
+        return listCollectionsResult.getOrderList()
+                .stream()
+                .map(entry -> Collection.fromCollectionData(entry, resultMap.get(entry)))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<Collection> getResult() {
+        return collectionStorage.listCollections().getCollectionDataMap()
                 .entrySet()
                 .stream()
                 .map(entry -> Collection.fromCollectionData(entry.getKey(), entry.getValue()))
